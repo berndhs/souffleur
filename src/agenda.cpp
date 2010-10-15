@@ -41,6 +41,7 @@ Agenda::Agenda (QWidget *parent)
   :QMainWindow (parent),
    app (0),
    configEdit (this),
+   db (this),
    dateEdit (0)
 {
   mainUi.setupUi (this);
@@ -54,6 +55,7 @@ Agenda::Init (QApplication &ap)
 {
   app = &ap;
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
+  db.Start ();
 }
 
 void
@@ -80,6 +82,12 @@ Agenda::Connect ()
            this, SLOT (NewItem()));
   connect (mainUi.calendarWidget, SIGNAL (clicked(const QDate &)),
            this, SLOT (PickedDate (const QDate &)));
+  connect (mainUi.hideButton, SIGNAL (clicked()), 
+           this, SLOT (showMinimized()));
+  connect (mainUi.quitButton, SIGNAL (clicked()),
+           this, SLOT (Quit()));
+  connect (mainUi.calButton, SIGNAL (clicked()),
+           this, SLOT (ToggleCal ()));
 }
 
 
@@ -92,6 +100,7 @@ Agenda::Quit ()
   if (app) {
     app->quit();
   }
+  db.Stop ();
 }
 
 void
@@ -127,6 +136,13 @@ Agenda::PickedDate (const QDate & date)
   dateEdit->setDisplayFormat("yyyy.MM.dd hh:mm:ss");
   dateEdit->move (mainUi.calendarWidget->pos());
   dateEdit->show ();
+}
+
+void
+Agenda::ToggleCal ()
+{
+  bool seeit = mainUi.calendarWidget->isVisible ();
+  mainUi.calendarWidget->setVisible (!seeit);
 }
 
 void

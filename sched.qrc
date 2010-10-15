@@ -3,4 +3,7 @@
 <qresource>
 <file>agenda.png</file>
 </qresource>
+<qresource prefix="/schemas">
+  <file alias="events.sql">schemas/events.sql</file>
+</qresource>
 </RCC>

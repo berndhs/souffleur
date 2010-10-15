@@ -1,5 +1,5 @@
-#ifndef AGENDA_H
-#define AGENDA_H
+#ifndef DB_MANAGER_H
+#define DB_MANAGER_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,58 +21,37 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QMainWindow>
-#include "ui_agenda.h"
-#include "config-edit.h"
-#include "db-manager.h"
-#include <QDateTimeEdit>
+#include <QThread>
+#include <QSqlDatabase>
 
-class QApplication;
-class QDate;
-
-
-namespace agenda 
+namespace agenda
 {
-
-class Agenda : public QMainWindow
+class DBManager : public QThread
 {
 Q_OBJECT
 
 public:
 
-  Agenda (QWidget *parent=0);
+  DBManager (QObject *parent = 0);
+  ~DBManager ();
 
-  void  Init (QApplication &ap);
-  void  Run ();
-
-  void  AddConfigMessages (const QStringList & cm) 
-           { configMessages.append (cm); }
-
-private slots:
-
-  void Quit ();
-  void EditSettings ();
-  void SetSettings ();
-  void About ();
-  void Exiting ();
-  void NewItem ();
-  void PickedDate (const QDate & date);
-  void ToggleCal ();
+  void  Start ();
+  void  Stop ();
+  bool  Running () { return dbRunning; }
 
 private:
 
-  void Connect ();
+  void StartDB (QSqlDatabase & db,
+                    const QString & conName, 
+                    const QString & dbFilename);
+  void CheckFileExists (const QString & filename);
+  void CheckDBComplete (QSqlDatabase & db,
+                        const QStringList & elements);
+  QString ElementType (QSqlDatabase & db, const QString & name);
+  void    MakeElement (QSqlDatabase & db, const QString & element);
 
-  QApplication    *app;
-  Ui_AgendaMain    mainUi;
- 
-  ConfigEdit       configEdit;
-  QStringList      configMessages;
-
-  DBManager        db;
-  QDateTimeEdit    *dateEdit;
-
-
+  QSqlDatabase     eventDB;
+  bool             dbRunning;
 };
 
 } // namespace

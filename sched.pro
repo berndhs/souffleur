@@ -48,6 +48,7 @@ HEADERS = src/schedmain.h \
           src/deliberate.h \
           src/version.h \
           src/agenda.h \
+          src/db-manager.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -57,5 +58,6 @@ SOURCES = src/schedmain.cpp \
           src/deliberate.cpp \
           src/version.cpp \
           src/agenda.cpp \
+          src/db-manager.cpp \
 
 
