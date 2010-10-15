@@ -28,6 +28,9 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
+#include <QDateTimeEdit>
+#include <QDateTime>
+#include <QCursor>
 
 using namespace deliberate;
 
@@ -37,9 +40,12 @@ namespace agenda
 Agenda::Agenda (QWidget *parent)
   :QMainWindow (parent),
    app (0),
-   configEdit (this)
+   configEdit (this),
+   dateEdit (0)
 {
   mainUi.setupUi (this);
+  dateEdit = new QDateTimeEdit (this);
+  dateEdit->hide ();
   Connect ();
 }
 
@@ -47,6 +53,7 @@ void
 Agenda::Init (QApplication &ap)
 {
   app = &ap;
+  connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
 }
 
 void
@@ -69,6 +76,10 @@ Agenda::Connect ()
            this, SLOT (EditSettings()));
   connect (mainUi.actionAbout, SIGNAL (triggered()),
            this, SLOT (About ()));
+  connect (mainUi.actionNewItem, SIGNAL (triggered()),
+           this, SLOT (NewItem()));
+  connect (mainUi.calendarWidget, SIGNAL (clicked(const QDate &)),
+           this, SLOT (PickedDate (const QDate &)));
 }
 
 
@@ -96,6 +107,29 @@ Agenda::SetSettings ()
 }
 
 void
+Agenda::NewItem ()
+{ 
+  qDebug () << " new item";
+  dateEdit->setDateTime (QDateTime::currentDateTime());
+  dateEdit->setMinimumDate(QDate::currentDate().addDays(-365));
+  dateEdit->setMaximumDate(QDate::currentDate().addDays(365));
+  dateEdit->setDisplayFormat("yyyy.MM.dd hh:mm:ss");
+  dateEdit->move (QCursor::pos());
+  dateEdit->show ();
+}
+
+void
+Agenda::PickedDate (const QDate & date)
+{
+  dateEdit->setDate (date);
+  dateEdit->setMinimumDate (QDate::currentDate());
+  dateEdit->setMaximumDate (date.addDays (365));
+  dateEdit->setDisplayFormat("yyyy.MM.dd hh:mm:ss");
+  dateEdit->move (mainUi.calendarWidget->pos());
+  dateEdit->show ();
+}
+
+void
 Agenda::About ()
 {
   QString version (deliberate::ProgramVersion::Version());
@@ -110,7 +144,13 @@ Agenda::About ()
   box.exec ();
 }
 
-
+void
+Agenda::Exiting ()
+{
+  QSize currentSize = size();
+  Settings().setValue ("sizes/main",currentSize);
+  Settings().sync();
+}
 
 
 } // namespace

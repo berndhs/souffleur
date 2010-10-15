@@ -24,8 +24,10 @@
 #include <QMainWindow>
 #include "ui_agenda.h"
 #include "config-edit.h"
+#include <QDateTimeEdit>
 
 class QApplication;
+class QDate;
 
 
 namespace agenda 
@@ -51,6 +53,9 @@ private slots:
   void EditSettings ();
   void SetSettings ();
   void About ();
+  void Exiting ();
+  void NewItem ();
+  void PickedDate (const QDate & date);
 
 private:
 
@@ -61,6 +66,7 @@ private:
  
   ConfigEdit       configEdit;
   QStringList      configMessages;
+  QDateTimeEdit    *dateEdit;
 
 
 };
