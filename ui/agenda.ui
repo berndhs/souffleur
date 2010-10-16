@@ -112,7 +112,14 @@
     </property>
     <addaction name="actionAbout"/>
    </widget>
+   <widget class="QMenu" name="menuMaintenance">
+    <property name="title">
+     <string>Maintenance</string>
+    </property>
+    <addaction name="actionClearOld"/>
+   </widget>
    <addaction name="menuAgenda"/>
+   <addaction name="menuMaintenance"/>
    <addaction name="menuHelp"/>
   </widget>
   <action name="actionSettings">
@@ -133,6 +140,11 @@
   <action name="actionNewItem">
    <property name="text">
     <string>New Item</string>
+   </property>
+  </action>
+  <action name="actionClearOld">
+   <property name="text">
+    <string>Clear Old</string>
    </property>
   </action>
  </widget>

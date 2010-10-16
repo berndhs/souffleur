@@ -227,6 +227,15 @@ DBManager::ReadNext (int iteratorId, AgendaEvent & event)
   }
 }
 
+void
+DBManager::DeleteOldEvents (quint64 beforeTime)
+{
+  QSqlQuery erase (eventDB);
+  QString cmd (QString("delete from events where time < %1")
+                     .arg (beforeTime));
+  erase.exec (cmd);
+}
+
 
 } // namespace
 

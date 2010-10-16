@@ -42,6 +42,7 @@ public:
   bool  Running () { return dbRunning; }
 
   bool  Write (const AgendaEvent & event);
+  void  DeleteOldEvents (quint64 beforeTime);
   int   OpenReadEvents ();
   bool  ReadNext (int iteratorId, AgendaEvent & event);
   void  CloseReadEvents (int iteratorId);

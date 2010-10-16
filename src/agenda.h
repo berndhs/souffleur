@@ -62,6 +62,7 @@ private slots:
   void ToggleCal ();
   void Popup ();
   void Minimize ();
+  void CleanOld ();
 
   void NewEvent (AgendaEvent event);
 

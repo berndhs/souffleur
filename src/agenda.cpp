@@ -98,6 +98,8 @@ Agenda::Connect ()
            this, SLOT (Quit()));
   connect (mainUi.calButton, SIGNAL (clicked()),
            this, SLOT (ToggleCal ()));
+  connect (mainUi.actionClearOld, SIGNAL (triggered()),
+           this, SLOT (CleanOld ()));
   connect (itemEdit, SIGNAL (NewEvent (AgendaEvent)),
            this, SLOT (NewEvent (AgendaEvent)));
 }
@@ -195,6 +197,15 @@ Agenda::NewEvent (AgendaEvent event)
   qDebug () << " new event " << event.Id() 
             << event.Nick() << event.Time() << event.Description();
   db.Write (event);
+  mainUi.activityList->Load ();
+}
+
+void
+Agenda::CleanOld ()
+{
+  QDateTime now = QDateTime::currentDateTime();
+  now.addDays (-2);
+  db.DeleteOldEvents (now.toTime_t());
   mainUi.activityList->Load ();
 }
 
