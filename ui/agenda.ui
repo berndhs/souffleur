@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>543</width>
-    <height>303</height>
+    <width>623</width>
+    <height>321</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -19,16 +19,6 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QTableView" name="activityList">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>30</horstretch>
-        <verstretch>20</verstretch>
-       </sizepolicy>
-      </property>
-     </widget>
-    </item>
     <item row="0" column="1">
      <widget class="QCalendarWidget" name="calendarWidget">
       <property name="sizePolicy">
@@ -64,6 +54,37 @@
       </item>
      </layout>
     </item>
+    <item row="0" column="0">
+     <widget class="QTableWidget" name="activityList">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>30</horstretch>
+        <verstretch>20</verstretch>
+       </sizepolicy>
+      </property>
+      <attribute name="horizontalHeaderStretchLastSection">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderVisible">
+       <bool>false</bool>
+      </attribute>
+      <column>
+       <property name="text">
+        <string>TItle</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>When</string>
+       </property>
+      </column>
+      <column>
+       <property name="text">
+        <string>What</string>
+       </property>
+      </column>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -71,7 +92,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>543</width>
+     <width>623</width>
      <height>25</height>
     </rect>
    </property>

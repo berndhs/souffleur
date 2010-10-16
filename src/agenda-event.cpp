@@ -1,5 +1,5 @@
-#ifndef DB_MANAGER_H
-#define DB_MANAGER_H
+
+#include "agenda-event.h"
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,42 +21,45 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QThread>
-#include <QSqlDatabase>
-#include "agenda-event.h"
 
 namespace agenda
 {
-class DBManager : public QThread
+
+AgendaEvent::AgendaEvent ()
+  :uuid (QUuid::createUuid()),
+   timestamp (0)
 {
-Q_OBJECT
+}
 
-public:
+AgendaEvent::AgendaEvent (const QString & n, quint64 time, const QString & desc)
+  :uuid (QUuid::createUuid()),
+   nick (n),
+   timestamp (time),
+   description (desc)
+{
+}
+   
 
-  DBManager (QObject *parent = 0);
-  ~DBManager ();
+AgendaEvent::AgendaEvent (const AgendaEvent & old)
+  :uuid (old.uuid),
+   nick (old.nick),
+   timestamp (old.timestamp),
+   description (old.description)
+{
+}
 
-  void  Start ();
-  void  Stop ();
-  bool  Running () { return dbRunning; }
+AgendaEvent &
+AgendaEvent::operator = (const AgendaEvent & other)
+{
+  if (this != &other) {
+    uuid = other.uuid;
+    nick = other.nick;
+    timestamp = other.timestamp;
+    description = other.description;
+  }
+  return *this;
+}
 
-  bool  Write (const AgendaEvent & event);
-
-private:
-
-  void StartDB (QSqlDatabase & db,
-                    const QString & conName, 
-                    const QString & dbFilename);
-  void CheckFileExists (const QString & filename);
-  void CheckDBComplete (QSqlDatabase & db,
-                        const QStringList & elements);
-  QString ElementType (QSqlDatabase & db, const QString & name);
-  void    MakeElement (QSqlDatabase & db, const QString & element);
-
-  QSqlDatabase     eventDB;
-  bool             dbRunning;
-};
 
 } // namespace
 
-#endif

@@ -1,5 +1,5 @@
-#ifndef DB_MANAGER_H
-#define DB_MANAGER_H
+#ifndef ITEM_EDIT_H
+#define ITEM_EDIT_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,42 +21,39 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QThread>
-#include <QSqlDatabase>
+#include "ui_item-edit.h"
 #include "agenda-event.h"
 
-namespace agenda
+class QDate;
+
+namespace agenda 
 {
-class DBManager : public QThread
+class ItemEdit : public QDialog
 {
 Q_OBJECT
 
 public:
 
-  DBManager (QObject *parent = 0);
-  ~DBManager ();
+  ItemEdit (QWidget * parent=0);
 
-  void  Start ();
-  void  Stop ();
-  bool  Running () { return dbRunning; }
+  void  NewItem ();
+  void  NewItem (const QDate & date);
 
-  bool  Write (const AgendaEvent & event);
+public slots:
+
+  void Save ();
+
+signals:
+
+  void NewEvent (AgendaEvent event);
 
 private:
 
-  void StartDB (QSqlDatabase & db,
-                    const QString & conName, 
-                    const QString & dbFilename);
-  void CheckFileExists (const QString & filename);
-  void CheckDBComplete (QSqlDatabase & db,
-                        const QStringList & elements);
-  QString ElementType (QSqlDatabase & db, const QString & name);
-  void    MakeElement (QSqlDatabase & db, const QString & element);
+  Ui_ItemEdit   ui;
 
-  QSqlDatabase     eventDB;
-  bool             dbRunning;
 };
 
 } // namespace
 
 #endif
+

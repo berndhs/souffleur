@@ -1,5 +1,5 @@
-#ifndef DB_MANAGER_H
-#define DB_MANAGER_H
+
+#include "item-edit.h"
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,42 +21,53 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QThread>
-#include <QSqlDatabase>
-#include "agenda-event.h"
+#include <QDate>
+#include <QDateTime>
 
 namespace agenda
 {
-class DBManager : public QThread
+
+ItemEdit::ItemEdit (QWidget *parent)
+  :QDialog (parent)
 {
-Q_OBJECT
+  ui.setupUi (this);
 
-public:
+  connect (ui.saveButton, SIGNAL (clicked()), this, SLOT (Save()));
+  connect (ui.cancelButton, SIGNAL (clicked()), this, SLOT (reject()));
+  ui.saveButton->setDefault (false);
+  ui.saveButton->setAutoDefault (false);
+  ui.cancelButton->setDefault (false);
+  ui.cancelButton->setAutoDefault (false);
+}
 
-  DBManager (QObject *parent = 0);
-  ~DBManager ();
+void
+ItemEdit::NewItem ()
+{
+  ui.titleEdit->clear ();
+  ui.whenEdit->setDateTime (QDateTime::currentDateTime().addSecs (1*60*60));
+  ui.whatEdit->clear ();
+  show ();
+}
 
-  void  Start ();
-  void  Stop ();
-  bool  Running () { return dbRunning; }
+void
+ItemEdit::NewItem (const QDate & date)
+{
+  ui.titleEdit->clear ();
+  ui.whenEdit->setDate (date);
+  ui.whatEdit->clear ();
+  show ();
+}
 
-  bool  Write (const AgendaEvent & event);
-
-private:
-
-  void StartDB (QSqlDatabase & db,
-                    const QString & conName, 
-                    const QString & dbFilename);
-  void CheckFileExists (const QString & filename);
-  void CheckDBComplete (QSqlDatabase & db,
-                        const QStringList & elements);
-  QString ElementType (QSqlDatabase & db, const QString & name);
-  void    MakeElement (QSqlDatabase & db, const QString & element);
-
-  QSqlDatabase     eventDB;
-  bool             dbRunning;
-};
+void
+ItemEdit::Save ()
+{
+  AgendaEvent event;
+  event.SetNick (ui.titleEdit->text ());
+  event.SetDescription (ui.whatEdit->toPlainText ());
+  event.SetTime (ui.whenEdit->dateTime().toTime_t());
+  emit NewEvent (event);
+  accept ();
+}
 
 } // namespace
 
-#endif

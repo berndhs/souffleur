@@ -24,11 +24,11 @@
 #include <QApplication>
 #include "deliberate.h"
 #include "version.h"
+#include "item-edit.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
 #include <QTimer>
-#include <QDateTimeEdit>
 #include <QDateTime>
 #include <QCursor>
 
@@ -39,14 +39,15 @@ namespace agenda
 
 Agenda::Agenda (QWidget *parent)
   :QMainWindow (parent),
+   initDone (false),
    app (0),
    configEdit (this),
    db (this),
-   dateEdit (0)
+   itemEdit (0)
 {
   mainUi.setupUi (this);
-  dateEdit = new QDateTimeEdit (this);
-  dateEdit->hide ();
+  itemEdit = new ItemEdit (this);
+  itemEdit->hide ();
   Connect ();
 }
 
@@ -56,11 +57,16 @@ Agenda::Init (QApplication &ap)
   app = &ap;
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   db.Start ();
+  initDone = true;
 }
 
-void
+bool
 Agenda::Run ()
 {
+  if (!initDone) {
+    Quit ();
+    return false;
+  }
   qDebug () << " Start Agenda";
   if (Settings().contains("sizes/main")) {
     QSize defaultSize = size();
@@ -68,6 +74,7 @@ Agenda::Run ()
     resize (newsize);
   }
   show ();
+  return true;
 }
 
 void
@@ -83,11 +90,20 @@ Agenda::Connect ()
   connect (mainUi.calendarWidget, SIGNAL (clicked(const QDate &)),
            this, SLOT (PickedDate (const QDate &)));
   connect (mainUi.hideButton, SIGNAL (clicked()), 
-           this, SLOT (showMinimized()));
+           this, SLOT (Minimize()));
   connect (mainUi.quitButton, SIGNAL (clicked()),
            this, SLOT (Quit()));
   connect (mainUi.calButton, SIGNAL (clicked()),
            this, SLOT (ToggleCal ()));
+  connect (itemEdit, SIGNAL (NewEvent (AgendaEvent)),
+           this, SLOT (NewEvent (AgendaEvent)));
+}
+
+void
+Agenda::Minimize ()
+{
+  showMinimized ();
+  QTimer::singleShot (5000,this, SLOT (Popup()));
 }
 
 
@@ -118,24 +134,13 @@ Agenda::SetSettings ()
 void
 Agenda::NewItem ()
 { 
-  qDebug () << " new item";
-  dateEdit->setDateTime (QDateTime::currentDateTime());
-  dateEdit->setMinimumDate(QDate::currentDate().addDays(-365));
-  dateEdit->setMaximumDate(QDate::currentDate().addDays(365));
-  dateEdit->setDisplayFormat("yyyy.MM.dd hh:mm:ss");
-  dateEdit->move (QCursor::pos());
-  dateEdit->show ();
+  itemEdit->NewItem ();
 }
 
 void
 Agenda::PickedDate (const QDate & date)
 {
-  dateEdit->setDate (date);
-  dateEdit->setMinimumDate (QDate::currentDate());
-  dateEdit->setMaximumDate (date.addDays (365));
-  dateEdit->setDisplayFormat("yyyy.MM.dd hh:mm:ss");
-  dateEdit->move (mainUi.calendarWidget->pos());
-  dateEdit->show ();
+  itemEdit->NewItem (date);
 }
 
 void
@@ -143,6 +148,7 @@ Agenda::ToggleCal ()
 {
   bool seeit = mainUi.calendarWidget->isVisible ();
   mainUi.calendarWidget->setVisible (!seeit);
+  
 }
 
 void
@@ -166,6 +172,26 @@ Agenda::Exiting ()
   QSize currentSize = size();
   Settings().setValue ("sizes/main",currentSize);
   Settings().sync();
+}
+
+void
+Agenda::Popup ()
+{
+  qDebug () << " popup";
+  QMessageBox  box (this);
+  box.setWindowTitle ("Agenda Item Popup");
+  box.setText ("Agenda Item");
+  box.setIcon (QMessageBox::Information);
+  QTimer::singleShot (10000, &box, SLOT (accept()));
+  box.exec (); 
+}
+
+void
+Agenda::NewEvent (AgendaEvent event)
+{
+  qDebug () << " new event " << event.Id() 
+            << event.Nick() << event.Time() << event.Description();
+  db.Write (event);
 }
 
 

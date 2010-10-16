@@ -38,6 +38,7 @@ TARGET = bin/agenda
 FORMS = ui/agenda.ui \
         ui/DebugLog.ui \
         ui/config-edit.ui \
+        ui/item-edit.ui \
         
 
 HEADERS = src/schedmain.h \
@@ -49,6 +50,8 @@ HEADERS = src/schedmain.h \
           src/version.h \
           src/agenda.h \
           src/db-manager.h \
+          src/item-edit.h \
+          src/agenda-event.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -59,5 +62,7 @@ SOURCES = src/schedmain.cpp \
           src/version.cpp \
           src/agenda.cpp \
           src/db-manager.cpp \
+          src/item-edit.cpp \
+          src/agenda-event.cpp \
 
 

@@ -67,7 +67,8 @@ DBManager::Start ()
   StartDB (eventDB, "eventBaseCon", eventBasename);
 
   QStringList  eventElements;
-  eventElements << "events";
+  eventElements << "events"
+                << "uniqueid";
 
   CheckDBComplete (eventDB, eventElements);
 }
@@ -138,6 +139,21 @@ DBManager::ElementType (QSqlDatabase & db, const QString & name)
     return tipo;
   }
   return QString ("none");
+}
+
+bool
+DBManager::Write (const AgendaEvent & event)
+{
+  QSqlQuery insert (eventDB);
+  insert.prepare ("insert or replace into events "
+                  " (eventid, nick, time, description) "
+                  " values (?, ?, ?, ?)");
+  insert.bindValue (0,QVariant (event.Id ()));
+  insert.bindValue (1,QVariant (event.Nick ()));
+  insert.bindValue (2,QVariant (event.Time ()));
+  insert.bindValue (3,QVariant (event.Description ()));
+  bool ok = insert.exec ();
+  qDebug () << " db insert " << ok << insert.executedQuery();
 }
 
 void

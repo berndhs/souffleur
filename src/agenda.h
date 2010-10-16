@@ -25,7 +25,7 @@
 #include "ui_agenda.h"
 #include "config-edit.h"
 #include "db-manager.h"
-#include <QDateTimeEdit>
+#include "agenda-event.h"
 
 class QApplication;
 class QDate;
@@ -33,6 +33,8 @@ class QDate;
 
 namespace agenda 
 {
+
+class ItemEdit;
 
 class Agenda : public QMainWindow
 {
@@ -43,7 +45,7 @@ public:
   Agenda (QWidget *parent=0);
 
   void  Init (QApplication &ap);
-  void  Run ();
+  bool  Run ();
 
   void  AddConfigMessages (const QStringList & cm) 
            { configMessages.append (cm); }
@@ -58,11 +60,16 @@ private slots:
   void NewItem ();
   void PickedDate (const QDate & date);
   void ToggleCal ();
+  void Popup ();
+  void Minimize ();
+
+  void NewEvent (AgendaEvent event);
 
 private:
 
   void Connect ();
 
+  bool             initDone;
   QApplication    *app;
   Ui_AgendaMain    mainUi;
  
@@ -70,7 +77,7 @@ private:
   QStringList      configMessages;
 
   DBManager        db;
-  QDateTimeEdit    *dateEdit;
+  ItemEdit        *itemEdit;
 
 
 };
