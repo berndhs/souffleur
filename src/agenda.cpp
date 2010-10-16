@@ -25,6 +25,7 @@
 #include "deliberate.h"
 #include "version.h"
 #include "item-edit.h"
+#include "agenda-scheduler.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
@@ -43,11 +44,13 @@ Agenda::Agenda (QWidget *parent)
    app (0),
    configEdit (this),
    db (this),
-   itemEdit (0)
+   itemEdit (0),
+   scheduler (0)
 {
   mainUi.setupUi (this);
   itemEdit = new ItemEdit (this);
   itemEdit->hide ();
+  scheduler = new AgendaScheduler (this);
   Connect ();
 }
 
@@ -58,6 +61,7 @@ Agenda::Init (QApplication &ap)
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   db.Start ();
   mainUi.activityList->Init (&db);
+  scheduler->Init (&db);
   mainUi.calendarWidget->setVisible (false);
   initDone = true;
 }
@@ -70,13 +74,15 @@ Agenda::Run ()
     return false;
   }
   qDebug () << " Start Agenda";
-  if (Settings().contains("sizes/main")) {
-    QSize defaultSize = size();
-    QSize newsize = Settings().value ("sizes/main", defaultSize).toSize();
-    resize (newsize);
-  }
+  QSize defaultSize = size();
+  QSize newsize = Settings().value ("sizes/main", defaultSize).toSize();
+  resize (newsize);
+  Settings().setValue ("sizes/main",newsize);
   show ();
   mainUi.activityList->Load ();
+  if (scheduler) {
+    scheduler->Start ();
+  }
   return true;
 }
 
@@ -102,6 +108,8 @@ Agenda::Connect ()
            this, SLOT (CleanOld ()));
   connect (itemEdit, SIGNAL (NewEvent (AgendaEvent)),
            this, SLOT (NewEvent (AgendaEvent)));
+  connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
+           this, SLOT (LaunchEvent (AgendaEvent)));
 }
 
 void
@@ -198,6 +206,22 @@ Agenda::NewEvent (AgendaEvent event)
             << event.Nick() << event.Time() << event.Description();
   db.Write (event);
   mainUi.activityList->Load ();
+  scheduler->Refresh ();
+}
+
+void
+Agenda::LaunchEvent (AgendaEvent event)
+{
+  QMessageBox box (this);
+  QStringList mlist;
+  mlist << event.Id().toString();
+  mlist << event.Nick ();
+  mlist << QDateTime::fromTime_t(event.Time()).toString("hh:mm:ss");
+  mlist << event.Description ();
+  box.setText (mlist.join ("\n"));
+  qDebug () << "Launching Event " << mlist;
+  QTimer::singleShot (10000, &box, SLOT (accepted()));
+  box.exec ();
 }
 
 void

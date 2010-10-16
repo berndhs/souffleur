@@ -1,5 +1,5 @@
-#ifndef AGENDA_H
-#define AGENDA_H
+#ifndef AGENDA_SCHEDULER_H
+#define AGENDA_SCHEDULER_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,68 +21,52 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QMainWindow>
-#include "ui_agenda.h"
-#include "config-edit.h"
-#include "db-manager.h"
+#include <QObject>
 #include "agenda-event.h"
+#include <map>
 
-class QApplication;
-class QDate;
+class QTimer;
 
-
-namespace agenda 
+namespace agenda
 {
 
-class ItemEdit;
-class AgendaScheduler;
+class DBManager;
 
-class Agenda : public QMainWindow
+class AgendaScheduler : public QObject
 {
 Q_OBJECT
 
 public:
 
-  Agenda (QWidget *parent=0);
+  AgendaScheduler (QObject *parent=0);
+  
+  void Init (DBManager *dmb);
 
-  void  Init (QApplication &ap);
-  bool  Run ();
-
-  void  AddConfigMessages (const QStringList & cm) 
-           { configMessages.append (cm); }
+  void Start ();
+  void Refresh ();
 
 private slots:
 
-  void Quit ();
-  void EditSettings ();
-  void SetSettings ();
-  void About ();
-  void Exiting ();
-  void NewItem ();
-  void PickedDate (const QDate & date);
-  void ToggleCal ();
-  void Popup ();
-  void Minimize ();
-  void CleanOld ();
+  void Poll ();
+  void Launch ();
+  void Launch (AgendaEvent & event);
 
-  void NewEvent (AgendaEvent event);
-  void LaunchEvent (AgendaEvent event);
+signals:
+
+  void CurrentEvent (AgendaEvent event);
 
 private:
-
-  void Connect ();
-
-  bool             initDone;
-  QApplication    *app;
-  Ui_AgendaMain    mainUi;
  
-  ConfigEdit       configEdit;
-  QStringList      configMessages;
+  typedef std::pair <quint64, AgendaEvent>      TimedEvent;
+  typedef std::multimap <quint64, AgendaEvent>  EventScheduleMap;
 
-  DBManager        db;
-  ItemEdit        *itemEdit;
-  AgendaScheduler *scheduler;
+  void LoadEvents ();
+  void LoadEvent  (const AgendaEvent & event);
 
+  DBManager    *db;
+  QTimer       *pollTimer;
+
+  EventScheduleMap    schedule;
 
 };
 

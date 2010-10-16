@@ -65,7 +65,6 @@ EventTable::Load ()
 void
 EventTable::DisplayEvent (int row, AgendaEvent & event)
 {
-  qDebug () << " display event " ; event.DebugDump ();
   QTableWidgetItem *item (0);
   item = new QTableWidgetItem (event.Nick());
   item->setData (Role_Celltype, Cell_Nick);
