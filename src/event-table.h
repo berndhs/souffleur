@@ -59,6 +59,7 @@ private:
   void DisplayEvent (int row, AgendaEvent & event);
 
   DBManager   *db;
+  QString      dateForm;
 
 };
 

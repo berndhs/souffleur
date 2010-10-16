@@ -78,12 +78,19 @@ main (int argc, char *argv[])
   }
 
   
-  agenda::Agenda   agenda;
+  int result;
+  bool again (false);
+  do {
+    agenda::Agenda   agenda;
 
-  app.setWindowIcon (agenda.windowIcon());
-  agenda.Init (app);
-  agenda.AddConfigMessages (configMessages);
+    app.setWindowIcon (agenda.windowIcon());
+    agenda.Init (app);
+    agenda.AddConfigMessages (configMessages);
 
-  agenda.Run ();
-  return app.exec ();
+    agenda.Run ();
+    result = app.exec ();
+    qDebug () << " QApplication exec finished ";
+    again = agenda.Again ();
+  } while (again);
+  return result;
 }

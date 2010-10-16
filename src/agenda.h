@@ -47,6 +47,7 @@ public:
 
   void  Init (QApplication &ap);
   bool  Run ();
+  bool  Again ();
 
   void  AddConfigMessages (const QStringList & cm) 
            { configMessages.append (cm); }
@@ -54,6 +55,7 @@ public:
 private slots:
 
   void Quit ();
+  void Restart ();
   void EditSettings ();
   void SetSettings ();
   void About ();
@@ -82,6 +84,8 @@ private:
   DBManager        db;
   ItemEdit        *itemEdit;
   AgendaScheduler *scheduler;
+  QString          dateForm;
+  bool             runAgain;
 
 
 };

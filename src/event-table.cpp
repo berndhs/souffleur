@@ -22,17 +22,22 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include "deliberate.h"
 #include "db-manager.h"
 #include "agenda-event.h"
 #include <QTableWidgetItem>
 #include <QDateTime>
 #include <QDebug>
 
+using namespace deliberate;
+
 namespace agenda
 {
 
 EventTable::EventTable (QWidget *parent)
-  :QTableWidget (parent)
+  :QTableWidget (parent),
+   db(0),
+   dateForm ("ddd yyyy-MM-dd hh:mm:ss")
 {
 }
 
@@ -40,6 +45,8 @@ void
 EventTable::Init (DBManager *dbm)
 {
   db = dbm;
+  dateForm = Settings().value ("display/dateform",dateForm).toString();
+  Settings().setValue ("display/dateform",dateForm);
 }
 
 void
@@ -70,7 +77,8 @@ EventTable::DisplayEvent (int row, AgendaEvent & event)
   item->setData (Role_Celltype, Cell_Nick);
   item->setData (Role_Uuid, event.Id().toString());
   setItem (row,0,item);
-  QString date = QDateTime::fromTime_t (event.Time()).toString();
+  QString date = QDateTime::fromTime_t (event.Time())
+                            .toString(dateForm);
   item = new QTableWidgetItem (date);
   item->setData (Role_Celltype, Cell_Time);
   setItem (row,1,item);

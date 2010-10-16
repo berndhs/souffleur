@@ -45,7 +45,9 @@ Agenda::Agenda (QWidget *parent)
    configEdit (this),
    db (this),
    itemEdit (0),
-   scheduler (0)
+   scheduler (0),
+   dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
+   runAgain (false)
 {
   mainUi.setupUi (this);
   itemEdit = new ItemEdit (this);
@@ -63,12 +65,23 @@ Agenda::Init (QApplication &ap)
   mainUi.activityList->Init (&db);
   scheduler->Init (&db);
   mainUi.calendarWidget->setVisible (false);
+  dateForm = Settings().value ("display/dateform",dateForm).toString();
+  Settings().setValue ("display/dateform",dateForm);
   initDone = true;
+}
+
+bool
+Agenda::Again ()
+{
+  bool again = runAgain;
+  runAgain = false;
+  return again;
 }
 
 bool
 Agenda::Run ()
 {
+  runAgain = false;
   if (!initDone) {
     Quit ();
     return false;
@@ -106,6 +119,8 @@ Agenda::Connect ()
            this, SLOT (ToggleCal ()));
   connect (mainUi.actionClearOld, SIGNAL (triggered()),
            this, SLOT (CleanOld ()));
+  connect (mainUi.actionRestart, SIGNAL (triggered()),
+           this, SLOT (Restart ()));
   connect (itemEdit, SIGNAL (NewEvent (AgendaEvent)),
            this, SLOT (NewEvent (AgendaEvent)));
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
@@ -117,6 +132,14 @@ Agenda::Minimize ()
 {
   showMinimized ();
   QTimer::singleShot (5000,this, SLOT (Popup()));
+}
+
+void
+Agenda::Restart ()
+{
+  qDebug () << " restart called ";
+  runAgain = true;
+  Quit ();
 }
 
 
@@ -142,6 +165,7 @@ Agenda::EditSettings ()
 void
 Agenda::SetSettings ()
 {
+  Settings().sync ();
 }
 
 void
