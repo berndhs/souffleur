@@ -22,6 +22,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
+#include <QDebug>
+
 namespace agenda
 {
 
@@ -60,6 +62,13 @@ AgendaEvent::operator = (const AgendaEvent & other)
   return *this;
 }
 
+void
+AgendaEvent::DebugDump ()
+{
+  qDebug () << " AgendaEvent ( " 
+            << uuid << nick << timestamp << description 
+            << " ) ";
+}
 
 } // namespace
 

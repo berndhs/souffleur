@@ -24,6 +24,7 @@
 #include <QThread>
 #include <QSqlDatabase>
 #include "agenda-event.h"
+#include <QMap>
 
 namespace agenda
 {
@@ -41,6 +42,9 @@ public:
   bool  Running () { return dbRunning; }
 
   bool  Write (const AgendaEvent & event);
+  int   OpenReadEvents ();
+  bool  ReadNext (int iteratorId, AgendaEvent & event);
+  void  CloseReadEvents (int iteratorId);
 
 private:
 
@@ -55,6 +59,9 @@ private:
 
   QSqlDatabase     eventDB;
   bool             dbRunning;
+
+  QMap <int, QSqlQuery*>  readIterator;
+  int                     nextIterator;
 };
 
 } // namespace

@@ -52,6 +52,7 @@ HEADERS = src/schedmain.h \
           src/db-manager.h \
           src/item-edit.h \
           src/agenda-event.h \
+          src/event-table.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -64,5 +65,6 @@ SOURCES = src/schedmain.cpp \
           src/db-manager.cpp \
           src/item-edit.cpp \
           src/agenda-event.cpp \
+          src/event-table.cpp \
 
 

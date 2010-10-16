@@ -55,7 +55,7 @@
      </layout>
     </item>
     <item row="0" column="0">
-     <widget class="QTableWidget" name="activityList">
+     <widget class="agenda::EventTable" name="activityList">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>30</horstretch>
@@ -136,6 +136,13 @@
    </property>
   </action>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>agenda::EventTable</class>
+   <extends>QTableWidget</extends>
+   <header location="global">../../src/event-table.h</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="../sched.qrc"/>
  </resources>

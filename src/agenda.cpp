@@ -57,6 +57,8 @@ Agenda::Init (QApplication &ap)
   app = &ap;
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   db.Start ();
+  mainUi.activityList->Init (&db);
+  mainUi.calendarWidget->setVisible (false);
   initDone = true;
 }
 
@@ -74,6 +76,7 @@ Agenda::Run ()
     resize (newsize);
   }
   show ();
+  mainUi.activityList->Load ();
   return true;
 }
 
@@ -192,6 +195,7 @@ Agenda::NewEvent (AgendaEvent event)
   qDebug () << " new event " << event.Id() 
             << event.Nick() << event.Time() << event.Description();
   db.Write (event);
+  mainUi.activityList->Load ();
 }
 
 

@@ -40,7 +40,8 @@ namespace agenda
 
 DBManager::DBManager (QObject *parent)
   :QThread (parent),
-   dbRunning (false)
+   dbRunning (false),
+   nextIterator (1)
 {
 }
 
@@ -154,6 +155,7 @@ DBManager::Write (const AgendaEvent & event)
   insert.bindValue (3,QVariant (event.Description ()));
   bool ok = insert.exec ();
   qDebug () << " db insert " << ok << insert.executedQuery();
+  return ok;
 }
 
 void
@@ -172,6 +174,58 @@ qDebug () << " tried " << ok << " to create element with "
           << query.executedQuery ();
 }
 
+int
+DBManager::OpenReadEvents ()
+{
+  QSqlQuery *reader = new QSqlQuery (eventDB);
+  int it = nextIterator;
+  nextIterator++;
+  bool ok = reader->exec (QString("select eventid, nick, time, description "
+                        " from events where 1 "
+                        " order by time ASC "));
+  if (ok) {
+    readIterator [it] = reader;
+    return it;
+  } else {
+    return -1;
+  }
+}
+
+void
+DBManager::CloseReadEvents (int iteratorId)
+{
+  if (readIterator.contains (iteratorId)) {
+    QSqlQuery *reader = readIterator [iteratorId];
+    if (reader) {
+      reader->clear();
+      delete reader;
+    }
+    readIterator.remove (iteratorId);
+  } 
+}
+
+bool
+DBManager::ReadNext (int iteratorId, AgendaEvent & event)
+{
+  if (readIterator.contains (iteratorId)) {
+    QSqlQuery * reader = readIterator [iteratorId];
+    if (reader->next ()) {
+      QUuid id = QUuid (reader->value (0).toString());
+      QString nick = reader->value(1).toString();
+      quint64 time = reader->value(2).toULongLong ();
+      QString desc = reader->value(3).toString();
+      event.SetId (id);
+      event.SetNick (nick);
+      event.SetTime (time);
+      event.SetDescription (desc);
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
 
 
 } // namespace
