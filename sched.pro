@@ -33,7 +33,7 @@ MOC_DIR = tmp/moc
 RCC_DIR = tmp/rcc
 OBJECTS_DIR = tmp/obj
 RESOURCES = sched.qrc
-TARGET = bin/agenda
+TARGET = bin/souffleur
 
 FORMS = ui/agenda.ui \
         ui/DebugLog.ui \

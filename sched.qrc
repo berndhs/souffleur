@@ -1,7 +1,7 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
 <qresource>
-<file>agenda.png</file>
+<file>souffleur.png</file>
 </qresource>
 <qresource prefix="/schemas">
   <file alias="events.sql">schemas/events.sql</file>

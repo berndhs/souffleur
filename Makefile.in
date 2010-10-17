@@ -1,5 +1,5 @@
 
-# Makefile for Agenda
+# Makefile for souffleur
 #
 
 #//
@@ -16,10 +16,10 @@
 PRO_FILE = sched.pro
 MAKEFILE = MakeSched
 TOP_MAKEFILE = Makefile
-TARGETS = bin/agenda
-DESKTOP_FILE = agenda.desktop
+TARGETS = bin/souffleur
+DESKTOP_FILE = souffleur.desktop
 DESKTOP_DIR = /usr/share/applications
-ICON_FILE = agenda.png
+ICON_FILE = souffleur.png
 ICON_DIR = /usr/share/pixmaps
 
 all: $(MAKEFILE)

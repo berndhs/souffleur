@@ -1,6 +1,6 @@
 #!/bin/bash
 
-NAME=agenda
+NAME=souffleur
 VERSION=0.0.1
 PACKDIR=${HOME}/packaging/sched
 

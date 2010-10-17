@@ -11,11 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Agenda</string>
+   <string>Souffleur</string>
   </property>
   <property name="windowIcon">
    <iconset resource="../sched.qrc">
-    <normaloff>:/agenda.png</normaloff>:/agenda.png</iconset>
+    <normaloff>:/souffleur.png</normaloff>:/souffleur.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">

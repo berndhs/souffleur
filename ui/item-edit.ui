@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="../sched.qrc">
-    <normaloff>:/agenda.png</normaloff>:/agenda.png</iconset>
+    <normaloff>:/souffleur.png</normaloff>:/souffleur.png</iconset>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">

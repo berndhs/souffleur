@@ -32,10 +32,10 @@
 int
 main (int argc, char *argv[])
 {
-  QCoreApplication::setApplicationName ("agenda");
+  QCoreApplication::setApplicationName ("souffleur");
   QCoreApplication::setOrganizationName ("BerndStramm");
   QCoreApplication::setOrganizationDomain ("bernd-stramm.com");
-  deliberate::ProgramVersion pv ("Agenda");
+  deliberate::ProgramVersion pv ("Souffleur");
   QCoreApplication::setApplicationVersion (pv.Version());
   QSettings  settings;
   deliberate::SetSettings (settings);
@@ -45,7 +45,7 @@ main (int argc, char *argv[])
 
   QStringList  configMessages;
 
-  deliberate::CmdOptions  opts ("Agenda");
+  deliberate::CmdOptions  opts ("souffleur");
   opts.AddSoloOption ("debug","D",QObject::tr("show Debug log window"));
   opts.AddStringOption ("logdebug","L",QObject::tr("write Debug log to file"));
 
