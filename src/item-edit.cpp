@@ -23,6 +23,9 @@
  ****************************************************************/
 #include <QDate>
 #include <QDateTime>
+#include "deliberate.h"
+
+using namespace deliberate;
 
 namespace agenda
 {
@@ -38,6 +41,9 @@ ItemEdit::ItemEdit (QWidget *parent)
   ui.saveButton->setAutoDefault (false);
   ui.cancelButton->setDefault (false);
   ui.cancelButton->setAutoDefault (false);
+  dateForm = Settings().value ("display/dateform",dateForm).toString();
+  Settings().setValue ("display/dateform",dateForm);
+  ui.whenEdit->setDisplayFormat (dateForm);
 }
 
 void
@@ -66,6 +72,18 @@ ItemEdit::Save ()
   event.SetDescription (ui.whatEdit->toPlainText ());
   event.SetTime (ui.whenEdit->dateTime().toTime_t());
   emit NewEvent (event);
+  if (ui.shortCheck->isChecked()) {
+    AgendaWarning warn (event.Id(), 
+                       event.Time() 
+                       - qRound64(60.0 * ui.shortMinutes->value()));
+    emit NewWarning (warn);
+  }
+  if (ui.longCheck->isChecked()) {
+    AgendaWarning warn (event.Id(), 
+                       event.Time() 
+                         - qRound64 (60.0 * 60.0 * ui.longHours->value()));
+    emit NewWarning (warn);
+  }
   accept ();
 }
 

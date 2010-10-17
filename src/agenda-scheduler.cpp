@@ -37,7 +37,8 @@ namespace agenda
 AgendaScheduler::AgendaScheduler (QObject *parent)
   :QObject (parent),
    db (0),
-   pollTimer (0)
+   pollTimer (0),
+   pollDelay (5*60)
 {
   pollTimer = new QTimer (this);
   connect (pollTimer, SIGNAL (timeout()), this, SLOT (Poll()));
@@ -48,7 +49,7 @@ AgendaScheduler::Init (DBManager * dbm)
 {
   db = dbm;
   if (pollTimer) {
-    int pollDelay (5*60);
+    pollDelay  = 5*60 ;
     pollDelay = Settings().value ("timers/pollsecs",pollDelay).toInt();
     Settings().setValue ("timers/pollsecs",pollDelay);
     pollTimer->start (pollDelay*1000);
@@ -59,40 +60,39 @@ void
 AgendaScheduler::Start ()
 {
   qDebug () << " AgendaScheduler start";
-  LoadEvents ();
+  LoadWarnings ();
   Poll ();
 }
 
 void
 AgendaScheduler::Refresh ()
 {
-  LoadEvents ();
+  LoadWarnings ();
   Poll ();
 }
 
 void
-AgendaScheduler::LoadEvents ()
+AgendaScheduler::LoadWarnings ()
 {
   schedule.clear ();
   if (db) {
-    int it = db->OpenReadEvents();
+    int it = db->OpenReadWarnings ();
     if (it >= 0) {
-      AgendaEvent event;
-      while (db->ReadNext (it, event)) {
-        LoadEvent (event);
+      AgendaWarning warn;
+      while (db->ReadNext (it, warn)) {
+        LoadWarning (warn);
       }
-      db->CloseReadEvents (it);
+      db->CloseRead (it);
     }
   }
 }
 
 void
-AgendaScheduler::LoadEvent (const AgendaEvent & event)
+AgendaScheduler::LoadWarning (const AgendaWarning & warn)
 {
-  TimedEvent te (event.Time(),event);
+  TimedEvent te (warn.Time(),warn.Id());
   schedule.insert (te);
-  qDebug () << " loaded " << te.first;
-  te.second.DebugDump ();
+  qDebug () << " loaded " << te.first << " for  " << te.second;
 }
 
 void
@@ -104,8 +104,9 @@ AgendaScheduler::Poll ()
   quint64 firstTime = it->first;
   if (firstTime <= now) {
     Launch ();
-  } else {
-    QTimer::singleShot (1000* (firstTime - now), this, SLOT (Launch ()));
+  } else if (firstTime < now + (pollDelay*1000)) {
+    qDebug () << "launch single shot in " << 1000 * (firstTime - now);
+    QTimer::singleShot (1000 * (firstTime - now), this, SLOT (Launch ()));
   }
 }
 
@@ -132,13 +133,15 @@ AgendaScheduler::Launch ()
       schedule.erase (first, it); 
     }
   }
-  QTimer::singleShot (500,this,SLOT (Poll()));
 }
 
 void
-AgendaScheduler::Launch (AgendaEvent & event)
+AgendaScheduler::Launch (QUuid & uuid)
 {
-  emit CurrentEvent (event);
+  AgendaEvent  event;
+  if (db->Read (uuid, event)) {
+    emit CurrentEvent (event);
+  }
 }
 
 

@@ -24,6 +24,7 @@
 #include <QThread>
 #include <QSqlDatabase>
 #include "agenda-event.h"
+#include "agenda-warning.h"
 #include <QMap>
 
 namespace agenda
@@ -42,10 +43,16 @@ public:
   bool  Running () { return dbRunning; }
 
   bool  Write (const AgendaEvent & event);
+  bool  Write (const AgendaWarning & warning);
+  bool  Read (const QUuid & id, AgendaEvent & event);
+
   void  DeleteOldEvents (quint64 beforeTime);
+  void  DeleteEvent (const QUuid & eventId);
   int   OpenReadEvents ();
   bool  ReadNext (int iteratorId, AgendaEvent & event);
-  void  CloseReadEvents (int iteratorId);
+  void  CloseRead (int iteratorId);
+  int   OpenReadWarnings ();
+  bool  ReadNext (int iteratorId, AgendaWarning & warn);
 
 private:
 
@@ -57,6 +64,7 @@ private:
                         const QStringList & elements);
   QString ElementType (QSqlDatabase & db, const QString & name);
   void    MakeElement (QSqlDatabase & db, const QString & element);
+
 
   QSqlDatabase     eventDB;
   bool             dbRunning;

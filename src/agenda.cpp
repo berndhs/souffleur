@@ -123,6 +123,8 @@ Agenda::Connect ()
            this, SLOT (Restart ()));
   connect (itemEdit, SIGNAL (NewEvent (AgendaEvent)),
            this, SLOT (NewEvent (AgendaEvent)));
+  connect (itemEdit, SIGNAL (NewWarning (AgendaWarning)),
+           this, SLOT (NewWarning (AgendaWarning)));
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
 }
@@ -234,6 +236,14 @@ Agenda::NewEvent (AgendaEvent event)
 }
 
 void
+Agenda::NewWarning (AgendaWarning warning)
+{
+  qDebug () << " new warning " << warning.Id() << " at " << warning.Time();
+  db.Write (warning);
+  scheduler->Refresh ();
+}
+
+void
 Agenda::LaunchEvent (AgendaEvent event)
 {
   QMessageBox box (this);
@@ -244,7 +254,7 @@ Agenda::LaunchEvent (AgendaEvent event)
   mlist << event.Description ();
   box.setText (mlist.join ("\n"));
   qDebug () << "Launching Event " << mlist;
-  QTimer::singleShot (10000, &box, SLOT (accepted()));
+  QTimer::singleShot (10000, &box, SLOT (accept()));
   box.exec ();
 }
 

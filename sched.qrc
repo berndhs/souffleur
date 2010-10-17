@@ -6,5 +6,6 @@
 <qresource prefix="/schemas">
   <file alias="events.sql">schemas/events.sql</file>
   <file alias="uniqueid.sql">schemas/uniqueid.sql</file>
+  <file alias="warnings.sql">schemas/warnings.sql</file>
 </qresource>
 </RCC>

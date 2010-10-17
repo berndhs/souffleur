@@ -26,6 +26,7 @@
 #include "config-edit.h"
 #include "db-manager.h"
 #include "agenda-event.h"
+#include "agenda-warning.h"
 
 class QApplication;
 class QDate;
@@ -68,6 +69,7 @@ private slots:
   void CleanOld ();
 
   void NewEvent (AgendaEvent event);
+  void NewWarning (AgendaWarning warning);
   void LaunchEvent (AgendaEvent event);
 
 private:

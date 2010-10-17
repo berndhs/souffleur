@@ -69,7 +69,8 @@ DBManager::Start ()
 
   QStringList  eventElements;
   eventElements << "events"
-                << "uniqueid";
+                << "uniqueid"
+                << "warnings";
 
   CheckDBComplete (eventDB, eventElements);
 }
@@ -154,7 +155,41 @@ DBManager::Write (const AgendaEvent & event)
   insert.bindValue (2,QVariant (event.Time ()));
   insert.bindValue (3,QVariant (event.Description ()));
   bool ok = insert.exec ();
-  qDebug () << " db insert " << ok << insert.executedQuery();
+  qDebug () << " event insert " << ok << insert.executedQuery();
+  Write (AgendaWarning (event.Id(), event.Time()));
+  return ok;
+}
+
+bool
+DBManager::Read (const QUuid & id, AgendaEvent & event)
+{
+  QSqlQuery select (eventDB);
+  QString cmd (QString ("select nick, time, description from events "
+                        " where eventid = \"%1\"")
+               .arg (id.toString()));
+  bool ok = select.exec (cmd);
+  bool good (false);
+  if (ok && select.next ()) {
+    event.SetNick (select.value(0).toString());
+    event.SetTime (select.value(1).toULongLong());
+    event.SetDescription (select.value(2).toString());
+    event.SetId (id);
+    good = true;
+  }
+  return good;
+}
+
+bool
+DBManager::Write (const AgendaWarning & warning)
+{
+  QSqlQuery insert (eventDB);
+  insert.prepare ("insert or replace into warnings "
+                  " (eventid, time) "
+                  " values (?, ?)");
+  insert.bindValue (0, QVariant (warning.Id()));
+  insert.bindValue (1, QVariant (warning.Time()));
+  bool ok = insert.exec ();
+  qDebug () << " warning insert " << ok << insert.executedQuery();
   return ok;
 }
 
@@ -191,8 +226,25 @@ DBManager::OpenReadEvents ()
   }
 }
 
+int
+DBManager::OpenReadWarnings ()
+{
+  QSqlQuery *reader = new QSqlQuery (eventDB);
+  int it = nextIterator;
+  nextIterator++;
+  bool ok = reader->exec (QString("select eventid, time "
+                        " from warnings where 1 "
+                        " order by time ASC "));
+  if (ok) {
+    readIterator [it] = reader;
+    return it;
+  } else {
+    return -1;
+  }
+}
+
 void
-DBManager::CloseReadEvents (int iteratorId)
+DBManager::CloseRead (int iteratorId)
 {
   if (readIterator.contains (iteratorId)) {
     QSqlQuery *reader = readIterator [iteratorId];
@@ -227,6 +279,25 @@ DBManager::ReadNext (int iteratorId, AgendaEvent & event)
   }
 }
 
+bool
+DBManager::ReadNext (int iteratorId, AgendaWarning & warn)
+{
+  if (readIterator.contains (iteratorId)) {
+    QSqlQuery * reader = readIterator [iteratorId];
+    if (reader->next ()) {
+      QUuid id = QUuid (reader->value (0).toString());
+      quint64 time = reader->value(1).toULongLong ();
+      warn.SetId (id);
+      warn.SetTime (time);
+      return true;
+    } else {
+      return false;
+    }
+  } else {
+    return false;
+  }
+}
+
 void
 DBManager::DeleteOldEvents (quint64 beforeTime)
 {
@@ -234,7 +305,22 @@ DBManager::DeleteOldEvents (quint64 beforeTime)
   QString cmd (QString("delete from events where time < %1")
                      .arg (beforeTime));
   erase.exec (cmd);
+  cmd = QString ("delete from warnings where time < %1").arg(beforeTime);
+  erase.exec (cmd);
 }
+
+void
+DBManager::DeleteEvent (const QUuid & eventId)
+{
+  QSqlQuery erase (eventDB);
+  QString cmd (QString("delete from events where eventid = \"%1\"")
+                  .arg (eventId.toString()));
+  erase.exec (cmd);
+  cmd = QString ("delete from warnings where eventid = \"%1\"")
+                  .arg (eventId.toString());
+  erase.exec (cmd);
+}
+
 
 
 } // namespace

@@ -23,6 +23,7 @@
  ****************************************************************/
 #include "ui_item-edit.h"
 #include "agenda-event.h"
+#include "agenda-warning.h"
 
 class QDate;
 
@@ -46,10 +47,12 @@ public slots:
 signals:
 
   void NewEvent (AgendaEvent event);
+  void NewWarning (AgendaWarning warning);
 
 private:
 
   Ui_ItemEdit   ui;
+  QString       dateForm;
 
 };
 

@@ -64,7 +64,7 @@ EventTable::Load ()
         DisplayEvent (row, event);
         row++;
       }
-      db->CloseReadEvents (it);
+      db->CloseRead (it);
     }
   }
 }

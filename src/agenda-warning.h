@@ -1,5 +1,5 @@
-#ifndef AGENDA_SCHEDULER_H
-#define AGENDA_SCHEDULER_H
+#ifndef AGENDA_WARNING_H
+#define AGENDA_WARNING_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,57 +21,47 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QObject>
-#include "agenda-event.h"
-#include "agenda-warning.h"
-#include <map>
 
-class QTimer;
+#include <QString>
+#include <QUuid>
 
 namespace agenda
 {
 
-class DBManager;
-
-class AgendaScheduler : public QObject
+class AgendaWarning 
 {
-Q_OBJECT
-
 public:
 
-  AgendaScheduler (QObject *parent=0);
+  AgendaWarning ()
+    :uuid (QUuid::createUuid()), timestamp (0) {}
+  AgendaWarning (const QUuid & id, quint64 time)
+    :uuid (id), timestamp (time) {}
+
+  AgendaWarning (const AgendaWarning & old)
+    :uuid (old.uuid), timestamp (old.timestamp) {}
+
+  AgendaWarning & operator= (const AgendaWarning &other)
+    {
+      if (this != &other) {
+        uuid = other.uuid;
+        timestamp = other.timestamp;
+      }
+      return *this;
+    }
   
-  void Init (DBManager *dmb);
+  QUuid   Id   () const { return uuid; }
+  quint64 Time () const { return timestamp; }
 
-  void Start ();
-  void Refresh ();
-
-private slots:
-
-  void Poll ();
-  void Launch ();
-  void Launch (QUuid & uuid);
-
-signals:
-
-  void CurrentEvent (AgendaEvent event);
+  void SetId (const QUuid & u) { uuid = u; }
+  void SetTime (quint64 t) { timestamp = t; }
 
 private:
- 
-  typedef std::pair <quint64, QUuid>      TimedEvent;
-  typedef std::multimap <quint64, QUuid>  EventScheduleMap;
 
-  void LoadWarnings ();
-  void LoadWarning  (const AgendaWarning & event);
-
-  DBManager    *db;
-  QTimer       *pollTimer;
-  int           pollDelay;
-
-  EventScheduleMap    schedule;
-
+  QUuid      uuid;
+  quint64    timestamp;
 };
 
 } // namespace
 
 #endif
+
