@@ -65,7 +65,6 @@ private slots:
   void NewItem ();
   void PickedDate (const QDate & date);
   void ToggleCal ();
-  void Popup ();
   void Minimize ();
   void CleanOld ();
 

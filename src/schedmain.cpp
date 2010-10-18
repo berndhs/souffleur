@@ -61,6 +61,10 @@ main (int argc, char *argv[])
     exit (0);
   }
   pv.CLIVersion ();
+  configMessages.append (QString("Built on %1 %2")
+                         .arg (__DATE__).arg(__TIME__));
+  configMessages.append (QObject::tr("Build with Qt %1").arg(QT_VERSION_STR));
+  configMessages.append (QObject::tr("Running with Qt %1").arg(qVersion()));
   for (int cm=0; cm<configMessages.size(); cm++) {
     deliberate::StdOut () << configMessages[cm] << endl;
   }

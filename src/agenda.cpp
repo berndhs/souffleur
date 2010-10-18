@@ -135,7 +135,6 @@ void
 Agenda::Minimize ()
 {
   showMinimized ();
-  QTimer::singleShot (5000,this, SLOT (Popup()));
 }
 
 void
@@ -213,18 +212,6 @@ Agenda::Exiting ()
   QSize currentSize = size();
   Settings().setValue ("sizes/main",currentSize);
   Settings().sync();
-}
-
-void
-Agenda::Popup ()
-{
-  qDebug () << " popup";
-  QMessageBox  box (this);
-  box.setWindowTitle ("Agenda Item Popup");
-  box.setText ("Agenda Item");
-  box.setIcon (QMessageBox::Information);
-  QTimer::singleShot (10000, &box, SLOT (accept()));
-  box.exec (); 
 }
 
 void
