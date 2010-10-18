@@ -37,6 +37,7 @@ namespace agenda
 
 class ItemEdit;
 class AgendaScheduler;
+class Notify;
 
 class Agenda : public QMainWindow
 {
@@ -86,6 +87,7 @@ private:
   DBManager        db;
   ItemEdit        *itemEdit;
   AgendaScheduler *scheduler;
+  Notify          *notify;
   QString          dateForm;
   bool             runAgain;
 

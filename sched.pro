@@ -55,6 +55,7 @@ HEADERS = src/schedmain.h \
           src/agenda-warning.h \
           src/event-table.h \
           src/agenda-scheduler.h \
+          src/notify.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -69,5 +70,6 @@ SOURCES = src/schedmain.cpp \
           src/agenda-event.cpp \
           src/event-table.cpp \
           src/agenda-scheduler.cpp \
+          src/notify.cpp \
 
 

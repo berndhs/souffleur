@@ -26,6 +26,7 @@
 #include "version.h"
 #include "item-edit.h"
 #include "agenda-scheduler.h"
+#include "notify.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
@@ -53,6 +54,7 @@ Agenda::Agenda (QWidget *parent)
   itemEdit = new ItemEdit (this);
   itemEdit->hide ();
   scheduler = new AgendaScheduler (this);
+  notify = new Notify (this);
   Connect ();
 }
 
@@ -246,16 +248,7 @@ Agenda::NewWarning (AgendaWarning warning)
 void
 Agenda::LaunchEvent (AgendaEvent event)
 {
-  QMessageBox box (this);
-  QStringList mlist;
-  mlist << event.Id().toString();
-  mlist << event.Nick ();
-  mlist << QDateTime::fromTime_t(event.Time()).toString("hh:mm:ss");
-  mlist << event.Description ();
-  box.setText (mlist.join ("\n"));
-  qDebug () << "Launching Event " << mlist;
-  QTimer::singleShot (10000, &box, SLOT (accept()));
-  box.exec ();
+  notify->ShowMessage (event);
 }
 
 void
