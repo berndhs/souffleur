@@ -22,6 +22,7 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QObject>
+#include <QSet>
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include <map>
@@ -49,7 +50,8 @@ public:
 private slots:
 
   void Poll ();
-  void Launch ();
+  void LaunchFuture ();
+  void LaunchPast ();
   void Launch (QUuid & uuid);
 
 signals:
@@ -61,14 +63,19 @@ private:
   typedef std::pair <quint64, QUuid>      TimedEvent;
   typedef std::multimap <quint64, QUuid>  EventScheduleMap;
 
-  void LoadWarnings ();
-  void LoadWarning  (const AgendaWarning & event);
+  void LoadWarnings (bool initial = false);
+  void LoadWarning  (EventScheduleMap & sched, const AgendaWarning & event);
+  void Launch (EventScheduleMap & sched);
+
+  void Dump ();
 
   DBManager    *db;
   QTimer       *pollTimer;
   int           pollDelay;
 
-  EventScheduleMap    schedule;
+  EventScheduleMap    future;
+  EventScheduleMap    past;
+  QSet <QUuid>        launchSet;
 
 };
 

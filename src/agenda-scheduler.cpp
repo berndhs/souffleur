@@ -60,7 +60,7 @@ void
 AgendaScheduler::Start ()
 {
   qDebug () << " AgendaScheduler start";
-  LoadWarnings ();
+  LoadWarnings (true);
   Poll ();
 }
 
@@ -72,15 +72,20 @@ AgendaScheduler::Refresh ()
 }
 
 void
-AgendaScheduler::LoadWarnings ()
+AgendaScheduler::LoadWarnings (bool initial)
 {
-  schedule.clear ();
+  quint64 now = QDateTime::currentDateTime().toTime_t();
+  future.clear ();
   if (db) {
     int it = db->OpenReadWarnings ();
     if (it >= 0) {
       AgendaWarning warn;
       while (db->ReadNext (it, warn)) {
-        LoadWarning (warn);
+        if (initial && warn.Time() < now) {
+          LoadWarning (past, warn);
+        } else {
+          LoadWarning (future, warn);
+        }
       }
       db->CloseRead (it);
     }
@@ -88,10 +93,11 @@ AgendaScheduler::LoadWarnings ()
 }
 
 void
-AgendaScheduler::LoadWarning (const AgendaWarning & warn)
+AgendaScheduler::LoadWarning (EventScheduleMap & sched, 
+                              const AgendaWarning & warn)
 {
   TimedEvent te (warn.Time(),warn.Id());
-  schedule.insert (te);
+  sched.insert (te);
   qDebug () << " loaded " << te.first << " for  " << te.second;
 }
 
@@ -100,37 +106,53 @@ AgendaScheduler::Poll ()
 {
   quint64 now = QDateTime::currentDateTime().toTime_t();
   qDebug () << " Poll at time " << now;
-  EventScheduleMap::iterator it = schedule.begin();
+  Dump ();
+  EventScheduleMap::iterator it = future.begin();
   quint64 firstTime = it->first;
   if (firstTime <= now) {
-    Launch ();
+    Launch (future);
   } else if (firstTime < now + (pollDelay*1000)) {
     qDebug () << "launch single shot in " << 1000 * (firstTime - now);
-    QTimer::singleShot (1000 * (firstTime - now), this, SLOT (Launch ()));
+    QTimer::singleShot (1000 * (firstTime - now), this, SLOT (LaunchFuture ()));
   }
+  launchSet.clear ();
 }
 
 void
-AgendaScheduler::Launch ()
+AgendaScheduler::LaunchFuture ()
 {
+  Launch (future);
+}
+
+void
+AgendaScheduler::LaunchPast ()
+{
+  Launch (past);
+}
+
+void
+AgendaScheduler::Launch (EventScheduleMap & sched)
+{
+  launchSet.clear ();
   quint64 now = QDateTime::currentDateTime().toTime_t();
-  EventScheduleMap::iterator it = schedule.begin();
+  EventScheduleMap::iterator it = sched.begin();
   EventScheduleMap::iterator lastLaunched;
   int launchCount (0);
-  while (it != schedule.end() && it->first < now) {
+  qDebug () << "first time " << it->first << " now " << now;
+  while (it != sched.end() && it->first <= now) {
     Launch  (it->second);
     launchCount++;
     lastLaunched = it;
     it++;
   }
   if (launchCount > 0) {
-    EventScheduleMap::iterator first = schedule.begin();
+    EventScheduleMap::iterator first = sched.begin();
     if (first == lastLaunched) {
       qDebug () << " erase first " << first->first;
-      schedule.erase (first);
+      future.erase (first);
     } else {
       qDebug () << " erase from " << first->first << " to " << lastLaunched->first;
-      schedule.erase (first, it); 
+      sched.erase (first, it); 
     }
   }
 }
@@ -139,8 +161,25 @@ void
 AgendaScheduler::Launch (QUuid & uuid)
 {
   AgendaEvent  event;
-  if (db->Read (uuid, event)) {
-    emit CurrentEvent (event);
+  if (!launchSet.contains (uuid)) {
+    if (db->Read (uuid, event)) {
+      launchSet.insert (uuid);
+      emit CurrentEvent (event);
+    }
+  }
+}
+
+void
+AgendaScheduler::Dump ()
+{
+  EventScheduleMap::iterator  it;
+  qDebug () << "Past Sched";
+  for (it = past.begin(); it != past.end(); it++) {
+    qDebug () << " for t=" << it->first << " uuid " << it->second;
+  }
+  qDebug () << "Future Sched";
+  for (it = future.begin(); it != future.end(); it++) {
+    qDebug () << " for t=" << it->first << " uuid " << it->second;
   }
 }
 
