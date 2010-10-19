@@ -25,6 +25,7 @@
 #include <QSqlDatabase>
 #include "agenda-event.h"
 #include "agenda-warning.h"
+#include "agenda-shell.h"
 #include <QMap>
 
 namespace agenda
@@ -44,7 +45,9 @@ public:
 
   bool  Write (const AgendaEvent & event);
   bool  Write (const AgendaWarning & warning);
+  bool  Write (const AgendaShell & shell);
   bool  Read (const QUuid & id, AgendaEvent & event);
+  bool  Read (const QUuid & id, AgendaShell & shell);
 
   void  DeleteOldEvents (quint64 beforeTime);
   void  DeleteEvent (const QUuid & eventId);

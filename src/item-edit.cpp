@@ -84,6 +84,10 @@ ItemEdit::Save ()
                          - qRound64 (60.0 * 60.0 * ui.longHours->value()));
     emit NewWarning (warn);
   }
+  if (ui.shellCheck->isChecked()) {
+    AgendaShell shell (event.Id(), ui.shellEdit->text());
+    emit NewShell (shell);
+  }
   accept ();
 }
 

@@ -1,5 +1,5 @@
-#ifndef ITEM_EDIT_H
-#define ITEM_EDIT_H
+
+#include "shell-launcher.h"
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,44 +21,50 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include "ui_item-edit.h"
-#include "agenda-event.h"
-#include "agenda-warning.h"
-#include "agenda-shell.h"
 
-class QDate;
-
-namespace agenda 
+namespace agenda
 {
-class ItemEdit : public QDialog
+
+/** AgendaProcess functions */
+
+AgendaProcess::AgendaProcess (QObject *parent)
+  :QProcess (parent)
 {
-Q_OBJECT
+  connect (this, SIGNAL (finished(int, QProcess::ExitStatus)), 
+          this, SLOT (ProcFinished(int, QProcess::ExitStatus)));
+}
 
-public:
+void
+AgendaProcess::ProcFinished (int exitCode, QProcess::ExitStatus exitStatus)
+{
+  Q_UNUSED (exitCode)
+  Q_UNUSED (exitStatus)
+  emit Finished (this);
+}
 
-  ItemEdit (QWidget * parent=0);
+/** ShellLauncher functions */
 
-  void  NewItem ();
-  void  NewItem (const QDate & date);
+ShellLauncher::ShellLauncher (QObject *parent)
+  :QObject (parent)
+{
+}
 
-public slots:
+void
+ShellLauncher::Launch (const AgendaShell & shell)
+{
+  AgendaProcess * newProc = new AgendaProcess (this);
+  processes.insert (newProc);
+  connect (newProc, SIGNAL (Finished (AgendaProcess*)),
+           this, SLOT (Finished (AgendaProcess*)));
+  newProc->execute (shell.Command());
+}
 
-  void Save ();
+void
+ShellLauncher::Finished (AgendaProcess *proc)
+{
+  processes.remove (proc);
+  proc->deleteLater ();
+}
 
-signals:
-
-  void NewEvent (AgendaEvent event);
-  void NewWarning (AgendaWarning warning);
-  void NewShell (AgendaShell shell);
-
-private:
-
-  Ui_ItemEdit   ui;
-  QString       dateForm;
-
-};
-
-} // namespace
-
-#endif
+} // agenda
 

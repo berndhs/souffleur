@@ -27,6 +27,7 @@
 #include "item-edit.h"
 #include "agenda-scheduler.h"
 #include "notify.h"
+#include "shell-launcher.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
@@ -47,6 +48,8 @@ Agenda::Agenda (QWidget *parent)
    db (this),
    itemEdit (0),
    scheduler (0),
+   notify (0),
+   shellLauncher (0),
    dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
    runAgain (false)
 {
@@ -55,6 +58,7 @@ Agenda::Agenda (QWidget *parent)
   itemEdit->hide ();
   scheduler = new AgendaScheduler (this);
   notify = new Notify (this);
+  shellLauncher = new ShellLauncher (this);
   Connect ();
 }
 
@@ -127,8 +131,12 @@ Agenda::Connect ()
            this, SLOT (NewEvent (AgendaEvent)));
   connect (itemEdit, SIGNAL (NewWarning (AgendaWarning)),
            this, SLOT (NewWarning (AgendaWarning)));
+  connect (itemEdit, SIGNAL (NewShell (AgendaShell)),
+           this, SLOT (NewShell (AgendaShell)));
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
+  connect (scheduler, SIGNAL (NewShell (AgendaShell)),
+           this, SLOT (LaunchShell (AgendaShell)));
 }
 
 void
@@ -233,9 +241,27 @@ Agenda::NewWarning (AgendaWarning warning)
 }
 
 void
+Agenda::NewShell (AgendaShell shell)
+{
+  qDebug () << " new shell " << shell.Id() << " doing " << shell.Command ();
+  db.Write (shell);
+}
+
+void
 Agenda::LaunchEvent (AgendaEvent event)
 {
-  notify->ShowMessage (event);
+  if (notify) {
+    notify->ShowMessage (event);
+  }
+}
+
+void
+Agenda::LaunchShell (AgendaShell shell)
+{
+qDebug () << " Agenda launch shell with " << shell.Command ();
+  if (shellLauncher) {
+    shellLauncher->Launch (shell);
+  }
 }
 
 void

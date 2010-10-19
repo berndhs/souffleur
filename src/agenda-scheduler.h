@@ -25,6 +25,7 @@
 #include <QSet>
 #include "agenda-event.h"
 #include "agenda-warning.h"
+#include "agenda-shell.h"
 #include <map>
 
 class QTimer;
@@ -52,16 +53,17 @@ private slots:
   void Poll ();
   void LaunchFuture ();
   void LaunchPast ();
-  void Launch (QUuid & uuid);
+  void Launch (const QUuid & uuid, bool isEvent);
 
 signals:
 
   void CurrentEvent (AgendaEvent event);
+  void NewShell (AgendaShell shell);
 
 private:
  
-  typedef std::pair <quint64, QUuid>      TimedEvent;
-  typedef std::multimap <quint64, QUuid>  EventScheduleMap;
+  typedef std::pair <quint64, AgendaWarning>      TimedEvent;
+  typedef std::multimap <quint64, AgendaWarning>  EventScheduleMap;
 
   void LoadWarnings (bool initial = false);
   void LoadWarning  (EventScheduleMap & sched, const AgendaWarning & event);
@@ -72,6 +74,7 @@ private:
   DBManager    *db;
   QTimer       *pollTimer;
   int           pollDelay;
+  quint64       nextPoll;
 
   EventScheduleMap    future;
   EventScheduleMap    past;

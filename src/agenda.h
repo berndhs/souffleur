@@ -27,6 +27,7 @@
 #include "db-manager.h"
 #include "agenda-event.h"
 #include "agenda-warning.h"
+#include "agenda-shell.h"
 
 class QApplication;
 class QDate;
@@ -38,6 +39,7 @@ namespace agenda
 class ItemEdit;
 class AgendaScheduler;
 class Notify;
+class ShellLauncher;
 
 class Agenda : public QMainWindow
 {
@@ -70,7 +72,9 @@ private slots:
 
   void NewEvent (AgendaEvent event);
   void NewWarning (AgendaWarning warning);
+  void NewShell (AgendaShell shell);
   void LaunchEvent (AgendaEvent event);
+  void LaunchShell (AgendaShell shell);
 
 private:
 
@@ -87,6 +91,7 @@ private:
   ItemEdit        *itemEdit;
   AgendaScheduler *scheduler;
   Notify          *notify;
+  ShellLauncher   *shellLauncher;
   QString          dateForm;
   bool             runAgain;
 

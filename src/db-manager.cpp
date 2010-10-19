@@ -70,7 +70,8 @@ DBManager::Start ()
   QStringList  eventElements;
   eventElements << "events"
                 << "uniqueid"
-                << "warnings";
+                << "warnings"
+                << "shells";
 
   CheckDBComplete (eventDB, eventElements);
 }
@@ -156,7 +157,7 @@ DBManager::Write (const AgendaEvent & event)
   insert.bindValue (3,QVariant (event.Description ()));
   bool ok = insert.exec ();
   qDebug () << " event insert " << ok << insert.executedQuery();
-  Write (AgendaWarning (event.Id(), event.Time()));
+  Write (AgendaWarning (event.Id(), event.Time(), true));
   return ok;
 }
 
@@ -184,14 +185,48 @@ DBManager::Write (const AgendaWarning & warning)
 {
   QSqlQuery insert (eventDB);
   insert.prepare ("insert or replace into warnings "
-                  " (eventid, time) "
-                  " values (?, ?)");
+                  " (eventid, time, isevent) "
+                  " values (?, ?, ?)");
   insert.bindValue (0, QVariant (warning.Id()));
   insert.bindValue (1, QVariant (warning.Time()));
+  insert.bindValue (2, QVariant ((warning.IsEvent() ? 1 : 0)));
   bool ok = insert.exec ();
   qDebug () << " warning insert " << ok << insert.executedQuery();
   return ok;
 }
+
+bool
+DBManager::Read (const QUuid & uuid, AgendaShell & shell)
+{
+  QSqlQuery select (eventDB);
+  bool ok = select.exec (QString("select command from shells "
+                                 " where eventid = \"%1\"")
+                           .arg (uuid.toString()));
+  if (ok && select.next ()) {
+    QString cmd = select.value (0).toString();
+    if (cmd.length() > 0) {
+      shell.SetId (uuid);
+      shell.SetCommand (cmd);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+DBManager::Write (const AgendaShell & shell)
+{
+  QSqlQuery insert (eventDB);
+  insert.prepare ("insert or replace into shells "
+                  " (eventid, command) "
+                  " values (?, ?)");
+  insert.bindValue (0, QVariant (shell.Id()));
+  insert.bindValue (1, QVariant (shell.Command()));
+  bool ok = insert.exec ();
+  qDebug () << " shell insert " << ok << insert.executedQuery ();
+  return ok;
+}
+
 
 void
 DBManager::MakeElement (QSqlDatabase & db, const QString & element)
@@ -232,7 +267,7 @@ DBManager::OpenReadWarnings ()
   QSqlQuery *reader = new QSqlQuery (eventDB);
   int it = nextIterator;
   nextIterator++;
-  bool ok = reader->exec (QString("select eventid, time "
+  bool ok = reader->exec (QString("select eventid, time, isevent "
                         " from warnings where 1 "
                         " order by time ASC "));
   if (ok) {
@@ -287,8 +322,10 @@ DBManager::ReadNext (int iteratorId, AgendaWarning & warn)
     if (reader->next ()) {
       QUuid id = QUuid (reader->value (0).toString());
       quint64 time = reader->value(1).toULongLong ();
+      int     isEvent = reader->value(2).toInt();
       warn.SetId (id);
       warn.SetTime (time);
+      warn.SetIsEvent (isEvent != 0);
       return true;
     } else {
       return false;

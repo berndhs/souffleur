@@ -1,5 +1,5 @@
-#ifndef AGENDA_WARNING_H
-#define AGENDA_WARNING_H
+#ifndef AGENDA_SHELL_H
+#define AGENDA_SHELL_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -28,41 +28,37 @@
 namespace agenda
 {
 
-class AgendaWarning 
+class AgendaShell 
 {
 public:
 
-  AgendaWarning ()
-    :uuid (QUuid::createUuid()), timestamp (0), isEvent (false) {}
-  AgendaWarning (const QUuid & id, quint64 time, bool forReal = false)
-    :uuid (id), timestamp (time), isEvent (forReal) {}
+  AgendaShell ()
+    :uuid (QUuid::createUuid()), command (QString()) {}
+  AgendaShell (const QUuid & id, const QString & cmd)
+    :uuid (id), command (cmd) {}
 
-  AgendaWarning (const AgendaWarning & old)
-    :uuid (old.uuid), timestamp (old.timestamp), isEvent (old.isEvent) {}
+  AgendaShell (const AgendaShell & old)
+    :uuid (old.uuid), command (old.command) {}
 
-  AgendaWarning & operator= (const AgendaWarning &other)
+  AgendaShell & operator= (const AgendaShell &other)
     {
       if (this != &other) {
         uuid = other.uuid;
-        timestamp = other.timestamp;
-        isEvent = other.isEvent;
+        command = other.command;
       }
       return *this;
     }
   
   QUuid   Id   () const { return uuid; }
-  quint64 Time () const { return timestamp; }
-  bool    IsEvent () const { return isEvent; }
+  QString Command () const { return command; }
 
   void SetId (const QUuid & u) { uuid = u; }
-  void SetTime (quint64 t) { timestamp = t; }
-  void SetIsEvent (bool is) { isEvent = is; }
+  void SetCommand (QString cmd) { command = cmd; }
 
 private:
 
   QUuid      uuid;
-  quint64    timestamp;
-  bool       isEvent;
+  QString    command;
 };
 
 } // namespace

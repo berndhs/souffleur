@@ -38,7 +38,8 @@ AgendaScheduler::AgendaScheduler (QObject *parent)
   :QObject (parent),
    db (0),
    pollTimer (0),
-   pollDelay (5*60)
+   pollDelay (5*60),
+   nextPoll (0)
 {
   pollTimer = new QTimer (this);
   connect (pollTimer, SIGNAL (timeout()), this, SLOT (Poll()));
@@ -53,6 +54,7 @@ AgendaScheduler::Init (DBManager * dbm)
     pollDelay = Settings().value ("timers/pollsecs",pollDelay).toInt();
     Settings().setValue ("timers/pollsecs",pollDelay);
     pollTimer->start (pollDelay*1000);
+    nextPoll = QDateTime::currentDateTime().toTime_t() + pollDelay;
   }
 }
 
@@ -96,22 +98,22 @@ void
 AgendaScheduler::LoadWarning (EventScheduleMap & sched, 
                               const AgendaWarning & warn)
 {
-  TimedEvent te (warn.Time(),warn.Id());
+  TimedEvent te (warn.Time(),warn);
   sched.insert (te);
-  qDebug () << " loaded " << te.first << " for  " << te.second;
+  qDebug () << " loaded " << te.first << " for  " << te.second.Id();
 }
 
 void
 AgendaScheduler::Poll () 
 {
   quint64 now = QDateTime::currentDateTime().toTime_t();
+  nextPoll = now + pollDelay;
   qDebug () << " Poll at time " << now;
-  Dump ();
   EventScheduleMap::iterator it = future.begin();
   quint64 firstTime = it->first;
   if (firstTime <= now) {
     Launch (future);
-  } else if (firstTime < now + (pollDelay*1000)) {
+  } else if (firstTime < nextPoll) {
     qDebug () << "launch single shot in " << 1000 * (firstTime - now);
     QTimer::singleShot (1000 * (firstTime - now), this, SLOT (LaunchFuture ()));
   }
@@ -140,7 +142,7 @@ AgendaScheduler::Launch (EventScheduleMap & sched)
   int launchCount (0);
   qDebug () << "first time " << it->first << " now " << now;
   while (it != sched.end() && it->first <= now) {
-    Launch  (it->second);
+    Launch  (it->second.Id(), it->second.IsEvent());
     launchCount++;
     lastLaunched = it;
     it++;
@@ -155,16 +157,38 @@ AgendaScheduler::Launch (EventScheduleMap & sched)
       sched.erase (first, it); 
     }
   }
+  // check it there is more before the next poll time
+  it = sched.begin ();
+  if (it != sched.end()) {
+    quint64 next = it->first;
+    // if event is in the future, but before next poll,
+    // we need to launch again
+    if (next > now && next < nextPoll) {
+      now = QDateTime::currentDateTime().toTime_t();
+      quint64 delay = next - now;
+      QTimer::singleShot (delay * 1000, this, SLOT (LaunchFuture()));
+    }
+  }
 }
 
 void
-AgendaScheduler::Launch (QUuid & uuid)
+AgendaScheduler::Launch (const QUuid & uuid, bool isEvent)
 {
   AgendaEvent  event;
   if (!launchSet.contains (uuid)) {
     if (db->Read (uuid, event)) {
       launchSet.insert (uuid);
       emit CurrentEvent (event);
+qDebug () << " launched event " << uuid ;
+qDebug () << "          original event " << isEvent;
+      if (isEvent) {
+        AgendaShell shell;
+        bool hasShell = db->Read (uuid, shell);
+qDebug () << " event has command " << hasShell << shell.Command ();
+        if (hasShell) {
+          emit NewShell (shell);
+        }
+      }
     }
   }
 }
@@ -175,11 +199,11 @@ AgendaScheduler::Dump ()
   EventScheduleMap::iterator  it;
   qDebug () << "Past Sched";
   for (it = past.begin(); it != past.end(); it++) {
-    qDebug () << " for t=" << it->first << " uuid " << it->second;
+    qDebug () << " for t=" << it->first << " uuid " << it->second.Id();
   }
   qDebug () << "Future Sched";
   for (it = future.begin(); it != future.end(); it++) {
-    qDebug () << " for t=" << it->first << " uuid " << it->second;
+    qDebug () << " for t=" << it->first << " uuid " << it->second.Id();
   }
 }
 

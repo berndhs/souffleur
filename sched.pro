@@ -52,10 +52,12 @@ HEADERS = src/schedmain.h \
           src/db-manager.h \
           src/item-edit.h \
           src/agenda-event.h \
+          src/agenda-shell.h \
           src/agenda-warning.h \
           src/event-table.h \
           src/agenda-scheduler.h \
           src/notify.h \
+          src/shell-launcher.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -71,5 +73,6 @@ SOURCES = src/schedmain.cpp \
           src/event-table.cpp \
           src/agenda-scheduler.cpp \
           src/notify.cpp \
+          src/shell-launcher.cpp \
 
 

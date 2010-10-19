@@ -1,5 +1,5 @@
-#ifndef AGENDA_WARNING_H
-#define AGENDA_WARNING_H
+#ifndef SHELL_LAUNCHER_H
+#define SHELL_LAUNCHER_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -21,51 +21,52 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
+#include <QObject>
+#include <QProcess>
+#include <QSet>
+#include "agenda-shell.h"
 
-#include <QString>
-#include <QUuid>
 
 namespace agenda
 {
 
-class AgendaWarning 
+class AgendaProcess : public QProcess
 {
+Q_OBJECT
 public:
 
-  AgendaWarning ()
-    :uuid (QUuid::createUuid()), timestamp (0), isEvent (false) {}
-  AgendaWarning (const QUuid & id, quint64 time, bool forReal = false)
-    :uuid (id), timestamp (time), isEvent (forReal) {}
+  AgendaProcess (QObject *parent);
 
-  AgendaWarning (const AgendaWarning & old)
-    :uuid (old.uuid), timestamp (old.timestamp), isEvent (old.isEvent) {}
+public slots:
 
-  AgendaWarning & operator= (const AgendaWarning &other)
-    {
-      if (this != &other) {
-        uuid = other.uuid;
-        timestamp = other.timestamp;
-        isEvent = other.isEvent;
-      }
-      return *this;
-    }
-  
-  QUuid   Id   () const { return uuid; }
-  quint64 Time () const { return timestamp; }
-  bool    IsEvent () const { return isEvent; }
+  void ProcFinished (int exitCode, QProcess::ExitStatus exitStatus);
 
-  void SetId (const QUuid & u) { uuid = u; }
-  void SetTime (quint64 t) { timestamp = t; }
-  void SetIsEvent (bool is) { isEvent = is; }
+signals:
+
+  void Finished (AgendaProcess * proc);
+                
+};
+
+class ShellLauncher : public QObject 
+{
+Q_OBJECT
+
+public:
+
+  ShellLauncher (QObject * parent=0);
+
+  void Launch (const AgendaShell & shell);
+
+private slots:
+
+  void Finished (AgendaProcess * proc);
 
 private:
 
-  QUuid      uuid;
-  quint64    timestamp;
-  bool       isEvent;
+  QSet <AgendaProcess *>  processes;
+
 };
 
 } // namespace
 
 #endif
-
