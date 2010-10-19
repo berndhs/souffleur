@@ -55,6 +55,7 @@ HEADERS = src/schedmain.h \
           src/agenda-event.h \
           src/agenda-shell.h \
           src/agenda-warning.h \
+          src/agenda-repeat.h \
           src/event-table.h \
           src/agenda-scheduler.h \
           src/notify.h \

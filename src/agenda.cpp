@@ -138,10 +138,14 @@ Agenda::Connect ()
            this, SLOT (NewWarning (AgendaWarning)));
   connect (itemEdit, SIGNAL (NewShell (AgendaShell)),
            this, SLOT (NewShell (AgendaShell)));
+  connect (itemEdit, SIGNAL (NewRepeat (AgendaRepeat)),
+           this, SLOT (NewRepeat (AgendaRepeat)));
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
   connect (scheduler, SIGNAL (NewShell (AgendaShell)),
            this, SLOT (LaunchShell (AgendaShell)));
+  connect (scheduler, SIGNAL (Launched (int)),
+           this, SLOT (Launched (int)));
 }
 
 void
@@ -246,10 +250,26 @@ Agenda::NewWarning (AgendaWarning warning)
 }
 
 void
+Agenda::Launched (int howmany)
+{
+  if (howmany > 0) {
+    mainUi.activityList->Load();
+  }
+}
+
+void
 Agenda::NewShell (AgendaShell shell)
 {
   qDebug () << " new shell " << shell.Id() << " doing " << shell.Command ();
   db.Write (shell);
+}
+
+void
+Agenda::NewRepeat (AgendaRepeat repeat)
+{
+  qDebug () << " new repeat " << repeat.Id() << " kind "
+            << repeat.Kind () << " delay " << repeat.Delay ();
+  db.Write (repeat);
 }
 
 void

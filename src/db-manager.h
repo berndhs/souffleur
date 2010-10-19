@@ -26,6 +26,7 @@
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
+#include "agenda-repeat.h"
 #include <QMap>
 
 namespace agenda
@@ -46,11 +47,19 @@ public:
   bool  Write (const AgendaEvent & event);
   bool  Write (const AgendaWarning & warning);
   bool  Write (const AgendaShell & shell);
+  bool  Write (const AgendaRepeat & repeat);
   bool  Read (const QUuid & id, AgendaEvent & event);
   bool  Read (const QUuid & id, AgendaShell & shell);
+  bool  Read (const QUuid & id, AgendaRepeat & repeat);
+  void  RemoveWarning (const AgendaWarning & warning);
+  void  RemoveAllWarnings (const QUuid & uuid);
+  void  RemoveShell (const QUuid & uuid);
+  void  RemoveEvent (const QUuid & uuid);
+
+  void  RemoveOrphans ();
 
   void  DeleteOldEvents (quint64 beforeTime);
-  void  DeleteEvent (const QUuid & eventId);
+  void  DeleteAll (const QUuid & eventId);
   int   OpenReadEvents ();
   bool  ReadNext (int iteratorId, AgendaEvent & event);
   void  CloseRead (int iteratorId);

@@ -39,7 +39,9 @@ AgendaScheduler::AgendaScheduler (QObject *parent)
    db (0),
    pollTimer (0),
    pollDelay (5*60),
-   nextPoll (0)
+   nextLaunch (0),
+   nextPoll (0),
+   repeatCount (0)
 {
   pollTimer = new QTimer (this);
   connect (pollTimer, SIGNAL (timeout()), this, SLOT (Poll()));
@@ -55,6 +57,7 @@ AgendaScheduler::Init (DBManager * dbm)
     Settings().setValue ("timers/pollsecs",pollDelay);
     pollTimer->start (pollDelay*1000);
     nextPoll = QDateTime::currentDateTime().toTime_t() + pollDelay;
+    nextLaunch = nextPoll;
   }
 }
 
@@ -108,6 +111,7 @@ AgendaScheduler::Poll ()
 {
   quint64 now = QDateTime::currentDateTime().toTime_t();
   nextPoll = now + pollDelay;
+  nextLaunch = nextPoll;
   qDebug () << " Poll at time " << now;
   EventScheduleMap::iterator it = future.begin();
   quint64 firstTime = it->first;
@@ -136,13 +140,18 @@ void
 AgendaScheduler::Launch (EventScheduleMap & sched)
 {
   launchSet.clear ();
+  repeatCount = 0;
   quint64 now = QDateTime::currentDateTime().toTime_t();
   EventScheduleMap::iterator it = sched.begin();
   EventScheduleMap::iterator lastLaunched;
   int launchCount (0);
+  nextLaunch = nextPoll;
   qDebug () << "first time " << it->first << " now " << now;
   while (it != sched.end() && it->first <= now) {
     Launch  (it->second.Id(), it->second.IsEvent());
+    if (db) {
+      db->RemoveWarning (it->second);
+    }
     launchCount++;
     lastLaunched = it;
     it++;
@@ -156,18 +165,25 @@ AgendaScheduler::Launch (EventScheduleMap & sched)
       qDebug () << " erase from " << first->first << " to " << lastLaunched->first;
       sched.erase (first, it); 
     }
+    emit Launched (launchCount);
   }
   // check it there is more before the next poll time
+  quint64 next = nextPoll;
   it = sched.begin ();
   if (it != sched.end()) {
-    quint64 next = it->first;
-    // if event is in the future, but before next poll,
-    // we need to launch again
-    if (next > now && next < nextPoll) {
-      now = QDateTime::currentDateTime().toTime_t();
-      quint64 delay = next - now;
-      QTimer::singleShot (delay * 1000, this, SLOT (LaunchFuture()));
-    }
+    next = qMin (it->first, next);
+  }
+  // if event is in the future, but before next poll,
+  // we need to launch again
+  if (next > now && next < nextPoll) {
+    now = QDateTime::currentDateTime().toTime_t();
+    quint64 delay = next - now;
+    QTimer::singleShot (delay * 1000, this, SLOT (LaunchFuture()));
+    nextLaunch = next;
+  }
+  if (repeatCount > 0) {
+    Refresh ();
+    repeatCount = 0;
   }
 }
 
@@ -176,7 +192,7 @@ AgendaScheduler::Launch (const QUuid & uuid, bool isEvent)
 {
   AgendaEvent  event;
   if (!launchSet.contains (uuid)) {
-    if (db->Read (uuid, event)) {
+    if (db && db->Read (uuid, event)) {
       launchSet.insert (uuid);
       emit CurrentEvent (event);
 qDebug () << " launched event " << uuid ;
@@ -187,6 +203,41 @@ qDebug () << "          original event " << isEvent;
 qDebug () << " event has command " << hasShell << shell.Command ();
         if (hasShell) {
           emit NewShell (shell);
+        }
+        AgendaRepeat repeat;
+        bool hasRepeat = db->Read (uuid, repeat);
+        if (hasRepeat) {
+          AgendaEvent repEvent (event);
+          quint64 delay = repeat.Delay();
+          QString kind = repeat.Kind();
+          QDateTime time = QDateTime::fromTime_t (event.Time());
+          bool makeNew = (delay > 0);
+          if (kind == "min") {
+            time = time.addSecs (delay * 60);
+          } else if (kind == "hour") {
+            time = time.addSecs (delay * 60 * 60); 
+          } else if (kind == "day") {
+            time = time.addDays (delay);
+          } else if (kind == "month") {
+            time = time.addMonths (delay);
+          } else {
+            makeNew = false;
+          }
+          if (makeNew) {
+            quint64 repTime = time.toTime_t();
+            repEvent.SetTime (repTime);
+            db->RemoveEvent (event.Id());
+            db->RemoveAllWarnings (event.Id());
+            db->Write (repEvent);
+            repeatCount++;
+            if (repTime < nextLaunch) {
+              nextLaunch = repTime;
+            } 
+          } else {
+            db->DeleteAll (event.Id());
+          }
+        } else {
+          db->DeleteAll (event.Id());
         }
       }
     }

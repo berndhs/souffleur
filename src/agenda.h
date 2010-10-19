@@ -75,8 +75,11 @@ private slots:
   void NewEvent (AgendaEvent event);
   void NewWarning (AgendaWarning warning);
   void NewShell (AgendaShell shell);
+  void NewRepeat (AgendaRepeat repeat);
   void LaunchEvent (AgendaEvent event);
   void LaunchShell (AgendaShell shell);
+
+  void Launched (int howmany);
 
 private:
 

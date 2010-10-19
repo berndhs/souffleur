@@ -71,7 +71,8 @@ DBManager::Start ()
   eventElements << "events"
                 << "uniqueid"
                 << "warnings"
-                << "shells";
+                << "shells"
+                << "repeats";
 
   CheckDBComplete (eventDB, eventElements);
 }
@@ -191,7 +192,66 @@ DBManager::Write (const AgendaWarning & warning)
   insert.bindValue (1, QVariant (warning.Time()));
   insert.bindValue (2, QVariant ((warning.IsEvent() ? 1 : 0)));
   bool ok = insert.exec ();
+  qDebug () << " warning for " << warning.Id() << " time " << warning.Time()
+            << " orig " << warning.IsEvent();
   qDebug () << " warning insert " << ok << insert.executedQuery();
+  return ok;
+}
+
+void
+DBManager::RemoveWarning (const AgendaWarning & warning)
+{
+  QSqlQuery delqry (eventDB);
+  bool ok = delqry.exec (QString ("delete from warnings "
+                        " where eventid = \"%1\" "
+                        " AND time = %2 ")
+                .arg (warning.Id().toString())
+                .arg (warning.Time()));
+  qDebug () << " Remove " << ok << delqry.executedQuery ();
+}
+
+void
+DBManager::RemoveAllWarnings (const QUuid & uuid)
+{
+  QSqlQuery delqry (eventDB);
+  bool ok = delqry.exec (QString ("delete from warnings "
+                        " where eventid = \"%1\" ")
+                .arg (uuid));
+  qDebug () << " Remove " << ok << delqry.executedQuery ();
+}
+
+void
+DBManager::RemoveShell (const QUuid & uuid)
+{
+  QSqlQuery delqry (eventDB);
+  bool ok = delqry.exec (QString ("delete from shells "
+                        " where eventid = \"%1\" ")
+                .arg (uuid));
+  qDebug () << " Remove " << ok << delqry.executedQuery ();
+}
+
+void
+DBManager::RemoveEvent (const QUuid & uuid)
+{
+  QSqlQuery delqry (eventDB);
+  bool ok = delqry.exec (QString ("delete from events "
+                        " where eventid = \"%1\" ")
+                .arg (uuid));
+  qDebug () << " Remove " << ok << delqry.executedQuery ();
+}
+
+bool
+DBManager::Write (const AgendaRepeat & repeat)
+{
+  QSqlQuery insert (eventDB);
+  insert.prepare ("insert or replace into repeats "
+                  " (eventid, kind, delay) "
+                  " values (?, ?, ?)");
+  insert.bindValue (0, QVariant (repeat.Id()));
+  insert.bindValue (1, QVariant (repeat.Kind()));
+  insert.bindValue (2, QVariant (repeat.Delay()));
+  bool ok = insert.exec ();
+  qDebug () << " repeat insert " << ok << insert.executedQuery ();
   return ok;
 }
 
@@ -207,6 +267,26 @@ DBManager::Read (const QUuid & uuid, AgendaShell & shell)
     if (cmd.length() > 0) {
       shell.SetId (uuid);
       shell.SetCommand (cmd);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool
+DBManager::Read (const QUuid & uuid, AgendaRepeat & repeat)
+{
+  QSqlQuery select (eventDB);
+  bool ok = select.exec (QString("select kind, delay from repeats "
+                                 " where eventid = \"%1\"")
+                           .arg (uuid.toString()));
+  if (ok && select.next ()) {
+    QString kind = select.value (0).toString();
+    quint64 delay = select.value (1).toULongLong ();
+    if (kind.length() > 0) {
+      repeat.SetId (uuid);
+      repeat.SetKind (kind);
+      repeat.SetDelay (delay);
       return true;
     }
   }
@@ -347,7 +427,7 @@ DBManager::DeleteOldEvents (quint64 beforeTime)
 }
 
 void
-DBManager::DeleteEvent (const QUuid & eventId)
+DBManager::DeleteAll (const QUuid & eventId)
 {
   QSqlQuery erase (eventDB);
   QString cmd (QString("delete from events where eventid = \"%1\"")
@@ -356,6 +436,17 @@ DBManager::DeleteEvent (const QUuid & eventId)
   cmd = QString ("delete from warnings where eventid = \"%1\"")
                   .arg (eventId.toString());
   erase.exec (cmd);
+  cmd = QString ("delete from shells where eventid = \"%1\"")
+                  .arg (eventId.toString());
+  cmd = QString ("delete from repeat where eventid = \"%1\"")
+                  .arg (eventId.toString());
+  erase.exec (cmd);
+}
+
+void
+DBManager::RemoveOrphans ()
+{
+  qDebug () << " RemoveOrphans will be implemented soon";
 }
 
 

@@ -25,7 +25,12 @@
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
+#include "agenda-repeat.h"
 
+#include <map>
+
+class QAbstractButton;
+class QSpinBox;
 class QDate;
 
 namespace agenda 
@@ -45,16 +50,34 @@ public slots:
 
   void Save ();
 
+private slots:
+
+  void ChangeWarning (int newState);
+  void ChangeRepeat  (int newState);
+  void RepeatChanged (QAbstractButton * button);
+
 signals:
 
   void NewEvent (AgendaEvent event);
   void NewWarning (AgendaWarning warning);
   void NewShell (AgendaShell shell);
+  void NewRepeat (AgendaRepeat rep);
 
 private:
 
+  typedef std::map <QAbstractButton*, QSpinBox*> ValueBoxMap;
+
+  void Clear ();
+  void ClearExcept (ValueBoxMap & values, QAbstractButton * button);
+  QString RepeatKind ();
+  int     RepeatValue ();
+
   Ui_ItemEdit   ui;
   QString       dateForm;
+
+  ValueBoxMap        repeatValues;
+  QAbstractButton   *repeatChecked;
+  std::map <QAbstractButton *, QString>  repeatKind;
 
 };
 

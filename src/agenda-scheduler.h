@@ -59,6 +59,7 @@ signals:
 
   void CurrentEvent (AgendaEvent event);
   void NewShell (AgendaShell shell);
+  void Launched (int howmany);
 
 private:
  
@@ -74,7 +75,9 @@ private:
   DBManager    *db;
   QTimer       *pollTimer;
   int           pollDelay;
+  quint64       nextLaunch;
   quint64       nextPoll;
+  int           repeatCount;
 
   EventScheduleMap    future;
   EventScheduleMap    past;

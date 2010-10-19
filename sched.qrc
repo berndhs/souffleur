@@ -8,6 +8,7 @@
   <file alias="uniqueid.sql">schemas/uniqueid.sql</file>
   <file alias="warnings.sql">schemas/warnings.sql</file>
   <file alias="shells.sql">schemas/shells.sql</file>
+  <file alias="repeats.sql">schemas/repeats.sql</file>
 </qresource>
 <qresource prefix="/help">
   <file alias="LICENSE.txt">helpfiles/LICENSE.txt</file>
