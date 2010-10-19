@@ -28,6 +28,7 @@
 #include "agenda-scheduler.h"
 #include "notify.h"
 #include "shell-launcher.h"
+#include "helpview.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
@@ -50,6 +51,7 @@ Agenda::Agenda (QWidget *parent)
    scheduler (0),
    notify (0),
    shellLauncher (0),
+   helpView (0),
    dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
    runAgain (false)
 {
@@ -59,6 +61,7 @@ Agenda::Agenda (QWidget *parent)
   scheduler = new AgendaScheduler (this);
   notify = new Notify (this);
   shellLauncher = new ShellLauncher (this);
+  helpView = new HelpView (this);
   Connect ();
 }
 
@@ -113,6 +116,8 @@ Agenda::Connect ()
            this, SLOT (EditSettings()));
   connect (mainUi.actionAbout, SIGNAL (triggered()),
            this, SLOT (About ()));
+  connect (mainUi.actionLicense, SIGNAL (triggered()),
+           this, SLOT (License ()));
   connect (mainUi.actionNewItem, SIGNAL (triggered()),
            this, SLOT (NewItem()));
   connect (mainUi.calendarWidget, SIGNAL (clicked(const QDate &)),
@@ -271,6 +276,14 @@ Agenda::CleanOld ()
   now.addDays (-2);
   db.DeleteOldEvents (now.toTime_t());
   mainUi.activityList->Load ();
+}
+
+void
+Agenda::License ()
+{
+  if (helpView) {
+    helpView->Show ("qrc:/help/LICENSE.txt");
+  }
 }
 
 

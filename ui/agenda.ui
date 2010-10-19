@@ -14,7 +14,7 @@
    <string>Souffleur</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../sched.qrc">
+   <iconset>
     <normaloff>:/souffleur.png</normaloff>:/souffleur.png</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -112,6 +112,7 @@
      <string>Help...</string>
     </property>
     <addaction name="actionAbout"/>
+    <addaction name="actionLicense"/>
    </widget>
    <widget class="QMenu" name="menuMaintenance">
     <property name="title">
@@ -151,6 +152,11 @@
   <action name="actionRestart">
    <property name="text">
     <string>Restart</string>
+   </property>
+  </action>
+  <action name="actionLicense">
+   <property name="text">
+    <string>License</string>
    </property>
   </action>
  </widget>

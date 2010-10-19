@@ -37,9 +37,7 @@ Q_OBJECT
 
 public:
 
-  AgendaBox (QWidget *parent=0)
-    :QMessageBox (parent) 
-    {}
+  AgendaBox (QWidget *parent=0);
 
 public slots:
 
@@ -72,6 +70,7 @@ private:
  
   QWidget           *parentWidget;
   QSet <AgendaBox*>  activeBoxes;
+  int                showTime;
 } ;
 
 } // namespace

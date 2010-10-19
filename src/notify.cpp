@@ -25,9 +25,19 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QDebug>
+#include "deliberate.h"
+
+using namespace deliberate;
 
 namespace agenda
 {
+
+/** AgendaBox is the window that pops up from the notifier */
+
+AgendaBox::AgendaBox (QWidget *parent)
+  :QMessageBox (parent)
+{
+}
 
 void
 AgendaBox::accept ()
@@ -43,10 +53,15 @@ AgendaBox::reject ()
   emit Done (this);
 }
 
+/** Notify is the notifier */
+
 Notify::Notify (QWidget *parent)
   :QObject (parent),
-   parentWidget (parent)
+   parentWidget (parent),
+   showTime (10)
 {
+  showTime = Settings().value ("timers/showtime",showTime).toInt();
+  Settings().setValue ("timers/showtime",showTime);
 }
 
 void
@@ -62,7 +77,7 @@ Notify::ShowMessage (const AgendaEvent & event)
   mlist << event.Description ();
   box->setText (mlist.join ("\n"));
   qDebug () << "Launching Event " << mlist;
-  QTimer::singleShot (10000, box, SLOT (accept()));
+  QTimer::singleShot (showTime * 1000, box, SLOT (accept()));
   box->show ();
 }
 

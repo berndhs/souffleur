@@ -28,6 +28,7 @@
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
+#include "helpview.h"
 
 class QApplication;
 class QDate;
@@ -63,6 +64,7 @@ private slots:
   void EditSettings ();
   void SetSettings ();
   void About ();
+  void License ();
   void Exiting ();
   void NewItem ();
   void PickedDate (const QDate & date);
@@ -92,6 +94,7 @@ private:
   AgendaScheduler *scheduler;
   Notify          *notify;
   ShellLauncher   *shellLauncher;
+  deliberate::HelpView        *helpView;
   QString          dateForm;
   bool             runAgain;
 

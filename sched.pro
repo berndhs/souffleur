@@ -26,7 +26,7 @@
 
 TEMPLATE = app
 
-QT += core gui sql
+QT += core gui sql webkit
 DEFINES += DELIBERATE_DEBUG=1
 UI_DIR = tmp/ui
 MOC_DIR = tmp/moc
@@ -39,6 +39,7 @@ FORMS = ui/agenda.ui \
         ui/DebugLog.ui \
         ui/config-edit.ui \
         ui/item-edit.ui \
+        ui/helpwin.ui \
         
 
 HEADERS = src/schedmain.h \
@@ -58,6 +59,7 @@ HEADERS = src/schedmain.h \
           src/agenda-scheduler.h \
           src/notify.h \
           src/shell-launcher.h \
+          src/helpview.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -74,5 +76,5 @@ SOURCES = src/schedmain.cpp \
           src/agenda-scheduler.cpp \
           src/notify.cpp \
           src/shell-launcher.cpp \
-
+          src/helpview.cpp \
 
