@@ -55,6 +55,9 @@ Agenda::Agenda (QWidget *parent)
    dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
    runAgain (false)
 {
+  dateForm = Settings().value ("display/dateform", dateForm)
+                                  .toString();
+  Settings().setValue ("display/dateform",QVariant (dateForm));
   mainUi.setupUi (this);
   itemEdit = new ItemEdit (this);
   itemEdit->hide ();
@@ -70,12 +73,11 @@ Agenda::Init (QApplication &ap)
 {
   app = &ap;
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
+  Settings().sync();
   db.Start ();
   mainUi.activityList->Init (&db);
   scheduler->Init (&db);
   mainUi.calendarWidget->setVisible (false);
-  dateForm = Settings().value ("display/dateform",dateForm).toString();
-  Settings().setValue ("display/dateform",dateForm);
   initDone = true;
 }
 

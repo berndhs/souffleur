@@ -29,15 +29,17 @@
 #include "cmdoptions.h"
 #include "agenda.h"
 
+
 int
 main (int argc, char *argv[])
 {
-  QCoreApplication::setApplicationName ("souffleur");
   QCoreApplication::setOrganizationName ("BerndStramm");
   QCoreApplication::setOrganizationDomain ("bernd-stramm.com");
+  QCoreApplication::setApplicationName ("souffleur");
   deliberate::ProgramVersion pv ("Souffleur");
   QCoreApplication::setApplicationVersion (pv.Version());
   QSettings  settings;
+  deliberate::InitSettings ();
   deliberate::SetSettings (settings);
   settings.setValue ("program",pv.MyName());
 

@@ -42,6 +42,12 @@ QTextStream & StdOut ()
 static QSettings * mySettings(0);
   
 void
+InitSettings ()
+{
+  mySettings = 0;
+}
+
+void
 SetSettings (QSettings & settings)
 {
   if (mySettings) {

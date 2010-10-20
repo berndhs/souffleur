@@ -31,7 +31,7 @@
 
 namespace agenda
 {
-class DBManager : public QThread
+class DBManager : public QObject
 {
 Q_OBJECT
 

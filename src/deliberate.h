@@ -41,6 +41,8 @@ QTextStream  & StdOut();
 
 void SetSettings (QSettings & settings);
 
+void InitSettings ();
+
 QSettings & Settings ();
 
 bool IsMaemo ();

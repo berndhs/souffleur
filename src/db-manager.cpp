@@ -39,7 +39,7 @@ namespace agenda
 {
 
 DBManager::DBManager (QObject *parent)
-  :QThread (parent),
+  :QObject (parent),
    dbRunning (false),
    nextIterator (1)
 {
@@ -56,13 +56,12 @@ DBManager::~DBManager ()
 void
 DBManager::Start ()
 {
-  QThread::start();
+  //QThread::start();
   QString dataDir = QDesktopServices::storageLocation
                     (QDesktopServices::DataLocation);
   QString eventBasename = dataDir + QDir::separator() + QString ("events.sql");
   eventBasename = Settings().value ("database/events",eventBasename).toString();
   Settings().setValue ("database/events",eventBasename);
-  Settings().sync ();
   
 
   StartDB (eventDB, "eventBaseCon", eventBasename);
@@ -83,7 +82,7 @@ DBManager::Stop ()
   if (dbRunning) {
     dbRunning = false;
     eventDB.close ();
-    QThread::exit ();
+//    QThread::exit ();
   }
 }
 
