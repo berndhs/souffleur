@@ -21,7 +21,6 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-
 #include <QDesktopServices>
 #include <QFile>
 #include <QDir>
@@ -56,7 +55,6 @@ DBManager::~DBManager ()
 void
 DBManager::Start ()
 {
-  //QThread::start();
   QString dataDir = QDesktopServices::storageLocation
                     (QDesktopServices::DataLocation);
   QString eventBasename = dataDir + QDir::separator() + QString ("events.sql");
@@ -82,7 +80,6 @@ DBManager::Stop ()
   if (dbRunning) {
     dbRunning = false;
     eventDB.close ();
-//    QThread::exit ();
   }
 }
 

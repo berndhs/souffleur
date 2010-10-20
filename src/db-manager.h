@@ -21,13 +21,13 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QThread>
 #include <QSqlDatabase>
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
 #include "agenda-repeat.h"
 #include <QMap>
+#include <QObject>
 
 namespace agenda
 {
