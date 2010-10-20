@@ -23,6 +23,8 @@
  ****************************************************************/
  
 #include <QStringList>
+#include <iostream>
+#include <stdlib.h>
 
 namespace deliberate {
 
@@ -53,6 +55,10 @@ Settings ()
 {
   if (mySettings) {
     mySettings = new QSettings;
+  }
+  if (mySettings == 0) {
+    std::cerr << "Cannot allocate Settings, have to quit" << std::endl;
+    abort ();
   }
   return *mySettings;
 }
