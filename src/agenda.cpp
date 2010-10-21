@@ -168,13 +168,27 @@ Agenda::Restart ()
 void
 Agenda::Quit ()
 {
-  QSize currentSize = size();
-  Settings().setValue ("sizes/main",currentSize);
-  Settings().sync();
+  CloseCleanup ();
   if (app) {
     app->quit();
   }
+}
+
+void
+Agenda::closeEvent (QCloseEvent *event)
+{
+  Q_UNUSED (event)
+  CloseCleanup ();
+}
+
+void
+Agenda::CloseCleanup ()
+{
+  QSize currentSize = size();
+  Settings().setValue ("sizes/main",currentSize);
+  mainUi.activityList->SaveSettings ();
   db.Stop ();
+  Settings().sync();
 }
 
 void

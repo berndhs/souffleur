@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=souffleur
-VERSION=0.0.4
+VERSION=0.0.5
 PACKDIR=${HOME}/packaging/sched
 
 makearchive.sh ${NAME}-${VERSION} master

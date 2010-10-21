@@ -23,6 +23,7 @@
  ****************************************************************/
 
 #include <QTableWidget>
+#include <QVector>
 
 namespace agenda
 {
@@ -41,6 +42,7 @@ public:
   void Init (DBManager *dbm);
 
   void Load ();
+  void SaveSettings ();
 
 private:
 

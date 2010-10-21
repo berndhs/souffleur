@@ -57,6 +57,8 @@ public:
   void  AddConfigMessages (const QStringList & cm) 
            { configMessages.append (cm); }
 
+  void closeEvent ( QCloseEvent *event);
+
 private slots:
 
   void Quit ();
@@ -84,6 +86,7 @@ private slots:
 private:
 
   void Connect ();
+  void CloseCleanup ();
 
   bool             initDone;
   QApplication    *app;

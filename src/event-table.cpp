@@ -47,6 +47,24 @@ EventTable::Init (DBManager *dbm)
   db = dbm;
   dateForm = Settings().value ("display/dateform",dateForm).toString();
   Settings().setValue ("display/dateform",dateForm);
+  int numCols = columnCount();
+  for (int c=0; c<numCols; c++) {
+    int cw = columnWidth (c);
+    QString colname (QString ("sizes/eventwidth%1").arg(c));
+    cw = Settings().value (colname,cw).toInt();
+    Settings().setValue (colname, cw);
+    setColumnWidth (c, cw);
+  }
+}
+
+void
+EventTable::SaveSettings ()
+{
+  int nc = columnCount ();
+  for (int c=0; c<nc; c++) {
+    Settings().setValue (QString("sizes/eventwidth%1").arg(c),
+                  columnWidth (c));
+  }
 }
 
 void
