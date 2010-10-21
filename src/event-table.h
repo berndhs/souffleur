@@ -23,13 +23,16 @@
  ****************************************************************/
 
 #include <QTableWidget>
-#include <QVector>
+#include <QTableWidgetItem>
+#include <QList>
+#include "agenda-event.h"
+
+class QAction ;
 
 namespace agenda
 {
 
 class DBManager;
-class AgendaEvent;
 
 class EventTable : public QTableWidget
 {
@@ -43,6 +46,14 @@ public:
 
   void Load ();
   void SaveSettings ();
+
+private slots:
+
+  void CellPicked (QTableWidgetItem *item);
+
+signals:
+
+  void PickedEvent (AgendaEvent event);
 
 private:
 
@@ -59,6 +70,8 @@ private:
       };
 
   void DisplayEvent (int row, AgendaEvent & event);
+  QAction * CellMenu (const QTableWidgetItem *item,
+                      const QList<QAction *>  extraActions = QList<QAction*>());
 
   DBManager   *db;
   QString      dateForm;
