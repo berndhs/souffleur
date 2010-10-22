@@ -142,6 +142,8 @@ Agenda::Connect ()
            this, SLOT (NewShell (AgendaShell)));
   connect (itemEdit, SIGNAL (NewRepeat (AgendaRepeat)),
            this, SLOT (NewRepeat (AgendaRepeat)));
+  connect (mainUi.activityList, SIGNAL (DeleteEvent (QUuid)),
+           this, SLOT (DeleteWanted (QUuid)));
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
   connect (scheduler, SIGNAL (NewShell (AgendaShell)),
@@ -248,13 +250,26 @@ Agenda::Exiting ()
 }
 
 void
+Agenda::Refresh ()
+{
+  mainUi.activityList->Load ();
+  scheduler->Refresh ();
+}
+
+void
+Agenda::DeleteWanted (QUuid uuid)
+{
+  db.DeleteAll (uuid);
+  QTimer::singleShot (200,this, SLOT (Refresh()));
+}
+
+void
 Agenda::NewEvent (AgendaEvent event)
 {
   qDebug () << " new event " << event.Id() 
             << event.Nick() << event.Time() << event.Description();
   db.Write (event);
-  mainUi.activityList->Load ();
-  scheduler->Refresh ();
+  QTimer::singleShot (200,this, SLOT (Refresh()));
 }
 
 void
@@ -262,7 +277,7 @@ Agenda::NewWarning (AgendaWarning warning)
 {
   qDebug () << " new warning " << warning.Id() << " at " << warning.Time();
   db.Write (warning);
-  scheduler->Refresh ();
+  QTimer::singleShot (200,this, SLOT (Refresh()));
 }
 
 void
@@ -311,7 +326,7 @@ Agenda::CleanOld ()
   QDateTime now = QDateTime::currentDateTime();
   now.addDays (-2);
   db.DeleteOldEvents (now.toTime_t());
-  mainUi.activityList->Load ();
+  QTimer::singleShot (200,this, SLOT (Refresh()));
 }
 
 void

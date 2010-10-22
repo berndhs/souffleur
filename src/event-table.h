@@ -49,11 +49,11 @@ public:
 
 private slots:
 
-  void CellPicked (QTableWidgetItem *item);
+  void CellPicked (QTableWidgetItem *cell);
 
 signals:
 
-  void PickedEvent (AgendaEvent event);
+  void DeleteEvent (QUuid uuid);
 
 private:
 
@@ -69,8 +69,9 @@ private:
       Cell_Desc = 3
       };
 
-  void DisplayEvent (int row, AgendaEvent & event);
-  QAction * CellMenu (const QTableWidgetItem *item,
+  void  DisplayEvent (int row, AgendaEvent & event);
+  bool  FindUuid (int row, QUuid & uuid);
+  QAction * CellMenu (const QTableWidgetItem *cell,
                       const QList<QAction *>  extraActions = QList<QAction*>());
 
   DBManager   *db;

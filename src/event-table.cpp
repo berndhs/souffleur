@@ -31,6 +31,7 @@
 #include <QAction>
 #include <QDesktopServices>
 #include <QClipboard>
+#include <QApplication>
 #include <QMenu>
 #include <QUrl>
 
@@ -113,26 +114,25 @@ EventTable::DisplayEvent (int row, AgendaEvent & event)
 }
 
 void
-EventTable::CellPicked (QTableWidgetItem *item)
+EventTable::CellPicked (QTableWidgetItem *cell)
 {
-  CellType typ = CellType (item->data (Role_Celltype).toInt());
-  CellMenu (item);
+  CellMenu (cell);
 }
 
 QAction *
-EventTable::CellMenu (const QTableWidgetItem *item,
+EventTable::CellMenu (const QTableWidgetItem *cell,
                       const QList<QAction *>  extraActions)
 {
-  if (item == 0) {
+  if (cell == 0) {
     return 0;
   }
   QMenu menu (this);
   QAction * copyAction = new QAction (tr("Copy Text"),this);
-  copyAction->setIcon(QPixmap(":/images/copy.png"));
   QAction * mailAction = new QAction (tr("Mail Text"),this);
-  mailAction->setIcon(QPixmap(":/images/mail.png"));
+  QAction * deleteAction = new QAction (tr("Delete Event"),this);
   menu.addAction (copyAction);
   menu.addAction (mailAction);
+  menu.addAction (deleteAction);
   if (extraActions.size() > 0) {
     menu.addSeparator ();
   }
@@ -144,19 +144,48 @@ EventTable::CellMenu (const QTableWidgetItem *item,
   if (select == copyAction) {
     QClipboard *clip = QApplication::clipboard ();
     if (clip) {
-      clip->setText (item->text());  
+      clip->setText (cell->text());  
     }
     return 0;
   } else if (select == mailAction) {
     QStringList mailBodytotal;
-    QString mailBody = item->text();
+    QString mailBody = cell->text();
     QString urltext = tr("mailto:?body=%1")
                       .arg (mailBody);
     QDesktopServices::openUrl (QUrl (urltext));
     return 0;
+  } else if (select == deleteAction) {
+    QUuid uuid;
+    bool ok (false);
+    if (CellType (cell->data (Role_Celltype).toInt()) == Cell_Nick) {
+      uuid = QUuid (cell->data (Role_Uuid).toString());
+qDebug () << " nick cell clicked, uuid is " << uuid;
+      ok = true;
+    } else {
+      ok = FindUuid (cell->row(), uuid);
+qDebug () << " other cell, ok " << ok << " uuid " << uuid;
+    }
+    if (ok) {
+      emit DeleteEvent (uuid);
+    }
   } else {
     return select;
   }
+}
+
+bool
+EventTable::FindUuid (int row, QUuid & uuid)
+{
+  int nc = columnCount();
+  QTableWidgetItem * cell(0);
+  for (int c=0; c<nc; c++) {
+    cell = item (row, c);
+    if (CellType (cell->data (Role_Celltype).toInt()) == Cell_Nick) {
+      uuid = QUuid (cell->data (Role_Uuid).toString()); 
+      return true;
+    }
+  }
+  return false;
 }
 
 

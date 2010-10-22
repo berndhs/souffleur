@@ -74,6 +74,10 @@ private slots:
   void Minimize ();
   void CleanOld ();
 
+  void Refresh ();
+
+  void DeleteWanted (QUuid uuid);
+
   void NewEvent (AgendaEvent event);
   void NewWarning (AgendaWarning warning);
   void NewShell (AgendaShell shell);
