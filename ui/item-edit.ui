@@ -103,17 +103,33 @@
    <item row="1" column="0" colspan="2">
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QCheckBox" name="warnCheck">
+      <widget class="QRadioButton" name="onceCheck">
        <property name="text">
-        <string>Warn</string>
+        <string>Once</string>
        </property>
+       <attribute name="buttonGroup">
+        <string>warnOrRepeatGroup</string>
+       </attribute>
       </widget>
      </item>
      <item>
-      <widget class="QCheckBox" name="repeatCheck">
+      <widget class="QRadioButton" name="warnCheck">
+       <property name="text">
+        <string>Pre-Warn</string>
+       </property>
+       <attribute name="buttonGroup">
+        <string>warnOrRepeatGroup</string>
+       </attribute>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="repeatCheck">
        <property name="text">
         <string>Repeat</string>
        </property>
+       <attribute name="buttonGroup">
+        <string>warnOrRepeatGroup</string>
+       </attribute>
       </widget>
      </item>
     </layout>
@@ -307,5 +323,6 @@
  <connections/>
  <buttongroups>
   <buttongroup name="repeatGroup"/>
+  <buttongroup name="warnOrRepeatGroup"/>
  </buttongroups>
 </ui>
