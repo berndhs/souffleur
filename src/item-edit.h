@@ -52,9 +52,8 @@ public slots:
 
 private slots:
 
-  void ChangeWarning (int newState);
-  void ChangeRepeat  (int newState);
   void RepeatChanged (QAbstractButton * button);
+  void ArrangeFrames (QAbstractButton * button);
 
 signals:
 
