@@ -132,6 +132,8 @@ Agenda::Connect ()
            this, SLOT (ToggleCal ()));
   connect (mainUi.actionClearOld, SIGNAL (triggered()),
            this, SLOT (CleanOld ()));
+  connect (mainUi.actionRevive, SIGNAL (triggered()),
+           this, SLOT (Revive ()));
   connect (mainUi.actionRestart, SIGNAL (triggered()),
            this, SLOT (Restart ()));
   connect (itemEdit, SIGNAL (NewEvent (AgendaEvent)),
@@ -327,6 +329,14 @@ Agenda::CleanOld ()
   now.addDays (-2);
   db.DeleteOldEvents (now.toTime_t());
   QTimer::singleShot (200,this, SLOT (Refresh()));
+}
+
+void
+Agenda::Revive ()
+{
+  if (scheduler) {
+    scheduler->Revive ();
+  }
 }
 
 void

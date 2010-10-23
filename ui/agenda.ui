@@ -122,6 +122,7 @@
      <string>Maintenance</string>
     </property>
     <addaction name="actionClearOld"/>
+    <addaction name="actionRevive"/>
    </widget>
    <addaction name="menuAgenda"/>
    <addaction name="menuMaintenance"/>
@@ -160,6 +161,11 @@
   <action name="actionLicense">
    <property name="text">
     <string>License</string>
+   </property>
+  </action>
+  <action name="actionRevive">
+   <property name="text">
+    <string>Revive Expired</string>
    </property>
   </action>
  </widget>

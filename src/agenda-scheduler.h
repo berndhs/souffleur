@@ -26,6 +26,7 @@
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
+#include "agenda-repeat.h"
 #include <map>
 
 class QTimer;
@@ -47,6 +48,7 @@ public:
 
   void Start ();
   void Refresh ();
+  void Revive ();
 
 private slots:
 
@@ -69,6 +71,7 @@ private:
   void LoadWarnings (bool initial = false);
   void LoadWarning  (EventScheduleMap & sched, const AgendaWarning & event);
   void Launch (EventScheduleMap & sched);
+  void Repeat (const AgendaRepeat & repeat, const AgendaEvent & event);
 
   void Dump ();
 

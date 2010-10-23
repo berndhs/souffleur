@@ -207,38 +207,92 @@ qDebug () << " event has command " << hasShell << shell.Command ();
         AgendaRepeat repeat;
         bool hasRepeat = db->Read (uuid, repeat);
         if (hasRepeat) {
-          AgendaEvent repEvent (event);
-          quint64 delay = repeat.Delay();
-          QString kind = repeat.Kind();
-          QDateTime time = QDateTime::fromTime_t (event.Time());
-          bool makeNew = (delay > 0);
-          if (kind == "min") {
-            time = time.addSecs (delay * 60);
-          } else if (kind == "hour") {
-            time = time.addSecs (delay * 60 * 60); 
-          } else if (kind == "day") {
-            time = time.addDays (delay);
-          } else if (kind == "month") {
-            time = time.addMonths (delay);
-          } else {
-            makeNew = false;
-          }
-          if (makeNew) {
-            quint64 repTime = time.toTime_t();
-            repEvent.SetTime (repTime);
-            db->RemoveEvent (event.Id());
-            db->RemoveAllWarnings (event.Id());
-            db->Write (repEvent);
-            repeatCount++;
-            if (repTime < nextLaunch) {
-              nextLaunch = repTime;
-            } 
-          } else {
-            db->DeleteAll (event.Id());
-          }
+          Repeat (repeat, event);
         } else {
           db->DeleteAll (event.Id());
         }
+      }
+    }
+  }
+}
+
+
+void
+AgendaScheduler::Repeat (const AgendaRepeat & repeat, const AgendaEvent & event)
+{
+  AgendaEvent repEvent (event);
+  quint64 delay = repeat.Delay();
+  QString kind = repeat.Kind();
+  QDateTime time = QDateTime::fromTime_t (event.Time());
+  bool makeNew = (delay > 0);
+  if (kind == "min") {
+    time = time.addSecs (delay * 60);
+  } else if (kind == "hour") {
+    time = time.addSecs (delay * 60 * 60); 
+  } else if (kind == "day") {
+    time = time.addDays (delay);
+  } else if (kind == "month") {
+    time = time.addMonths (delay);
+  } else {
+    makeNew = false;
+  }
+  if (makeNew) {
+    quint64 repTime = time.toTime_t();
+    repEvent.SetTime (repTime);
+    db->RemoveEvent (event.Id());
+    db->RemoveAllWarnings (event.Id());
+    db->Write (repEvent);
+    repeatCount++;
+    if (repTime < nextLaunch) {
+      nextLaunch = repTime;
+    } 
+  } else {
+    db->DeleteAll (event.Id());
+  }
+}
+
+void
+AgendaScheduler::Revive ()
+{
+  if (db == 0) {
+    return;
+  }
+  int itId = db->OpenReadEvents ();
+  if (itId <= 0) {
+      return;
+  }
+  AgendaEvent event;
+  AgendaRepeat repeat;
+  while (db->ReadNext (itId, event)) {
+    QDateTime now = QDateTime::currentDateTime();
+    quint64 nowT = now.toTime_t();
+    if (event.Time() > nowT) {
+      continue;
+    }
+    bool hasRepeat = db->Read (event.Id(), repeat);
+    if (hasRepeat) {   
+      quint64 delay = repeat.Delay();
+      QString kind = repeat.Kind();
+      QDateTime time = QDateTime::fromTime_t (event.Time());
+      while (delay > 0 && time < now) {    
+        if (kind == "min") {
+          time = time.addSecs (delay * 60);
+        } else if (kind == "hour") {
+          time = time.addSecs (delay * 60 * 60); 
+        } else if (kind == "day") {
+          time = time.addDays (delay);
+        } else if (kind == "month") {
+          time = time.addMonths (delay);
+        } else {
+          delay = 0;
+        }
+      }
+      if (time.toTime_t() > event.Time()) { 
+        AgendaEvent repEvent (event);
+        repEvent.SetTime (time.toTime_t());    
+        db->RemoveEvent (event.Id());
+        db->RemoveAllWarnings (event.Id());
+        db->Write (repEvent);
       }
     }
   }

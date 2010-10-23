@@ -73,6 +73,7 @@ private slots:
   void ToggleCal ();
   void Minimize ();
   void CleanOld ();
+  void Revive ();
 
   void Refresh ();
 
