@@ -49,10 +49,8 @@ ItemEdit::ItemEdit (QWidget *parent)
   repeatChecked = ui.norepeatCheck;
   connect (ui.saveButton, SIGNAL (clicked()), this, SLOT (Save()));
   connect (ui.cancelButton, SIGNAL (clicked()), this, SLOT (reject()));
-  connect (ui.warnCheck, SIGNAL (stateChanged (int)),
-            this, SLOT (ChangeWarning (int)));
-  connect (ui.repeatCheck, SIGNAL (stateChanged (int)),
-            this, SLOT (ChangeRepeat (int)));
+  connect (ui.warnOrRepeatGroup, SIGNAL (buttonClicked (QAbstractButton *)),
+           this, SLOT (ArrangeFrames (QAbstractButton *)));
   connect (ui.repeatGroup, SIGNAL (buttonClicked (QAbstractButton *)),
            this, SLOT (RepeatChanged (QAbstractButton*)));
   ui.saveButton->setDefault (false);
@@ -87,6 +85,7 @@ ItemEdit::Clear ()
   ui.whatEdit->clear ();
   ui.shortCheck->setChecked (false);
   ui.longCheck->setChecked (false);
+  ui.onceCheck->setChecked (true);
   ui.norepeatCheck->setChecked (true);
   repeatChecked = ui.norepeatCheck;
   ui.warningFrame->hide ();
@@ -143,25 +142,20 @@ ItemEdit::Save ()
   accept ();
 }
 
-void
-ItemEdit::ChangeWarning (int newState)
-{
-  qDebug () << " new Warning state " << newState;
-  if (newState == 0) {
-    ui.warningFrame->hide();
-  } else {
-    ui.warningFrame->show();
-  }
-}
 
 void
-ItemEdit::ChangeRepeat (int newState)
+ItemEdit::ArrangeFrames (QAbstractButton *button)
 {
-  qDebug () << " new Repeat state " << newState;
-  if (newState == 0) {
-    ui.repeatFrame->hide();
+  Q_UNUSED (button)
+  if (ui.repeatCheck->isChecked ()) {
+    ui.repeatFrame->show ();
+    ui.warningFrame->hide ();
+  } else if (ui.warnCheck->isChecked ()) {
+    ui.repeatFrame->hide ();
+    ui.warningFrame->show ();
   } else {
-    ui.repeatFrame->show();
+    ui.repeatFrame->hide ();
+    ui.warningFrame->hide ();
   }
 }
 

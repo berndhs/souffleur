@@ -336,6 +336,7 @@ Agenda::Revive ()
 {
   if (scheduler) {
     scheduler->Revive ();
+    Refresh ();
   }
 }
 

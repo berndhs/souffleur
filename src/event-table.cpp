@@ -159,11 +159,9 @@ EventTable::CellMenu (const QTableWidgetItem *cell,
     bool ok (false);
     if (CellType (cell->data (Role_Celltype).toInt()) == Cell_Nick) {
       uuid = QUuid (cell->data (Role_Uuid).toString());
-qDebug () << " nick cell clicked, uuid is " << uuid;
       ok = true;
     } else {
       ok = FindUuid (cell->row(), uuid);
-qDebug () << " other cell, ok " << ok << " uuid " << uuid;
     }
     if (ok) {
       emit DeleteEvent (uuid);
