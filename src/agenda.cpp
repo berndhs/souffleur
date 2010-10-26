@@ -107,6 +107,11 @@ Agenda::Run ()
   if (scheduler) {
     scheduler->Start ();
   }
+  QDateTime now = QDateTime::currentDateTime();
+  int numOld = db.NumOldEvents (QDateTime::currentDateTime().toTime_t());
+  if (numOld) {
+    AskRevive (numOld);
+  }
   return true;
 }
 
@@ -337,6 +342,21 @@ Agenda::Revive ()
   if (scheduler) {
     scheduler->Revive ();
     Refresh ();
+  }
+}
+
+void
+Agenda::AskRevive (int numOld)
+{
+  QMessageBox::StandardButton dorevive =
+      QMessageBox::question (this, tr("Revive Old Events ?"),
+                    tr("There are %1 expired events, \n"
+                       "Do you want to bring them up to date?")
+                       .arg (numOld),
+                    QMessageBox::Yes | QMessageBox::No,
+                    QMessageBox::No);
+  if (dorevive == QMessageBox::Yes) {
+    Revive ();
   }
 }
 

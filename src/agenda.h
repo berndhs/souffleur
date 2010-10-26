@@ -92,6 +92,7 @@ private:
 
   void Connect ();
   void CloseCleanup ();
+  void AskRevive (int numOld);
 
   bool             initDone;
   QApplication    *app;

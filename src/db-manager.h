@@ -58,6 +58,8 @@ public:
 
   void  RemoveOrphans ();
 
+  int   NumOldEvents (quint64 beforeTime);
+
   void  DeleteOldEvents (quint64 beforeTime);
   void  DeleteAll (const QUuid & eventId);
   int   OpenReadEvents ();

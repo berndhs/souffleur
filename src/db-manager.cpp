@@ -411,6 +411,21 @@ DBManager::ReadNext (int iteratorId, AgendaWarning & warn)
   }
 }
 
+int
+DBManager::NumOldEvents (quint64 beforeTime)
+{
+  QSqlQuery select (eventDB);
+  QString cmd (QString("select count(eventid) from events "
+                       " where time < %1 ").arg (beforeTime));
+  bool ok = select.exec (cmd);
+  qDebug () << " select result " << ok << select.executedQuery ();
+  int num (0);
+  if (ok && select.next ()) {
+    num = select.value (0).toInt();
+  }
+  return num;
+}
+
 void
 DBManager::DeleteOldEvents (quint64 beforeTime)
 {
