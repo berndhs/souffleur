@@ -1,7 +1,9 @@
 #!/bin/bash
 
 NAME=souffleur
-VERSION=0.0.7
+VERSION=`grep "ProgramVersion::VersionNumber" src/version.cpp \
+        | awk '{print $3;}' \
+        | sed s/[\(\"\;\)]//g`
 PACKDIR=${HOME}/packaging/sched
 
 makearchive.sh ${NAME}-${VERSION} master
