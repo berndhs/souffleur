@@ -1,0 +1,12 @@
+
+[Desktop Entry]
+Name=Souffleur Agenda Planner
+GenericName=Daily Event Planner Application
+Comment=Keep a Schedule and Remind the User to Do Things
+Exec=souffleur
+Icon=souffleur
+StartupNotify=false
+Terminal=false
+Type=Application
+Categories=Utility;
+X-Desktop-File-Install-Version=0.16

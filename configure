@@ -207,8 +207,15 @@ cat Makefile.in >> Makefile
 #
 # tell the user what to do next
 #
-echo ""
-echo "qmake is                  " $QMAKE
-echo "Installation prefix is    " $PREFIX
-echo "Now you can build with    " $MAKE_PROGRAM
+showmsg () {
+  echo "     " $* 
+  echo $* >> config.last
+}
+
+echo "" > config.last
+showmsg ""
+showmsg 'qmake is..................' $QMAKE
+showmsg 'Installation prefix is....' $PREFIX 
+showmsg 'Now you can build with....' $MAKE_PROGRAM 
+showmsg ""
 
