@@ -108,10 +108,7 @@ Agenda::Run ()
     scheduler->Start ();
   }
   QDateTime now = QDateTime::currentDateTime();
-  int numOld = db.NumOldEvents (QDateTime::currentDateTime().toTime_t());
-  if (numOld) {
-    AskRevive (numOld);
-  }
+  Revive ();
   return true;
 }
 
