@@ -37,7 +37,10 @@ Q_OBJECT
 
 public:
 
-  AgendaBox (QWidget *parent=0);
+  AgendaBox (QWidget *parent=0, bool oldVisible=false, bool oldMinimized=false);
+
+  bool WasVisible ();
+  bool WasMinimized ();
 
 public slots:
 
@@ -50,6 +53,9 @@ signals:
 
 private:
 
+  bool wasVisible;
+  bool wasMinimized;
+
 };
 
 class Notify : public QObject
@@ -60,11 +66,15 @@ public:
 
   Notify (QWidget *parent=0);
 
-  void ShowMessage (const AgendaEvent & event);
+  void ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimized);
 
 public slots:
 
   void BoxDone (AgendaBox *box);
+
+signals:
+
+  void MessageDone (bool wasVisible, bool wasMinimized);
 
 private:
  

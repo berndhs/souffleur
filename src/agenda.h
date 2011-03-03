@@ -87,6 +87,7 @@ private slots:
   void LaunchShell (AgendaShell shell);
 
   void Launched (int howmany);
+  void RestoreVisible (bool oldVisible, bool oldMinimized);
 
 private:
 
@@ -109,6 +110,7 @@ private:
   deliberate::HelpView        *helpView;
   QString          dateForm;
   bool             runAgain;
+  bool             visibleBeforeEvent;
 
 
 };

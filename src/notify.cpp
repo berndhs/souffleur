@@ -34,9 +34,23 @@ namespace agenda
 
 /** AgendaBox is the window that pops up from the notifier */
 
-AgendaBox::AgendaBox (QWidget *parent)
-  :QMessageBox (parent)
+AgendaBox::AgendaBox (QWidget *parent, bool oldVisible, bool oldMinimized)
+  :QMessageBox (parent),
+   wasVisible (oldVisible),
+   wasMinimized (oldMinimized)
 {
+}
+
+bool
+AgendaBox::WasVisible ()
+{
+  return wasVisible;
+}
+
+bool
+AgendaBox::WasMinimized ()
+{
+  return wasMinimized;
 }
 
 void
@@ -65,9 +79,9 @@ Notify::Notify (QWidget *parent)
 }
 
 void
-Notify::ShowMessage (const AgendaEvent & event)
+Notify::ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimized)
 {
-  AgendaBox * box = new AgendaBox (parentWidget);
+  AgendaBox * box = new AgendaBox (parentWidget, oldVisible, oldMinimized);
   activeBoxes.insert (box);
   connect (box, SIGNAL (Done(AgendaBox*)), this, SLOT (BoxDone (AgendaBox*)));
   QStringList mlist;
@@ -85,9 +99,12 @@ void
 Notify::BoxDone (AgendaBox *box)
 {
   if (box) {
+    bool oldVisible = box->WasVisible();
+    bool oldMinimized = box->WasMinimized ();
     activeBoxes.remove (box);
     disconnect (box, 0,0,0);
     box->deleteLater ();
+    emit MessageDone (oldVisible, oldMinimized);
   }
 }
 

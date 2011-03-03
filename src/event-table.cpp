@@ -169,6 +169,7 @@ EventTable::CellMenu (const QTableWidgetItem *cell,
   } else {
     return select;
   }
+  return 0;
 }
 
 bool

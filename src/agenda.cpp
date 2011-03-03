@@ -154,6 +154,8 @@ Agenda::Connect ()
            this, SLOT (LaunchShell (AgendaShell)));
   connect (scheduler, SIGNAL (Launched (int)),
            this, SLOT (Launched (int)));
+  connect (notify, SIGNAL (MessageDone(bool, bool)),
+           this, SLOT (RestoreVisible (bool, bool)));
 }
 
 void
@@ -311,7 +313,9 @@ void
 Agenda::LaunchEvent (AgendaEvent event)
 {
   if (notify) {
-    notify->ShowMessage (event);
+qDebug () << " Agenda::Launch Event visi " << isVisible () 
+          << " mini " << isMinimized();
+    notify->ShowMessage (event, isVisible(), isMinimized());
   }
 }
 
@@ -321,6 +325,16 @@ Agenda::LaunchShell (AgendaShell shell)
 qDebug () << " Agenda launch shell with " << shell.Command ();
   if (shellLauncher) {
     shellLauncher->Launch (shell);
+  }
+}
+
+void
+Agenda::RestoreVisible (bool oldVisible, bool oldMinimized)
+{
+  qDebug () << "Agenda::RestoreVisible " << oldVisible << oldMinimized;
+  setVisible (oldVisible);
+  if (oldMinimized) {
+    showMinimized ();
   }
 }
 
