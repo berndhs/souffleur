@@ -1,4 +1,8 @@
 %changelog
+* Thu Mar 03 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.9-1
+- do better job of restoring old visibility/minimized state after even
+- better packaging
+
 * Sat Dec 18 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.8-1
 - Revive in all cases
 
