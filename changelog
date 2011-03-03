@@ -1,0 +1,23 @@
+%changelog
+* Sat Dec 18 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.8-1
+- Revive in all cases
+
+* Sat Oct 23 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.7-1
+- warnings and repeats mutually exclusive
+
+* Fri Oct 22 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.6-1
+- revive expired repeated event to make them current and reschedulable
+- allow deleting events
+- context menu for event table cells
+- remember column width for next restart
+
+* Tue Oct 20 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.4-1
+- fixed problems with Settings initialization 
+
+* Tue Oct 19 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.3-1
+- Repeating Events support
+- Shell command execution on launched event
+
+* Fri Oct 15 2010 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.1-1
+- Initial RPM build
+
