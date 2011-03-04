@@ -318,7 +318,6 @@ qDebug () << " Agenda::Launch Event visi " << isVisible ()
     bool oldVisi = isVisible ();
     bool oldMini = isMinimized ();
     notify->ShowMessage (event, oldVisi, oldMini);
-    setFocus (Qt::PopupFocusReason);
   }
 }
 
