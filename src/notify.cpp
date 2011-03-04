@@ -98,7 +98,6 @@ Notify::ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimiz
   Q_UNUSED (oldMinimized)
 
   QStringList mlist;
-  mlist << event.Id().toString();
   mlist << event.Nick ();
   mlist << QDateTime::fromTime_t(event.Time()).toString("hh:mm:ss");
   mlist << event.Description ();
