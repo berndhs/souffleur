@@ -28,6 +28,11 @@ TEMPLATE = app
 
 QT += core gui sql webkit
 DEFINES += DELIBERATE_DEBUG=1
+
+CONFIG += link_pkgconfig
+PKGCONFIG += libnotify
+PKGCONFIG += gtk+-2.0
+
 UI_DIR = tmp/ui
 MOC_DIR = tmp/moc
 RCC_DIR = tmp/rcc

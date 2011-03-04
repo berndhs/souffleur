@@ -315,7 +315,10 @@ Agenda::LaunchEvent (AgendaEvent event)
   if (notify) {
 qDebug () << " Agenda::Launch Event visi " << isVisible () 
           << " mini " << isMinimized();
-    notify->ShowMessage (event, isVisible(), isMinimized());
+    bool oldVisi = isVisible ();
+    bool oldMini = isMinimized ();
+    notify->ShowMessage (event, oldVisi, oldMini);
+    setFocus (Qt::PopupFocusReason);
   }
 }
 

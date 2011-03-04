@@ -68,6 +68,8 @@ public:
 
   void ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimized);
 
+  static void SetAppName (const QString & name);
+
 public slots:
 
   void BoxDone (AgendaBox *box);
@@ -81,6 +83,8 @@ private:
   QWidget           *parentWidget;
   QSet <AgendaBox*>  activeBoxes;
   int                showTime;
+
+  static QString     appName;
 } ;
 
 } // namespace

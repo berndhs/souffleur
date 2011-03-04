@@ -26,11 +26,17 @@
 #include <QDateTime>
 #include <QDebug>
 #include "deliberate.h"
+#define DELIBERATE_QT_SIGNALS signals
+#undef signals
+#include <libnotify/notify.h>
 
 using namespace deliberate;
 
 namespace agenda
 {
+
+
+QString Notify::appName (QString::fromUtf8("Souffleur"));
 
 /** AgendaBox is the window that pops up from the notifier */
 
@@ -79,20 +85,50 @@ Notify::Notify (QWidget *parent)
 }
 
 void
+Notify::SetAppName (const QString & name)
+{
+  appName = name;
+}
+
+void
 Notify::ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimized)
 {
-  AgendaBox * box = new AgendaBox (parentWidget, oldVisible, oldMinimized);
-  activeBoxes.insert (box);
-  connect (box, SIGNAL (Done(AgendaBox*)), this, SLOT (BoxDone (AgendaBox*)));
+  Q_UNUSED (event)
+  Q_UNUSED (oldVisible)
+  Q_UNUSED (oldMinimized)
+
   QStringList mlist;
   mlist << event.Id().toString();
   mlist << event.Nick ();
   mlist << QDateTime::fromTime_t(event.Time()).toString("hh:mm:ss");
   mlist << event.Description ();
+
+  #if 0
+  AgendaBox * box = new AgendaBox (parentWidget, oldVisible, oldMinimized);
+  activeBoxes.insert (box);
+  connect (box, SIGNAL (Done(AgendaBox*)), this, SLOT (BoxDone (AgendaBox*)));
   box->setText (mlist.join ("\n"));
   qDebug () << "Launching Event " << mlist;
   QTimer::singleShot (showTime * 1000, box, SLOT (accept()));
+  box->setWindowModality (Qt::NonModal);
+  box->setFocus (Qt::PopupFocusReason);
   box->show ();
+  box->activateWindow ();
+  #endif
+
+  NotifyNotification *notification;
+  notification = notify_notification_new(appName.toUtf8().data(),
+        mlist.join("\n").toUtf8().data(), NULL, NULL);
+  if (notification) {
+    notify_notification_set_timeout(notification, showTime * 1000);
+        /* Schedule notification for showing */
+    if (!notify_notification_show(notification, NULL)) {
+      qDebug("Failed to send notification");
+    }
+ 
+    /* Clean up the memory */
+    g_object_unref(notification);
+  }
 }
 
 void
