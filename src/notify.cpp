@@ -117,7 +117,7 @@ Notify::ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimiz
 
   NotifyNotification *notification;
   notification = notify_notification_new(appName.toUtf8().data(),
-        mlist.join("\n").toUtf8().data(), NULL, NULL);
+        mlist.join("\n").toUtf8().data(), NULL);
   if (notification) {
     notify_notification_set_timeout(notification, showTime * 1000);
         /* Schedule notification for showing */
