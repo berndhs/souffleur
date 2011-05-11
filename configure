@@ -128,7 +128,7 @@ find_lrelease () {
 }
 
 find_notify () {
-  NOTI=N`pkg-config --nodversion libnotify`
+  NOTI=N`pkg-config --modversion libnotify`
   if [ $NOTI \< "N0.7" ]
   then 
      DELIBERATE_OLDNOTIFY=1
