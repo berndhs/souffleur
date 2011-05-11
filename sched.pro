@@ -28,6 +28,9 @@ TEMPLATE = app
 
 QT += core gui sql webkit
 DEFINES += DELIBERATE_DEBUG=1
+!include(options.pri) {
+  DEFINES += DELIBERATE_OLDNOTIFY=1
+}
 
 CONFIG += link_pkgconfig
 PKGCONFIG += libnotify
