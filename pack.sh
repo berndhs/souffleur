@@ -1,7 +1,7 @@
 #!/bin/bash
 
 NAME=souffleur
-CHANGELOG=changelog
+CHANGELOG=${NAME}.changes
 VERSION=`grep "ProgramVersion::VersionNumber" src/version.cpp \
         | awk '{print $3;}' \
         | sed s/[\(\"\;\)]//g`

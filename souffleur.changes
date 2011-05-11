@@ -1,4 +1,7 @@
 %changelog
+* Tue May 10 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.10-1
+- update packaging
+
 * Thu Mar 03 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.9-1
 - do better job of restoring old visibility/minimized state after even
 - better packaging
