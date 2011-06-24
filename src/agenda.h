@@ -92,6 +92,7 @@ private slots:
   void RestoreVisible (bool oldVisible, bool oldMinimized);
 
   void UpdateToolTip (const QDateTime & nextEvent);
+  void TrayIconActive (QSystemTrayIcon::ActivationReason reason);
 
 private:
 

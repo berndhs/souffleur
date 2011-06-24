@@ -164,6 +164,8 @@ Agenda::Connect ()
            this, SLOT (UpdateToolTip (const QDateTime &)));
   connect (notify, SIGNAL (MessageDone(bool, bool)),
            this, SLOT (RestoreVisible (bool, bool)));
+  connect (trayIcon,SIGNAL (activated ( QSystemTrayIcon::ActivationReason)),
+           this, SLOT (TrayIconActive (QSystemTrayIcon::ActivationReason)));
 }
 
 void
@@ -397,6 +399,16 @@ Agenda::UpdateToolTip (const QDateTime & nextEvent)
         + tr (" \n checking at %1")
          .arg (nextEvent.toString()));
   }
+}
+
+void
+Agenda::TrayIconActive (QSystemTrayIcon::ActivationReason reason)
+{
+  Q_UNUSED (reason)
+  if (isMinimized()) {
+    showNormal ();
+  }
+  raise ();
 }
 
 
