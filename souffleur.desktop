@@ -8,5 +8,5 @@ Icon=souffleur
 StartupNotify=false
 Terminal=false
 Type=Application
-Categories=Utility;X-TimeUtility;
+Categories=Office;Calendar;
 X-Desktop-File-Install-Version=0.16
