@@ -396,7 +396,7 @@ Agenda::UpdateToolTip (const QDateTime & nextEvent)
 {
   if (trayIcon) {
     trayIcon->setToolTip (windowTitle()
-        + tr (" \n checking at %1")
+        + tr (" \n next at %1")
          .arg (nextEvent.toString()));
   }
 }
