@@ -1,4 +1,7 @@
 %changelog
+* Thu Jun 23 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.12-1
+- raise hidden window
+
 * Thu Jun 23 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.11-1
 - replace notify library with system tray message
 
