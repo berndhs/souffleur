@@ -23,10 +23,12 @@
  ****************************************************************/
 #include <QObject>
 #include <QSet>
+#include <QDateTime>
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
 #include "agenda-repeat.h"
+#include "property.h"
 #include <map>
 
 class QTimer;
@@ -50,6 +52,8 @@ public:
   void Refresh ();
   void Revive ();
 
+  Property <QDateTime> nextEvent;
+
 private slots:
 
   void Poll ();
@@ -62,6 +66,7 @@ signals:
   void CurrentEvent (AgendaEvent event);
   void NewShell (AgendaShell shell);
   void Launched (int howmany);
+  void CheckAgain (const QDateTime & when);
 
 private:
  

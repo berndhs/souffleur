@@ -27,6 +27,7 @@
 #include <QObject>
 #include <QSet>
 #include <QMessageBox>
+#include <QSystemTrayIcon>
 
 namespace agenda
 {
@@ -68,6 +69,8 @@ public:
 
   void ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimized);
 
+  void SetTrayIcon (QSystemTrayIcon * tray);
+
   static void SetAppName (const QString & name);
 
 public slots:
@@ -83,6 +86,7 @@ private:
   QWidget           *parentWidget;
   QSet <AgendaBox*>  activeBoxes;
   int                showTime;
+  QSystemTrayIcon   *trayIcon;
 
   static QString     appName;
 } ;

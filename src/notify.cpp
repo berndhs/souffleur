@@ -28,7 +28,6 @@
 #include "deliberate.h"
 #define DELIBERATE_QT_SIGNALS signals
 #undef signals
-#include <libnotify/notify.h>
 
 using namespace deliberate;
 
@@ -78,10 +77,17 @@ AgendaBox::reject ()
 Notify::Notify (QWidget *parent)
   :QObject (parent),
    parentWidget (parent),
-   showTime (10)
+   showTime (10),
+   trayIcon (0)
 {
   showTime = Settings().value ("timers/showtime",showTime).toInt();
   Settings().setValue ("timers/showtime",showTime);
+}
+
+void
+Notify::SetTrayIcon (QSystemTrayIcon * tray)
+{
+  trayIcon = tray;
 }
 
 void
@@ -115,23 +121,11 @@ Notify::ShowMessage (const AgendaEvent & event, bool oldVisible, bool oldMinimiz
   box->activateWindow ();
   #endif
 
-  NotifyNotification *notification;
-#if DELIBERATE_OLDNOTIFY
-  notification = notify_notification_new(appName.toUtf8().data(),
-        mlist.join("\n").toUtf8().data(), NULL, NULL);
-#else
-  notification = notify_notification_new(appName.toUtf8().data(),
-        mlist.join("\n").toUtf8().data(), NULL);
-#endif
-  if (notification) {
-    notify_notification_set_timeout(notification, showTime * 1000);
-        /* Schedule notification for showing */
-    if (!notify_notification_show(notification, NULL)) {
-      qDebug("Failed to send notification");
-    }
- 
-    /* Clean up the memory */
-    g_object_unref(notification);
+  if (trayIcon) {
+    trayIcon->showMessage (appName,
+               mlist.join ("\n"),
+               QSystemTrayIcon::Information,
+               showTime * 1000); 
   }
 }
 

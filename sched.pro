@@ -32,9 +32,6 @@ DEFINES += DELIBERATE_DEBUG=1
   DEFINES += DELIBERATE_OLDNOTIFY=1
 }
 
-CONFIG += link_pkgconfig
-PKGCONFIG += libnotify
-PKGCONFIG += gtk+-2.0
 
 UI_DIR = tmp/ui
 MOC_DIR = tmp/moc
@@ -69,6 +66,7 @@ HEADERS = src/schedmain.h \
           src/notify.h \
           src/shell-launcher.h \
           src/helpview.h \
+          src/property.h \
 
 
 SOURCES = src/schedmain.cpp \

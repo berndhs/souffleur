@@ -45,6 +45,7 @@ AgendaScheduler::AgendaScheduler (QObject *parent)
 {
   pollTimer = new QTimer (this);
   connect (pollTimer, SIGNAL (timeout()), this, SLOT (Poll()));
+  nextEvent = QDateTime::currentDateTime().addYears (100);
 }
 
 void
@@ -115,6 +116,8 @@ AgendaScheduler::Poll ()
   qDebug () << " Poll at time " << now;
   EventScheduleMap::iterator it = future.begin();
   quint64 firstTime = it->first;
+  nextEvent = QDateTime::fromTime_t (firstTime);
+  emit CheckAgain (nextEvent());
   if (firstTime <= now) {
     Launch (future);
   } else if (firstTime < nextPoll) {
@@ -169,12 +172,18 @@ AgendaScheduler::Launch (EventScheduleMap & sched)
   }
   // check it there is more before the next poll time
   quint64 next = nextPoll;
+  quint64 checkTime (next + 60 * 60 * 24 * 365 * 100);
   it = sched.begin ();
   if (it != sched.end()) {
+    checkTime = it->first;
     next = qMin (it->first, next);
   }
   // if event is in the future, but before next poll,
   // we need to launch again
+  if (next > now) {
+    nextEvent = QDateTime::fromTime_t (checkTime);
+    emit CheckAgain (nextEvent());
+  }
   if (next > now && next < nextPoll) {
     now = QDateTime::currentDateTime().toTime_t();
     quint64 delay = next - now;

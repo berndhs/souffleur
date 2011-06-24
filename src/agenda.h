@@ -22,6 +22,8 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 #include <QMainWindow>
+#include <QSystemTrayIcon>
+#include <QDateTime>
 #include "ui_agenda.h"
 #include "config-edit.h"
 #include "db-manager.h"
@@ -89,6 +91,8 @@ private slots:
   void Launched (int howmany);
   void RestoreVisible (bool oldVisible, bool oldMinimized);
 
+  void UpdateToolTip (const QDateTime & nextEvent);
+
 private:
 
   void Connect ();
@@ -98,6 +102,7 @@ private:
   bool             initDone;
   QApplication    *app;
   Ui_AgendaMain    mainUi;
+  QSystemTrayIcon *trayIcon;
  
   ConfigEdit       configEdit;
   QStringList      configMessages;

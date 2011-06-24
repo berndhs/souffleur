@@ -127,15 +127,6 @@ find_lrelease () {
   fi
 }
 
-find_notify () {
-  NOTI=N`pkg-config --modversion libnotify`
-  if [ $NOTI \< "N0.7" ]
-  then 
-     DELIBERATE_OLDNOTIFY=1
-  else
-     DELIBERATE_OLDNOTIFY=0
-  fi
-}
 
 #
 # function to tell the user about options
@@ -158,9 +149,9 @@ usage () {
 
 COPYRIGHT=" Copyright (C) 2010, 2011 Bernd Stramm"
 PREFIX=/usr
+COMMAND_LINE="$0 $*"
 OPTIONS_FILE=options.pri
 find_distro
-find_notify
 
 # 
 # command line arguments:
@@ -225,7 +216,6 @@ fi
 echo "DISTRO = ${DISTRO}" > ${OPTIONS_FILE}
 echo "CONFIG += ${DISTRO}" >> ${OPTIONS_FILE}
 echo "DEFINES += DISTRO_${DISTRO}=1" >> ${OPTIONS_FILE}
-echo "DEFINES += DELIBERATE_OLDNOTIFY=${DELIBERATE_OLDNOTIFY}" >> ${OPTIONS_FILE}
 #
 # generate Makefile
 #
@@ -255,11 +245,12 @@ showmsg () {
 }
 
 echo "" > config.last
+showmsg `date --utc`
+showmsg $COMMAND_LINE
 showmsg ""
 showmsg 'qmake is..................' $QMAKE
 showmsg 'Installation prefix is....' $PREFIX 
 showmsg 'Distro setting is.........' $DISTRO
-showmsg 'old-notify is.............' $DELIBERATE_OLDNOTIFY
 showmsg 'Now you can build with....' $MAKE_PROGRAM 
 showmsg ""
 

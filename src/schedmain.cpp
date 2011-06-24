@@ -22,7 +22,6 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <libnotify/notify.h>
 #include <QApplication>
 #include "deliberate.h"
 #include "version.h"
@@ -44,7 +43,6 @@ main (int argc, char *argv[])
   deliberate::SetSettings (settings);
   settings.setValue ("program",pv.MyName());
  
-  notify_init(pv.MyName().toUtf8().data());  // Initialize libnotify
   agenda::Notify::SetAppName (pv.MyName());
 
   QApplication  app (argc, argv);

@@ -45,6 +45,7 @@ Agenda::Agenda (QWidget *parent)
   :QMainWindow (parent),
    initDone (false),
    app (0),
+   trayIcon (0),
    configEdit (this),
    db (this),
    itemEdit (0),
@@ -59,10 +60,14 @@ Agenda::Agenda (QWidget *parent)
                                   .toString();
   Settings().setValue ("display/dateform",QVariant (dateForm));
   mainUi.setupUi (this);
+  trayIcon = new QSystemTrayIcon (this);  
+  trayIcon->setIcon (windowIcon());
+  trayIcon->setToolTip (windowTitle());
   itemEdit = new ItemEdit (this);
   itemEdit->hide ();
   scheduler = new AgendaScheduler (this);
   notify = new Notify (this);
+  notify->SetTrayIcon (trayIcon);
   shellLauncher = new ShellLauncher (this);
   helpView = new HelpView (this);
   Connect ();
@@ -103,6 +108,7 @@ Agenda::Run ()
   resize (newsize);
   Settings().setValue ("sizes/main",newsize);
   show ();
+  trayIcon->show ();
   mainUi.activityList->Load ();
   if (scheduler) {
     scheduler->Start ();
@@ -154,6 +160,8 @@ Agenda::Connect ()
            this, SLOT (LaunchShell (AgendaShell)));
   connect (scheduler, SIGNAL (Launched (int)),
            this, SLOT (Launched (int)));
+  connect (scheduler, SIGNAL (CheckAgain (const QDateTime &)),
+           this, SLOT (UpdateToolTip (const QDateTime &)));
   connect (notify, SIGNAL (MessageDone(bool, bool)),
            this, SLOT (RestoreVisible (bool, bool)));
 }
@@ -378,6 +386,16 @@ Agenda::License ()
 {
   if (helpView) {
     helpView->Show ("qrc:/help/LICENSE.txt");
+  }
+}
+
+void
+Agenda::UpdateToolTip (const QDateTime & nextEvent)
+{
+  if (trayIcon) {
+    trayIcon->setToolTip (windowTitle()
+        + tr (" \n checking at %1")
+         .arg (nextEvent.toString()));
   }
 }
 

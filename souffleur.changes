@@ -1,4 +1,7 @@
 %changelog
+* Thu Jun 23 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.11-1
+- replace notify library with system tray message
+
 * Tue May 10 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.10-1
 - update packaging
 - auto-detect old/new libnotify in configure, using pkg-config
