@@ -22,40 +22,36 @@ Rectangle {
   }
   Component {
     id:eventListDelegate
-    Row {
-      id: eventListRow
-      Text {
-        id: eventTitleText
-        text: eventTitle
+    Rectangle {
+      id:normalDelegateRow
+      height:mainBox.rowHeight
+      width:mainBox.mainWidth
+      color:Qt.lighter (mainBox.color,isCurrent ? 1.5 : 1.2)
+      property bool isCurrent: index == eventList.currentIndex
+      Row {
+        id: eventListRow
+        Text {
+          id: eventTitleText
+          text: eventTitle + " "
+          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+        }
+        Text {
+          id: eventTimeText
+          text: eventWhen + " "
+          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+        }
+        Text {
+          id: eventWhatText
+          text: eventWhat + " "
+          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+        }
       }
-      Text {
-        id: eventTimeText
-        text: eventWhen
-      }
-      Text {
-        id: eventWhatText
-        text: eventWhat
-      }
-    }
-  }
-  Component {
-    id:eventListCurrentDelegate
-    Row {
-      id: eventListRow
-      Text {
-        id: eventTitleText
-        text: eventTitle
-        color: "red"
-      }
-      Text {
-        id: eventTimeText
-        text: eventWhen
-        color: "red"
-      }
-      Text {
-        id: eventWhatText
-        text: eventWhat
-        color: "red"
+      MouseArea {
+        anchors.fill:parent
+        onClicked: {
+          eventList.currentIndex = index
+          console.log ("clicked to make index " + eventList.currentIndex)
+        }
       }
     }
   }
@@ -64,9 +60,9 @@ Rectangle {
     id:eventList
     model:cppEventListModel
     delegate: eventListDelegate
-    highlight:eventListCurrentDelegate
     width: mainBox.mainWidth
     height: mainBox.mainHeight * 0.75
+    currentIndex: -1
     clip: true
     anchors {
       top:buttonRow.bottom
