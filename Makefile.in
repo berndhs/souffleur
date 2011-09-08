@@ -13,11 +13,11 @@
 #// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 #//
 
-PRO_FILE = sched.pro
+PRO_FILE = souffleur-linux.pro
 MAKEFILE = MakeSched
 TOP_MAKEFILE = Makefile
 TARGETS = bin/souffleur
-DESKTOP_FILE = souffleur.desktop
+DESKTOP_FILE = linux/souffleur.desktop
 DESKTOP_DIR = /usr/share/applications
 ICON_FILE = souffleur.png
 ICON_DIR = /usr/share/pixmaps

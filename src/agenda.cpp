@@ -35,6 +35,9 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QCursor>
+#include <QDeclarativeContext>
+
+#define AGENDA_PRETTY_DEBUG qDebug() << "__agenda__" << __PRETTY_FUNCTION__ 
 
 using namespace deliberate;
 
@@ -42,24 +45,27 @@ namespace agenda
 {
 
 Agenda::Agenda (QWidget *parent)
-  :QMainWindow (parent),
+  :QDeclarativeView (parent),
    initDone (false),
-   app (0),
-   trayIcon (0),
+   app (nullptr),
+   trayIcon (nullptr),
    configEdit (this),
    db (this),
-   itemEdit (0),
-   scheduler (0),
-   notify (0),
-   shellLauncher (0),
-   helpView (0),
+   itemEdit (nullptr),
+   scheduler (nullptr),
+   notify (nullptr),
+   shellLauncher (nullptr),
+   helpView (nullptr),
    dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
-   runAgain (false)
+   runAgain (false),
+   visibleBeforeEvent (false),
+   qmlRoot (nullptr),
+   events (nullptr)
 {
+  AGENDA_PRETTY_DEBUG ;
   dateForm = Settings().value ("display/dateform", dateForm)
                                   .toString();
   Settings().setValue ("display/dateform",QVariant (dateForm));
-  mainUi.setupUi (this);
   trayIcon = new QSystemTrayIcon (this);  
   trayIcon->setIcon (windowIcon());
   trayIcon->setToolTip (windowTitle());
@@ -70,7 +76,7 @@ Agenda::Agenda (QWidget *parent)
   notify->SetTrayIcon (trayIcon);
   shellLauncher = new ShellLauncher (this);
   helpView = new HelpView (this);
-  Connect ();
+  events = new EventList (this);
 }
 
 void
@@ -80,10 +86,13 @@ Agenda::Init (QApplication &ap)
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   Settings().sync();
   db.Start ();
-  mainUi.activityList->Init (&db);
+  //mainUi.activityList->Init (&db);
   scheduler->Init (&db);
-  mainUi.calendarWidget->setVisible (false);
+  //mainUi.calendarWidget->setVisible (false);
   initDone = true;
+  if (events) {
+    events->Init (&db);
+  }
 }
 
 bool
@@ -103,13 +112,26 @@ Agenda::Run ()
     return false;
   }
   qDebug () << " Start Agenda";
+  QDeclarativeContext * context = rootContext ();
+  if (context) {
+    context->setContextProperty ("cppEventListModel",events);
+  }
+  setSource (QUrl ("qrc:///qml/main.qml"));
+  qmlRoot = qobject_cast<QDeclarativeItem*> (rootObject());
+  AGENDA_PRETTY_DEBUG << " root " << qmlRoot;
+  setResizeMode(QDeclarativeView::SizeRootObjectToView);
+  Connect ();
+  show ();
+  if (events) {
+    events->Load();
+  }
   QSize defaultSize = size();
   QSize newsize = Settings().value ("sizes/main", defaultSize).toSize();
   resize (newsize);
   Settings().setValue ("sizes/main",newsize);
   show ();
   trayIcon->show ();
-  mainUi.activityList->Load ();
+  //mainUi.activityList->Load ();
   if (scheduler) {
     scheduler->Start ();
   }
@@ -121,6 +143,8 @@ Agenda::Run ()
 void
 Agenda::Connect ()
 {
+  connect (qmlRoot, SIGNAL (quit()),this, SLOT(Quit()));
+#if 0
   connect (mainUi.actionQuit, SIGNAL (triggered()), this, SLOT (Quit()));
   connect (mainUi.actionSettings, SIGNAL (triggered()),
            this, SLOT (EditSettings()));
@@ -166,6 +190,7 @@ Agenda::Connect ()
            this, SLOT (RestoreVisible (bool, bool)));
   connect (trayIcon,SIGNAL (activated ( QSystemTrayIcon::ActivationReason)),
            this, SLOT (TrayIconActive (QSystemTrayIcon::ActivationReason)));
+#endif
 }
 
 void
@@ -204,7 +229,7 @@ Agenda::CloseCleanup ()
 {
   QSize currentSize = size();
   Settings().setValue ("sizes/main",currentSize);
-  mainUi.activityList->SaveSettings ();
+  //mainUi.activityList->SaveSettings ();
   db.Stop ();
   Settings().sync();
 }
@@ -237,8 +262,8 @@ Agenda::PickedDate (const QDate & date)
 void
 Agenda::ToggleCal ()
 {
-  bool seeit = mainUi.calendarWidget->isVisible ();
-  mainUi.calendarWidget->setVisible (!seeit);
+  bool seeit = false; //mainUi.calendarWidget->isVisible ();
+ // mainUi.calendarWidget->setVisible (!seeit);
   
 }
 
@@ -268,7 +293,7 @@ Agenda::Exiting ()
 void
 Agenda::Refresh ()
 {
-  mainUi.activityList->Load ();
+  //mainUi.activityList->Load ();
   scheduler->Refresh ();
 }
 
@@ -300,7 +325,7 @@ void
 Agenda::Launched (int howmany)
 {
   if (howmany > 0) {
-    mainUi.activityList->Load();
+    //mainUi.activityList->Load();
   }
 }
 

@@ -21,16 +21,18 @@
  *  Foundation, Inc., 51 Franklin Street, Fifth Floor, 
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
-#include <QMainWindow>
+#include <QDeclarativeView>
 #include <QSystemTrayIcon>
 #include <QDateTime>
-#include "ui_agenda.h"
 #include "config-edit.h"
 #include "db-manager.h"
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
+#include "event-list.h"
 #include "helpview.h"
+
+#include <QDeclarativeItem>
 
 class QApplication;
 class QDate;
@@ -44,7 +46,7 @@ class AgendaScheduler;
 class Notify;
 class ShellLauncher;
 
-class Agenda : public QMainWindow
+class Agenda : public QDeclarativeView
 {
 Q_OBJECT
 
@@ -102,7 +104,6 @@ private:
 
   bool             initDone;
   QApplication    *app;
-  Ui_AgendaMain    mainUi;
   QSystemTrayIcon *trayIcon;
  
   ConfigEdit       configEdit;
@@ -117,6 +118,9 @@ private:
   QString          dateForm;
   bool             runAgain;
   bool             visibleBeforeEvent;
+
+  QDeclarativeItem * qmlRoot;
+  EventList        * events;
 
 
 };

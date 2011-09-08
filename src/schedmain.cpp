@@ -53,7 +53,7 @@ main (int argc, char *argv[])
   opts.AddSoloOption ("debug","D",QObject::tr("show Debug log window"));
   opts.AddStringOption ("logdebug","L",QObject::tr("write Debug log to file"));
 
-  deliberate::UseMyOwnMessageHandler ();
+  //deliberate::UseMyOwnMessageHandler ();
 
   bool optsOk = opts.Parse (argc, argv);
   if (!optsOk) {

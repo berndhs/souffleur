@@ -1,5 +1,5 @@
-#ifndef EVENT_TABLE_H
-#define EVENT_TABLE_H
+#ifndef AGENDA_EVENT_LIST_H
+#define AGENDA_EVENT_LIST_H
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -22,64 +22,48 @@
  *  Boston, MA  02110-1301, USA.
  ****************************************************************/
 
-#include <QTableWidget>
-#include <QTableWidgetItem>
-#include <QList>
 #include "agenda-event.h"
-
-class QAction ;
+#include "db-manager.h"
+#include <QAbstractListModel>
+#include <QList>
+#include <QObject>
 
 namespace agenda
 {
-
-class DBManager;
-
-class EventTable : public QTableWidget
+class EventList : public QAbstractListModel
 {
 Q_OBJECT
 
 public:
 
-  EventTable (QWidget *parent=0);
+  EventList (QObject *parent=0);
+
+  int rowCount (const QModelIndex & index = QModelIndex()) const;
+  QVariant data (const QModelIndex & index, int role = Qt::DisplayRole) const;
 
   void Init (DBManager *dbm);
 
   void Load ();
   void SaveSettings ();
 
-private slots:
-
-  void CellPicked (QTableWidgetItem *cell);
-
-signals:
-
-  void DeleteEvent (QUuid uuid);
-
 private:
 
-  enum DataRole {
-      Role_Celltype = Qt::UserRole+1,
-      Role_Uuid     = Qt::UserRole+2
-      };
+  void addEvent (const AgendaEvent & event);
+  void clear ();
 
-  enum CellType {
-      Cell_None = 0,
-      Cell_Nick = 1,
-      Cell_Time = 2,
-      Cell_Desc = 3
-      };
+  enum DataType {
+    Type_Title = Qt::UserRole+1,
+    Type_When = Qt::UserRole+2,
+    Type_What = Qt::UserRole+3
+  };
 
-  void  DisplayEvent (int row, AgendaEvent & event);
-  bool  FindUuid (int row, QUuid & uuid);
-  QAction * CellMenu (const QTableWidgetItem *cell,
-                      const QList<QAction *>  extraActions = QList<QAction*>());
+  QList <AgendaEvent>  eventList;
+  DBManager           *db;
+  QString              dateForm;
 
-  DBManager   *db;
-  QString      dateForm;
 
 };
 
 } // namespace
 
 #endif
-
