@@ -56,7 +56,7 @@ ShellLauncher::Launch (const AgendaShell & shell)
   processes.insert (newProc);
   connect (newProc, SIGNAL (Finished (AgendaProcess*)),
            this, SLOT (Finished (AgendaProcess*)));
-  newProc->execute (shell.Command());
+  newProc->startDetached (shell.Command());
 }
 
 void

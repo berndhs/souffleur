@@ -102,9 +102,10 @@ main (int argc, char *argv[])
   
   if (isPhone) {
     QFont normalFont = app.font();
-    normalFont.setPointSize (normalFont.pointSize() + 6);
+    normalFont.setPointSize (normalFont.pointSize() + 8);
     app.setFont (normalFont);
   }
+  
   agenda::Agenda   agenda;
   
   app.setWindowIcon (agenda.windowIcon());

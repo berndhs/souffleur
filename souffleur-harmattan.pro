@@ -48,8 +48,20 @@ contains(MEEGO_EDITION,harmattan) {
     INSTALLS += icon
 }
 
+contains(MEEGO_EDITION,harmattan) {
+   audiofiles.files += sounds/alert.wav
+   audiofiles.path = /opt/souffleur/audio
+   INSTALLS += audiofiles
+}
 
 
 
 
 
+
+
+contains(MEEGO_EDITION,harmattan) {
+    desktopfile.files = $${TARGET}.desktop
+    desktopfile.path = /usr/share/applications
+    INSTALLS += desktopfile
+}

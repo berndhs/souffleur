@@ -37,6 +37,7 @@
 #include <QDateTime>
 #include <QCursor>
 #include <QDeclarativeContext>
+#include <QMediaPlayer>
 
 #define AGENDA_PRETTY_DEBUG qDebug() << "__agenda__" << __PRETTY_FUNCTION__ 
 
@@ -56,6 +57,7 @@ Agenda::Agenda (QWidget *parent)
    scheduler (nullptr),
    notify (nullptr),
    shellLauncher (nullptr),
+   audioAlerter (nullptr),
    helpView (nullptr),
    dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
    runAgain (false),
@@ -79,6 +81,7 @@ Agenda::Agenda (QWidget *parent)
   shellLauncher = new ShellLauncher (this);
   helpView = new HelpView (this);
   events = new EventList (this);
+  audioAlerter = new QMediaPlayer (this);
 }
 
 void
@@ -151,6 +154,25 @@ void
 Agenda::Connect ()
 {
   connect (qmlRoot, SIGNAL (quit()),this, SLOT(Quit()));
+  bool ok = connect (qmlRoot, SIGNAL (saveNewEvent(const QString &, const QString &, const QString&,
+                                         const QString &)),
+           this, SLOT (SaveNewEvent(const QString &, const QString &, const QString &,
+                                    const QString &)));
+  qDebug () << " connect newEvent " << ok;
+  connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
+           this, SLOT (LaunchEvent (AgendaEvent)));
+  connect (scheduler, SIGNAL (NewShell (AgendaShell)),
+           this, SLOT (LaunchShell (AgendaShell)));
+  connect (scheduler, SIGNAL (Launched (int)),
+           this, SLOT (Launched (int)));
+  connect (scheduler, SIGNAL (CheckAgain (const QDateTime &)),
+           this, SLOT (UpdateToolTip (const QDateTime &)));
+  connect (notify, SIGNAL (MessageDone(bool, bool)),
+           this, SLOT (RestoreVisible (bool, bool)));
+  if (!assumePhone) {
+    connect (trayIcon,SIGNAL (activated ( QSystemTrayIcon::ActivationReason)),
+           this, SLOT (TrayIconActive (QSystemTrayIcon::ActivationReason)));
+  }
 #if 0
   connect (mainUi.actionQuit, SIGNAL (triggered()), this, SLOT (Quit()));
   connect (mainUi.actionSettings, SIGNAL (triggered()),
@@ -185,18 +207,6 @@ Agenda::Connect ()
            this, SLOT (NewRepeat (AgendaRepeat)));
   connect (mainUi.activityList, SIGNAL (DeleteEvent (QUuid)),
            this, SLOT (DeleteWanted (QUuid)));
-  connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
-           this, SLOT (LaunchEvent (AgendaEvent)));
-  connect (scheduler, SIGNAL (NewShell (AgendaShell)),
-           this, SLOT (LaunchShell (AgendaShell)));
-  connect (scheduler, SIGNAL (Launched (int)),
-           this, SLOT (Launched (int)));
-  connect (scheduler, SIGNAL (CheckAgain (const QDateTime &)),
-           this, SLOT (UpdateToolTip (const QDateTime &)));
-  connect (notify, SIGNAL (MessageDone(bool, bool)),
-           this, SLOT (RestoreVisible (bool, bool)));
-  connect (trayIcon,SIGNAL (activated ( QSystemTrayIcon::ActivationReason)),
-           this, SLOT (TrayIconActive (QSystemTrayIcon::ActivationReason)));
 #endif
 }
 
@@ -300,7 +310,7 @@ Agenda::Exiting ()
 void
 Agenda::Refresh ()
 {
-  //mainUi.activityList->Load ();
+  events->Refresh ();
   scheduler->Refresh ();
 }
 
@@ -314,7 +324,7 @@ Agenda::DeleteWanted (QUuid uuid)
 void
 Agenda::NewEvent (AgendaEvent event)
 {
-  qDebug () << " new event " << event.Id() 
+  AGENDA_PRETTY_DEBUG << event.Id() 
             << event.Nick() << event.Time() << event.Description();
   db.Write (event);
   QTimer::singleShot (200,this, SLOT (Refresh()));
@@ -323,7 +333,7 @@ Agenda::NewEvent (AgendaEvent event)
 void
 Agenda::NewWarning (AgendaWarning warning)
 {
-  qDebug () << " new warning " << warning.Id() << " at " << warning.Time();
+  AGENDA_PRETTY_DEBUG << warning.Id() << " at " << warning.Time();
   db.Write (warning);
   QTimer::singleShot (200,this, SLOT (Refresh()));
 }
@@ -332,7 +342,36 @@ void
 Agenda::Launched (int howmany)
 {
   if (howmany > 0) {
-    //mainUi.activityList->Load();
+    events->Refresh();
+  }
+}
+
+void
+Agenda::SaveNewEvent(const QString &title, const QString &time, const QString &description,
+                     const QString & command)
+{
+  AGENDA_PRETTY_DEBUG << title << time << description << command;
+  QString format1 ("yyyy-MM-dd hh:mm:ss");
+  QString format2 ("yyyy-MM-dd hh:mm");
+  QDateTime attempt (QDateTime::fromString(time,format1));
+  quint64 stamp;
+  if (attempt.isValid()) {
+    stamp = attempt.toTime_t();
+  } else {
+    attempt = QDateTime::fromString (time,format2);
+    if (attempt.isValid()) {
+      stamp = attempt.toTime_t();
+    } else {
+      return; // bad date, give up
+    }
+  }
+  qDebug () << " new event time " << time << " using " << dateForm;
+  AgendaEvent event (title, stamp, description);
+  qDebug () << " converted to " << event.Time();
+  NewEvent (event);
+  if (!command.isEmpty()) {
+    AgendaShell shellCommand (event.Id(), command);
+    NewShell (shellCommand);
   }
 }
 
@@ -354,12 +393,36 @@ Agenda::NewRepeat (AgendaRepeat repeat)
 void
 Agenda::LaunchEvent (AgendaEvent event)
 {
+  AGENDA_PRETTY_DEBUG;
+  
   if (notify) {
 qDebug () << " Agenda::Launch Event visi " << isVisible () 
           << " mini " << isMinimized();
     bool oldVisi = isVisible ();
     bool oldMini = isMinimized ();
     notify->ShowMessage (event, oldVisi, oldMini);
+  }
+  AGENDA_PRETTY_DEBUG << audioAlerter;
+  if (audioAlerter) {
+    if (assumePhone) {
+      audioAlerter->setMedia (QUrl::fromLocalFile("/opt/souffleur/audio/alert.wav"));
+    } else {
+      audioAlerter->setMedia(QUrl("qrc:///alerts/alert.wav"));
+    }
+    audioAlerter->setVolume(50);
+    QTimer::singleShot (1,audioAlerter,SLOT (play()));
+    if (assumePhone) {
+      showFullScreen();
+      show ();
+      raise ();
+    }
+    AGENDA_PRETTY_DEBUG << " alerter ok "  << audioAlerter->isAudioAvailable();
+    AGENDA_PRETTY_DEBUG << " media   ok "  << audioAlerter->mediaStatus();
+    AGENDA_PRETTY_DEBUG << " media duration "  << audioAlerter->duration();
+    AGENDA_PRETTY_DEBUG << " alerter error " << audioAlerter->errorString();
+    AGENDA_PRETTY_DEBUG << " media url " << audioAlerter->media().canonicalUrl();
+  } else {
+    AGENDA_PRETTY_DEBUG << " no alerter !!";
   }
 }
 

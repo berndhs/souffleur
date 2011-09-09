@@ -50,7 +50,6 @@ EventList::EventList (QObject *parent)
 void
 EventList::Init (DBManager * dbm)
 {
-  AGENDA_PRETTY_DEBUG << dbm;
   db = dbm;
   dateForm = Settings().value ("display/dateform",dateForm).toString();
   Settings().setValue ("display/dateform",dateForm);
@@ -59,17 +58,22 @@ EventList::Init (DBManager * dbm)
 int
 EventList::rowCount(const QModelIndex &index) const
 {
-  AGENDA_PRETTY_DEBUG << index;
   Q_UNUSED (index)
   int count = eventList.count();
-  AGENDA_PRETTY_DEBUG << " return " << count;
   return count;
+}
+
+void
+EventList::Refresh ()
+{
+  beginResetModel ();
+  Load ();
+  endResetModel ();
 }
    
 void
 EventList::clear ()
 {
-  AGENDA_PRETTY_DEBUG ;
   if (!eventList.isEmpty()) {
     beginRemoveRows(QModelIndex(),0,rowCount()-1);
     eventList.clear ();
@@ -80,7 +84,6 @@ EventList::clear ()
 void
 EventList::Load ()
 {
-  AGENDA_PRETTY_DEBUG ;
   clear ();
   if (db) {
     int it = db->OpenReadEvents();
@@ -97,7 +100,6 @@ EventList::Load ()
 QVariant
 EventList::data (const QModelIndex & index, int role) const
 {
-  AGENDA_PRETTY_DEBUG << index << role;
   int row = index.row();
   if (row < 0 || row > eventList.count()) {
     return QVariant();

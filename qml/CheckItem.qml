@@ -29,8 +29,8 @@ Rectangle {
   width: checkBox.width + checkText.width + textIndent
   property bool isChecked: false
   property real textIndent: 8
-  property string imageTrue: "/checked-yes.png"
-  property string imageFalse: "/checked-no.png"
+  property string imageTrue: ":/icons/checked-yes.png"
+  property string imageFalse: "qrc:/icons/checked-no.png"
   property alias text: checkText.text
   property alias font: checkText.font
   property alias imageHeight: checkBox.height

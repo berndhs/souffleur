@@ -21,4 +21,8 @@
     <qresource prefix="/alerts">
         <file alias="alert.wav">sounds/alert.wav</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file alias="checked-no.png">icons/checked-no.png</file>
+        <file alias="checked-yes.png">icons/checked-yes.png</file>
+    </qresource>
 </RCC>

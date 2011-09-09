@@ -45,6 +45,8 @@ public:
 
   void Load ();
   void SaveSettings ();
+  
+  void Refresh ();
 
 private:
 

@@ -11,6 +11,8 @@ Rectangle {
   property real rowHeight: 42
   property real nickWidth: mainWidth * 0.25
   signal quit ()
+  signal saveNewEvent (string title, string time, string description, string command)
+  
   Row {
     id:buttonRow
     spacing:32
@@ -43,13 +45,6 @@ Rectangle {
       color:Qt.lighter (mainBox.color,isCurrent ? 1.5 : 1.2)
       property bool isCurrent: index == eventList.currentIndex
       Column {
-        Rectangle {
-          width:mainBox.mainWidth * 0.6667
-          anchors { left: parent.left; leftMargin: mainBox.nickWidth * 0.5 }
-          height:1
-          color: "white"
-          visible:index > 0
-        }
         
         Row {
           id: eventListRow
@@ -108,5 +103,8 @@ Rectangle {
       horizontalCenter: mainBox.horizontalCenter
     }
     z: eventList.z+1
+    onSaveEvent: {
+      mainBox.saveNewEvent (theTitle, theTime, theDescription, command)
+    }
   }
 }

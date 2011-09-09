@@ -36,6 +36,7 @@
 
 class QApplication;
 class QDate;
+class QMediaPlayer;
 
 
 namespace agenda 
@@ -95,6 +96,11 @@ private slots:
 
   void UpdateToolTip (const QDateTime & nextEvent);
   void TrayIconActive (QSystemTrayIcon::ActivationReason reason);
+  
+  void SaveNewEvent (const QString & title, 
+                     const QString & time, 
+                     const QString & description,
+                     const QString & command);
 
 private:
 
@@ -114,6 +120,7 @@ private:
   AgendaScheduler *scheduler;
   Notify          *notify;
   ShellLauncher   *shellLauncher;
+  QMediaPlayer    *audioAlerter;
   deliberate::HelpView        *helpView;
   QString          dateForm;
   bool             runAgain;
