@@ -29,10 +29,11 @@ include ("souffleur-common.pri")
 target.path = /usr/local/bin
 INSTALLS += target
 
-DESKTOPFILE = linux/souffleur.desktop
+desktopfile.files = linux/souffleur.desktop
 desktopfile.path = /usr/local/share/applications
 INSTALLS += desktopfile
 
-ICONFILE = souffleur.png
-iconfile.path = /usr/local/share/pixmaps
-INSTALLS += iconfile
+
+icon.files = souffleur.png
+icon.path = /usr/local/share/pixmaps
+INSTALLS += icon

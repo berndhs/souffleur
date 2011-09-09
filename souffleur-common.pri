@@ -48,6 +48,9 @@ HEADERS = include/schedmain.h \
           include/shell-launcher.h \
           include/helpview.h \
           include/property.h \
+          include/magic-defs.h \
+          include/orientation.h \
+          include/date-time-checker.h \
 
 
 SOURCES = src/schedmain.cpp \
@@ -65,3 +68,10 @@ SOURCES = src/schedmain.cpp \
           src/notify.cpp \
           src/shell-launcher.cpp \
           src/helpview.cpp \
+          src/orientation.cpp \
+          src/date-time-checker.cpp \
+
+
+OTHER_FILES += \
+    sounds/alert.wav
+

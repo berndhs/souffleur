@@ -6,6 +6,7 @@
         <file>qml/CopyPasteMenu.qml</file>
         <file>qml/GetString.qml</file>
         <file>qml/main.qml</file>
+        <file>qml/ItemEdit.qml</file>
     </qresource>
     <qresource prefix="/schemas">
         <file alias="events.sql">schemas/events.sql</file>
@@ -16,5 +17,8 @@
     </qresource>
     <qresource prefix="/help">
         <file alias="LICENSE.txt">helpfiles/LICENSE.txt</file>
+    </qresource>
+    <qresource prefix="/alerts">
+        <file alias="alert.wav">sounds/alert.wav</file>
     </qresource>
 </RCC>

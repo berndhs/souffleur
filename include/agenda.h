@@ -54,7 +54,7 @@ public:
 
   Agenda (QWidget *parent=0);
 
-  void  Init (QApplication &ap);
+  void  Init (QApplication &ap, bool isPhone=false);
   bool  Run ();
   bool  Again ();
 
@@ -121,6 +121,8 @@ private:
 
   QDeclarativeItem * qmlRoot;
   EventList        * events;
+  
+  bool             assumePhone;
 
 
 };

@@ -40,15 +40,10 @@ release: $(MAKEFILE) FORCE
 	$(MAKE) -f $(MAKEFILE) release
 
 install: all FORCE
-	install -d $(DESTDIR)
-	install -m 0755 -p $(TARGETS) $(DESTDIR)
+	make -f $(MAKEFILE) install
 
-desktop: install
-	install -d $(DESKTOP_DIR)
-	install -m 0644 -p $(DESKTOP_FILE) $(DESKTOP_DIR)
-	install -d $(ICON_DIR)
-	install -m 0644 -p $(ICON_FILE) $(ICON_DIR)
-	
+uninstall: $(MAKEFILE) FORCE
+	make -f $(MAKEFILE) uninstall
 
 qmake: 
 	$(QMAKE) $(PRO_FILE) -o $(MAKEFILE)

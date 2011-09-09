@@ -41,3 +41,15 @@ contains(MEEGO_EDITION,harmattan) {
     INSTALLS += target
 }
 
+
+contains(MEEGO_EDITION,harmattan) {
+    icon.files = souffleur-harmattan.png
+    icon.path = /usr/share/icons/hicolor/80x80/apps
+    INSTALLS += icon
+}
+
+
+
+
+
+

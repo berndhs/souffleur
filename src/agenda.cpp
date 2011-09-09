@@ -22,6 +22,7 @@
  ****************************************************************/
 
 #include <QApplication>
+#include "magic-defs.h"
 #include "deliberate.h"
 #include "version.h"
 #include "item-edit.h"
@@ -60,7 +61,8 @@ Agenda::Agenda (QWidget *parent)
    runAgain (false),
    visibleBeforeEvent (false),
    qmlRoot (nullptr),
-   events (nullptr)
+   events (nullptr),
+   assumePhone (false)
 {
   AGENDA_PRETTY_DEBUG ;
   dateForm = Settings().value ("display/dateform", dateForm)
@@ -80,9 +82,10 @@ Agenda::Agenda (QWidget *parent)
 }
 
 void
-Agenda::Init (QApplication &ap)
+Agenda::Init (QApplication &ap, bool isPhone)
 {
   app = &ap;
+  assumePhone = isPhone;
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   Settings().sync();
   db.Start ();
@@ -125,10 +128,14 @@ Agenda::Run ()
   if (events) {
     events->Load();
   }
-  QSize defaultSize = size();
-  QSize newsize = Settings().value ("sizes/main", defaultSize).toSize();
-  resize (newsize);
-  Settings().setValue ("sizes/main",newsize);
+  if (assumePhone) {
+    showFullScreen();
+  } else {
+    QSize defaultSize = size();
+    QSize newsize = Settings().value ("sizes/main", defaultSize).toSize();
+    resize (newsize);
+    Settings().setValue ("sizes/main",newsize);
+  }
   show ();
   trayIcon->show ();
   //mainUi.activityList->Load ();

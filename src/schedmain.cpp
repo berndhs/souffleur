@@ -23,12 +23,20 @@
  ****************************************************************/
 
 #include <QApplication>
+#include <QSystemDeviceInfo>
+#include <QFont>
 #include "deliberate.h"
 #include "version.h"
 #include "cmdoptions.h"
 #include "agenda.h"
 #include "notify.h"
 
+#include "magic-defs.h"
+#include "date-time-checker.h"
+
+#include <qdeclarative.h>
+
+QTM_USE_NAMESPACE
 
 int
 main (int argc, char *argv[])
@@ -44,8 +52,20 @@ main (int argc, char *argv[])
   settings.setValue ("program",pv.MyName());
  
   agenda::Notify::SetAppName (pv.MyName());
+  
+  char staticUri[] = "moui.geuzen.utils.static";
+  
+  qmlRegisterType<agenda::DateTimeChecker> (staticUri,1,0,"DateTimeChecker");
 
   QApplication  app (argc, argv);
+  
+  QSystemDeviceInfo sdi;
+
+  QString imsi = sdi.imsi();
+  QString imei = sdi.imei();
+  bool isPhone (!(imsi.isEmpty() || imei.isEmpty()));
+  qDebug () << __PRETTY_FUNCTION__ << " phone ? " << isPhone;
+  
 
   QStringList  configMessages;
 
@@ -53,7 +73,6 @@ main (int argc, char *argv[])
   opts.AddSoloOption ("debug","D",QObject::tr("show Debug log window"));
   opts.AddStringOption ("logdebug","L",QObject::tr("write Debug log to file"));
 
-  //deliberate::UseMyOwnMessageHandler ();
 
   bool optsOk = opts.Parse (argc, argv);
   if (!optsOk) {
@@ -77,28 +96,23 @@ main (int argc, char *argv[])
   }
   bool showDebug = opts.SeenOpt ("debug");
 
-  deliberate::StartDebugLog (showDebug);
-  bool logDebug = opts.SeenOpt ("logdebug");
-  if (logDebug) {
-    QString logfile ("/dev/null");
-    opts.SetStringOpt ("logdebug",logfile);
-    deliberate::StartFileLog (logfile);
-  }
-
+  qDebug () << __PRETTY_FUNCTION__ << " gcc version " << GCC_VERSION;
   
   int result;
-  bool again (false);
-  do {
-    agenda::Agenda   agenda;
-
-    app.setWindowIcon (agenda.windowIcon());
-    agenda.Init (app);
-    agenda.AddConfigMessages (configMessages);
-
-    agenda.Run ();
-    result = app.exec ();
-    qDebug () << " QApplication exec finished ";
-    again = agenda.Again ();
-  } while (again);
+  
+  if (isPhone) {
+    QFont normalFont = app.font();
+    normalFont.setPointSize (normalFont.pointSize() + 6);
+    app.setFont (normalFont);
+  }
+  agenda::Agenda   agenda;
+  
+  app.setWindowIcon (agenda.windowIcon());
+  agenda.Init (app,isPhone);
+  agenda.AddConfigMessages (configMessages);
+  
+  agenda.Run ();
+  result = app.exec ();
+  qDebug () << " QApplication exec finished ";
   return result;
 }
