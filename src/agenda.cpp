@@ -122,25 +122,39 @@ Agenda::Run ()
   if (context) {
     context->setContextProperty ("cppEventListModel",events);
   }
-  setSource (QUrl ("qrc:///qml/main.qml"));
-  qmlRoot = qobject_cast<QDeclarativeItem*> (rootObject());
-  AGENDA_PRETTY_DEBUG << " root " << qmlRoot;
+  AGENDA_PRETTY_DEBUG << " phone ? " << assumePhone;
+  QSize normalSize (600,400);
+  if (assumePhone) {
+    showFullScreen();
+    normalSize = size();
+  } else {
+    showNormal ();
+    normalSize = Settings().value ("sizes/main", normalSize).toSize();
+    resize (normalSize);
+    Settings().setValue ("sizes/main",normalSize);
+  }
+  AGENDA_PRETTY_DEBUG << __LINE__ << " resize mode " << resizeMode();
   setResizeMode(QDeclarativeView::SizeRootObjectToView);
+  AGENDA_PRETTY_DEBUG << __LINE__ << " resize mode " << resizeMode();
+  setSource (QUrl ("qrc:///qml/main.qml"));
+  setResizeMode(QDeclarativeView::SizeRootObjectToView);
+  qmlRoot = qobject_cast<QDeclarativeItem*> (rootObject());
+  AGENDA_PRETTY_DEBUG << __LINE__ << " resize mode " << resizeMode();
+  AGENDA_PRETTY_DEBUG << " root " << qmlRoot;
+  if (!assumePhone) {
+    resize (normalSize);
+  }
+  AGENDA_PRETTY_DEBUG << " size "  << size() << " normal is " << normalSize;
+  AGENDA_PRETTY_DEBUG << __LINE__ << " resize mode " << resizeMode();
+                        
   Connect ();
   show ();
   if (events) {
     events->Load();
   }
-  if (assumePhone) {
-    showFullScreen();
-  } else {
-    QSize defaultSize = size();
-    QSize newsize = Settings().value ("sizes/main", defaultSize).toSize();
-    resize (newsize);
-    Settings().setValue ("sizes/main",newsize);
+  if (!assumePhone) {
+    trayIcon->show ();
   }
-  show ();
-  trayIcon->show ();
   //mainUi.activityList->Load ();
   if (scheduler) {
     scheduler->Start ();

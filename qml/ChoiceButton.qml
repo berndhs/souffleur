@@ -35,6 +35,7 @@ Rectangle {
   property real commonMargin: 4
   property color topColor: "#d3d3d3"
   property color bottomColor: "#f0f0f0"
+  property alias font: label.font
 
   signal labelChanged (string text)
 

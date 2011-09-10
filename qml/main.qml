@@ -2,16 +2,17 @@ import QtQuick 1.0
 import moui.geuzen.utils.static 1.0
 
 Rectangle {
-  width: 4096
-  height: 4096
+  width: 1024
+  height: 1024
   id: mainBox
-  color: "#f0f0cc"
+  color: "transparent"
   visible: true
   rotation: 0
   property bool isPortrait: false
   property bool isInverted: false
   property real rowHeight: 42
-  property real nickWidth: mainWidth * 0.25  
+  property real nickWidth: mainWidth * 0.25 
+  property color mainColor: "#f0f0c0"
   x: isPortrait ? (isInverted ? (width - height) * 0.5 : (height - width) * 0.5) : 0
   property real mainWidth: isPortrait ? height : width
   property real mainHeight: isPortrait ? width : height
@@ -52,6 +53,7 @@ Rectangle {
     ChoiceButton {
       id:addButton
       labelText: qsTr("+")
+      font.weight: Font.Bold
       topColor: "#e7e755"
       height:mainBox.rowHeight
       radius: height * 0.5
@@ -68,7 +70,7 @@ Rectangle {
       id:normalDelegateRow
       height:mainBox.rowHeight
       width:mainBox.mainWidth
-      color:Qt.lighter (mainBox.color,isCurrent ? 1.5 : 1.2)
+      color:Qt.lighter (mainBox.mainColor,isCurrent ? 1.5 : 1.2)
       property bool isCurrent: index == eventList.currentIndex
       Column {
         

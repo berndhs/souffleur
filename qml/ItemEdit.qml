@@ -63,18 +63,18 @@ Rectangle {
     }
     
     Rectangle {
-      width: mainBox.timeWidth
-      height: mainBox.rowHeight
+      id: timeFlowBox
+      width: timeRow.width
+      height: timeRow.height
       color: "transparent"
       radius:mainBox.radius - 1
-      Row {
+      Flow {
         id: timeRow
         spacing: 4
-        height: mainBox.rowHeight
-
+        width: mainBox.width
         Rectangle {
           id: itemTime
-          width: mainBox.timeWidth - saveButton.width - timeRow.spacing - commandCheck.width
+          width: 400
           height: mainBox.rowHeight
           color: itemTimeText.focus ? "white" : Qt.darker (mainBox.color, 1.3)
           radius:mainBox.radius - 1
@@ -109,9 +109,9 @@ Rectangle {
           id: saveButton
           labelText: qsTr ("Save")
           height: mainBox.rowHeight * 0.8
+          width: labelWidth + 8
           radius: height * 0.5
           topColor: "#aaff99"
-          anchors { verticalCenter: itemTime.verticalCenter }
           onPressed: {
             if (itemTime.checkDate()) {
               mainBox.save (itemNickText.text, 
@@ -125,6 +125,7 @@ Rectangle {
         }
       }
     }
+    
     Row {
       CheckItem {
         id: commandCheck
@@ -149,6 +150,7 @@ Rectangle {
         }
       }
     }
+    
     Rectangle {
       id: itemCommand
       width: mainBox.width
