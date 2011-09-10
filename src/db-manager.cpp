@@ -72,6 +72,7 @@ DBManager::Start ()
                 << "repeats";
 
   CheckDBComplete (eventDB, eventElements);
+  CheckEventsComplete (eventDB, "events");
 }
 
 void
@@ -141,17 +142,40 @@ DBManager::ElementType (QSqlDatabase & db, const QString & name)
   return QString ("none");
 }
 
+void
+DBManager::CheckEventsComplete (QSqlDatabase & db, const QString & tableName)
+{
+  QSqlQuery query (db);
+  QString pat ("select sql from main.sqlite_master where type == \"table\" "
+               " AND name == \"%1\"");
+  QString cmd = pat.arg (tableName);
+  bool ok = query.exec (cmd);
+  if (ok && query.next()) {
+    QString schema = query.value(0).toString();
+    qDebug () << " Events schema " << schema;
+    if (schema.contains ("audible")) {
+      return;
+    }
+    QString alterTable ("alter table %1 add column audible INTEGER default 0");
+    QSqlQuery alter (db);
+    bool ok = alter.exec (alterTable.arg(tableName));
+    qDebug () << __PRETTY_FUNCTION__ << alter.executedQuery() << " ok: " << ok;
+  }
+}
+
+
 bool
 DBManager::Write (const AgendaEvent & event)
 {
   QSqlQuery insert (eventDB);
   insert.prepare ("insert or replace into events "
-                  " (eventid, nick, time, description) "
-                  " values (?, ?, ?, ?)");
+                  " (eventid, nick, time, description, audible) "
+                  " values (?, ?, ?, ?, ?)");
   insert.bindValue (0,QVariant (event.Id ()));
   insert.bindValue (1,QVariant (event.Nick ()));
   insert.bindValue (2,QVariant (event.Time ()));
   insert.bindValue (3,QVariant (event.Description ()));
+  insert.bindValue (4,QVariant (event.Audible()));
   bool ok = insert.exec ();
   qDebug () << " event insert " << ok << insert.executedQuery();
   Write (AgendaWarning (event.Id(), event.Time(), true));
@@ -162,7 +186,7 @@ bool
 DBManager::Read (const QUuid & id, AgendaEvent & event)
 {
   QSqlQuery select (eventDB);
-  QString cmd (QString ("select nick, time, description from events "
+  QString cmd (QString ("select nick, time, description, audible from events "
                         " where eventid = \"%1\"")
                .arg (id.toString()));
   bool ok = select.exec (cmd);
@@ -172,6 +196,7 @@ DBManager::Read (const QUuid & id, AgendaEvent & event)
     event.SetTime (select.value(1).toULongLong());
     event.SetDescription (select.value(2).toString());
     event.SetId (id);
+    event.SetAudible(select.value(3).toBool());
     good = true;
   }
   return good;

@@ -100,7 +100,8 @@ private slots:
   void SaveNewEvent (const QString & title, 
                      const QString & time, 
                      const QString & description,
-                     const QString & command);
+                     const QString & command,
+                     bool  audible);
 
 private:
 

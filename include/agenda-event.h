@@ -33,7 +33,7 @@ class AgendaEvent
 public:
 
   AgendaEvent ();
-  AgendaEvent (const QString & n, quint64 time, const QString & desc);
+  AgendaEvent (const QString & n, quint64 time, const QString & desc, bool playSound);
 
   AgendaEvent (const AgendaEvent & old);
   AgendaEvent & operator= (const AgendaEvent &other);
@@ -42,11 +42,13 @@ public:
   QString Nick () const { return nick; }
   quint64 Time () const { return timestamp; }
   QString Description () const { return description; }
+  bool    Audible () const { return audible; }
 
   void SetId (const QUuid & u) { uuid = u; }
   void SetNick (const QString & n) { nick = n; }
   void SetTime (quint64 t) { timestamp = t; }
   void SetDescription (const QString & d) { description = d; }
+  void SetAudible (bool a) { audible = a; }
 
   void DebugDump ();
 
@@ -57,6 +59,7 @@ private:
   QString    nick;
   quint64    timestamp;
   QString    description;
+  bool       audible;
 };
 
 } // namespace

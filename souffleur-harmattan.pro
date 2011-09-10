@@ -43,7 +43,7 @@ contains(MEEGO_EDITION,harmattan) {
 
 
 contains(MEEGO_EDITION,harmattan) {
-    icon.files = souffleur-harmattan.png
+    icon.files = harmattan/souffleur.png
     icon.path = /usr/share/icons/hicolor/80x80/apps
     INSTALLS += icon
 }
@@ -55,13 +55,8 @@ contains(MEEGO_EDITION,harmattan) {
 }
 
 
-
-
-
-
-
 contains(MEEGO_EDITION,harmattan) {
-    desktopfile.files = $${TARGET}.desktop
+    desktopfile.files = harmattan/souffleur.desktop
     desktopfile.path = /usr/share/applications
     INSTALLS += desktopfile
 }

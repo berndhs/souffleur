@@ -20,16 +20,17 @@ Rectangle {
   border.width: frameWidth
   
   signal saveEvent (string theTitle, string theTime, string theDescription, 
-                    string command)
+                    string command,
+                    bool  audible)
   
-  function save (theTitle, theTime, theDescription, hasCommand, command) {
+  function save (theTitle, theTime, theDescription, hasCommand, command, audible) {
     console.log ("save new event " + theTitle + "/" + theTime + "/" + theDescription
                  + "/" + hasCommand + "/" + command)
     visible = false
     if (!hasCommand) {
       command = ""
     }
-    saveEvent (theTitle, theTime, theDescription, command)
+    saveEvent (theTitle, theTime, theDescription, command, audible)
     console.log ("back from signal")
   }
   
@@ -117,24 +118,35 @@ Rectangle {
                             itemTimeText.text, 
                             itemDescriptionText.text,
                             commandCheck.isChecked,
-                            itemCommandText.text)
+                            itemCommandText.text,
+                            audioCheck.isChecked)
             }
           }
         }
       }
     }
-    
-    CheckItem {
-      id: commandCheck
-      height: mainBox.rowHeight
-      imageHeight: mainBox.rowHeight
-      text: qsTr ("Run Command")
-      onUserChanged: {
-        if (checked) {
-          itemCommandText.forceActiveFocus ()
+    Row {
+      CheckItem {
+        id: commandCheck
+        height: mainBox.rowHeight
+        imageHeight: mainBox.rowHeight
+        text: qsTr ("Run Command")
+        onUserChanged: {
+          if (checked) {
+            itemCommandText.forceActiveFocus ()
+          }
+          console.log (" check command changed to " + isChecked)
+          console.log (" command row height " + itemCommand.height)
         }
-        console.log (" check command changed to " + isChecked)
-        console.log (" command row height " + itemCommand.height)
+      }
+      CheckItem {
+        id: audioCheck
+        height: mainBox.rowHeight
+        imageHeight: mainBox.rowHeight
+        text: qsTr ("Audible")
+        onUserChanged: {
+          console.log (" audible changed to " + isChecked)
+        }
       }
     }
     Rectangle {

@@ -1,32 +1,57 @@
 import QtQuick 1.0
+import moui.geuzen.utils.static 1.0
 
 Rectangle {
-  width: 480
-  height: 480
+  width: 4096
+  height: 4096
   id: mainBox
-  color: "#eeeebb"
+  color: "#f0f0cc"
   visible: true
-  property real mainWidth: width
-  property real mainHeight: height
+  rotation: 0
+  property bool isPortrait: false
+  property bool isInverted: false
   property real rowHeight: 42
-  property real nickWidth: mainWidth * 0.25
+  property real nickWidth: mainWidth * 0.25  
+  x: isPortrait ? (isInverted ? (width - height) * 0.5 : (height - width) * 0.5) : 0
+  property real mainWidth: isPortrait ? height : width
+  property real mainHeight: isPortrait ? width : height
+  property real orientMargin: (isPortrait ? Math.abs (width - height) * 0.5 : 0)
+
+
   signal quit ()
-  signal saveNewEvent (string title, string time, string description, string command)
+  signal saveNewEvent (string title, string time, string description, string command, bool audible)
+  
+  GeuzenOrientation {
+    id: orientationWatcher
+    onRotationChange: {
+      mainBox.isPortrait = portrait
+      mainBox.rotation = rotation
+      mainBox.isInverted = inverted
+      console.log ("orientation port " + mainBox.isPortrait)
+      console.log ("main box x " + mainBox.x + " y " + mainBox.y)
+      console.log ("rect size: " + mainBox.width + ", " + mainBox.height)
+      console.log ("my size  : " + mainWidth + ", " + mainHeight)
+    }
+  }
   
   Row {
     id:buttonRow
     spacing:32
+    anchors { top: mainBox.top; horizontalCenter: mainBox.horizontalCenter }
     ChoiceButton {
       id:quitButton
       labelText: qsTr ("Quit")
       topColor: "#00ccff"
       height:mainBox.rowHeight
       radius: height * 0.5
-      onPressed: { mainBox.quit() }
+      onPressed: {
+        console.log ("quit pressed")
+        mainBox.quit() 
+      }
     }
     ChoiceButton {
       id:addButton
-      labelText: (qsTr("+"))
+      labelText: qsTr("+")
       topColor: "#e7e755"
       height:mainBox.rowHeight
       radius: height * 0.5
@@ -36,6 +61,7 @@ Rectangle {
       }
     }
   }
+  
   Component {
     id:eventListDelegate
     Rectangle {
@@ -85,7 +111,7 @@ Rectangle {
     model:cppEventListModel
     delegate: eventListDelegate
     width: mainBox.mainWidth
-    height: mainBox.mainHeight * 0.75
+    height: mainBox.mainHeight - buttonRow.height
     currentIndex: -1
     clip: true
     anchors {
@@ -104,7 +130,10 @@ Rectangle {
     }
     z: eventList.z+1
     onSaveEvent: {
-      mainBox.saveNewEvent (theTitle, theTime, theDescription, command)
+      mainBox.saveNewEvent (theTitle, theTime, theDescription, command, audible)
     }
+  }
+  Component.onCompleted: {
+    orientationWatcher.start()
   }
 }

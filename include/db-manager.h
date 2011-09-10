@@ -76,6 +76,8 @@ private:
   void CheckFileExists (const QString & filename);
   void CheckDBComplete (QSqlDatabase & db,
                         const QStringList & elements);
+  void CheckEventsComplete (QSqlDatabase & db,
+                            const QString & tableName);
   QString ElementType (QSqlDatabase & db, const QString & name);
   void    MakeElement (QSqlDatabase & db, const QString & element);
 

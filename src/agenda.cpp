@@ -155,9 +155,9 @@ Agenda::Connect ()
 {
   connect (qmlRoot, SIGNAL (quit()),this, SLOT(Quit()));
   bool ok = connect (qmlRoot, SIGNAL (saveNewEvent(const QString &, const QString &, const QString&,
-                                         const QString &)),
+                                         const QString &, bool)),
            this, SLOT (SaveNewEvent(const QString &, const QString &, const QString &,
-                                    const QString &)));
+                                    const QString &, bool)));
   qDebug () << " connect newEvent " << ok;
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
@@ -348,7 +348,7 @@ Agenda::Launched (int howmany)
 
 void
 Agenda::SaveNewEvent(const QString &title, const QString &time, const QString &description,
-                     const QString & command)
+                     const QString & command, bool audible)
 {
   AGENDA_PRETTY_DEBUG << title << time << description << command;
   QString format1 ("yyyy-MM-dd hh:mm:ss");
@@ -366,7 +366,7 @@ Agenda::SaveNewEvent(const QString &title, const QString &time, const QString &d
     }
   }
   qDebug () << " new event time " << time << " using " << dateForm;
-  AgendaEvent event (title, stamp, description);
+  AgendaEvent event (title, stamp, description, audible);
   qDebug () << " converted to " << event.Time();
   NewEvent (event);
   if (!command.isEmpty()) {

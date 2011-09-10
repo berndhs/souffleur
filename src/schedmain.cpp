@@ -33,6 +33,7 @@
 
 #include "magic-defs.h"
 #include "date-time-checker.h"
+#include "orientation.h"
 
 #include <qdeclarative.h>
 
@@ -56,6 +57,7 @@ main (int argc, char *argv[])
   char staticUri[] = "moui.geuzen.utils.static";
   
   qmlRegisterType<agenda::DateTimeChecker> (staticUri,1,0,"DateTimeChecker");
+  qmlRegisterType<geuzen::OrientationWatcher> (staticUri,1,0,"GeuzenOrientation");
 
   QApplication  app (argc, argv);
   

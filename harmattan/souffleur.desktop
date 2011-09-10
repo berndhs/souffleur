@@ -2,7 +2,7 @@
 Name=Souffleur Agenda Planner
 GenericName=Daily Event Planner Application
 Comment=Keep a Schedule and Remind the User to Do Things
-Exec=souffleur
+Exec=/opt/souffleur/bin/souffleur
 Icon=souffleur
 StartupNotify=false
 Terminal=false
