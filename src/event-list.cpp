@@ -44,6 +44,7 @@ EventList::EventList (QObject *parent)
   roles[Type_When] = "eventWhen";
   roles[Type_Title] = "eventTitle";
   roles[Type_What] = "eventWhat";
+  roles[Type_Audible] = "eventAudible";
   setRoleNames(roles);
 }
 
@@ -114,6 +115,9 @@ EventList::data (const QModelIndex & index, int role) const
     break;
   case Type_What:
     return QVariant (eventList.at(row).Description());
+    break;
+  case Type_Audible:
+    return QVariant (eventList.at(row).Audible());
     break;
   default:
     break;

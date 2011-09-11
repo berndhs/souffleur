@@ -175,7 +175,8 @@ DBManager::Write (const AgendaEvent & event)
   insert.bindValue (1,QVariant (event.Nick ()));
   insert.bindValue (2,QVariant (event.Time ()));
   insert.bindValue (3,QVariant (event.Description ()));
-  insert.bindValue (4,QVariant (event.Audible()));
+qDebug () << __PRETTY_FUNCTION__ << " wwwwwwwwwwww audible " << event.Audible();
+  insert.bindValue (4,QVariant (event.Audible() ? 1 : 0));
   bool ok = insert.exec ();
   qDebug () << " event insert " << ok << insert.executedQuery();
   Write (AgendaWarning (event.Id(), event.Time(), true));
@@ -196,7 +197,8 @@ DBManager::Read (const QUuid & id, AgendaEvent & event)
     event.SetTime (select.value(1).toULongLong());
     event.SetDescription (select.value(2).toString());
     event.SetId (id);
-    event.SetAudible(select.value(3).toBool());
+qDebug () << __PRETTY_FUNCTION__ << " rrrrrrrrrrrr audible " << select.value(3);
+    event.SetAudible(select.value(3).toInt() != 0);
     good = true;
   }
   return good;
@@ -351,7 +353,8 @@ DBManager::OpenReadEvents ()
   QSqlQuery *reader = new QSqlQuery (eventDB);
   int it = nextIterator;
   nextIterator++;
-  bool ok = reader->exec (QString("select eventid, nick, time, description "
+  bool ok = reader->exec (QString(
+                        "select eventid, nick, time, description, audible "
                         " from events where 1 "
                         " order by time ASC "));
   if (ok) {
@@ -402,10 +405,14 @@ DBManager::ReadNext (int iteratorId, AgendaEvent & event)
       QString nick = reader->value(1).toString();
       quint64 time = reader->value(2).toULongLong ();
       QString desc = reader->value(3).toString();
+      bool audible = (reader->value(4).toInt() != 0);
+qDebug () << __PRETTY_FUNCTION__ << " rnrnrn audible " 
+          << reader->value(4) << " is " << audible;
       event.SetId (id);
       event.SetNick (nick);
       event.SetTime (time);
       event.SetDescription (desc);
+      event.SetAudible (audible);
       return true;
     } else {
       return false;

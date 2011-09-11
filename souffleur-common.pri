@@ -7,6 +7,10 @@ MOBILITY += systeminfo sensors multimedia
 
 INCLUDEPATH += ./include
 
+CONFIG += lib_pkgconfig
+PKGCONFIG += qca
+PKGCONFIG += QJson
+
 QMAKE_CXXFLAGS += -std=c++0x
 
 DEFINES += DELIBERATE_DEBUG=0

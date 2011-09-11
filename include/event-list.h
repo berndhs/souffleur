@@ -56,7 +56,8 @@ private:
   enum DataType {
     Type_Title = Qt::UserRole+1,
     Type_When = Qt::UserRole+2,
-    Type_What = Qt::UserRole+3
+    Type_What = Qt::UserRole+3,
+    Type_Audible = Qt::UserRole+4
   };
 
   QList <AgendaEvent>  eventList;

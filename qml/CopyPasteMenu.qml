@@ -28,7 +28,7 @@ Item {
   property real buttonHeight: 42
   property real buttonWidth: 84
   property real buttonRadius: buttonHeight * 0.5
-  property color buttonTopShade: "red"
+  property color buttonTopShade: "#f03333"
   property color buttonBottomShade: "#f0f0f0"
   property bool enableCopy: true
   property bool enablePaste: true

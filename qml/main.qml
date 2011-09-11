@@ -68,20 +68,40 @@ Rectangle {
     id:eventListDelegate
     Rectangle {
       id:normalDelegateRow
-      height:mainBox.rowHeight
+      height:eventListRow.height
       width:mainBox.mainWidth
       color:Qt.lighter (mainBox.mainColor,isCurrent ? 1.5 : 1.2)
       property bool isCurrent: index == eventList.currentIndex
-      Column {
+      property real restWidth: width - eventTimeText.width 
+                               - audibleIconBox.width - eventTitleText.width 
+                               - (eventListRow.itemCount - 1) * eventListRow.spacing
+      //Column {
         
-        Row {
+        Flow {
           id: eventListRow
+          spacing: 4
+          //height: Math.max (mainBox.rowHeight, eventWhatText.height)
+          width: normalDelegateRow.width
+          property int itemCount: 4
           Text {
             id: eventTitleText
             text: eventTitle 
             width: mainBox.nickWidth
             height:mainBox.rowHeight
             font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+          }
+          Rectangle {
+            id: audibleIconBox
+            width: 0.5* mainBox.rowHeight
+            height: mainBox.rowHeight
+            color: "transparent"
+            Image {
+              id: audibleImage
+              width: 0.5 * mainBox.rowHeight
+              height: 0.5 * mainBox.rowHeight
+              anchors.top: parent.top
+              source: eventAudible ? ":/icons/bell.png" : ""
+            }
           }
           Text {
             id: eventTimeText
@@ -92,11 +112,14 @@ Rectangle {
           Text {
             id: eventWhatText
             text: eventWhat 
-            height:mainBox.rowHeight
-            width:normalDelegateRow.width - eventTitleText.width - eventTimeText.width
+            width: Math.max (mainBox.nickWidth, normalDelegateRow.restWidth)
+            wrapMode:Text.WrapAtWordBoundaryOrAnywhere
+            //height:mainBox.rowHeight
+            //width:normalDelegateRow.width - eventTitleText.width - eventTimeText.width
             font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
           }
-        }
+       // }
+          /*
         MouseArea {
           anchors.fill:eventListRow
           onPressed: {
@@ -104,6 +127,7 @@ Rectangle {
             console.log ("clicked to make index " + eventList.currentIndex)
           }
         }
+        */
       }
     }
   }

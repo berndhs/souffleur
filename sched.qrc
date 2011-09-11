@@ -24,5 +24,6 @@
     <qresource prefix="/icons">
         <file alias="checked-no.png">icons/checked-no.png</file>
         <file alias="checked-yes.png">icons/checked-yes.png</file>
+        <file alias="bell.png">icons/bell.png</file>
     </qresource>
 </RCC>

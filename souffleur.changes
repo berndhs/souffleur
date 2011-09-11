@@ -1,4 +1,9 @@
-%changelog
+* Fri Sep 09 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.0 
+ - better layout for rotation
+ - audio uptional, rotation
+ - start converting to QML for Harmattan & Tablet
+ - replace libnotify with system tray messages, libnotify is too much trouble
+
 * Thu Jun 23 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.12-1
 - raise hidden window
 

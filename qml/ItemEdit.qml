@@ -54,10 +54,33 @@ Rectangle {
         anchors { left: parent.left; verticalCenter: parent.verticalCenter }
         text: "title"
       }
+      CopyPasteMenu {
+        id: itemNickCopyPaste
+        anchors { top: itemNick.top; horizontalCenter: itemNick.horizontalCenter }
+        visible: false
+        opacity: 0.7
+        z: itemNick.z + 1
+        onWantCopy: {
+          itemNickText.copy ()
+          visible = false
+        }
+        onWantPaste: {
+          itemNickText.paste ()
+          visible = false
+        }
+        onWantSelect: {
+          itemNickText.selectAll ()
+          visible = false
+        }
+      }
+
       MouseArea {
         anchors.fill:parent
         onPressed: {
           itemNickText.forceActiveFocus()
+        }
+        onPressAndHold: {
+          itemNickCopyPaste.visible = !itemNickCopyPaste.visible
         }
       }
     }
@@ -68,6 +91,25 @@ Rectangle {
       height: timeRow.height
       color: "transparent"
       radius:mainBox.radius - 1
+      CopyPasteMenu {
+        id: timeFlowCopyPaste
+        anchors { top: timeFlowBox.top; horizontalCenter: timeFlowBox.horizontalCenter }
+        visible: false
+        opacity: 0.7
+        z: timeFlowBox.z + 1
+        onWantCopy: {
+          itemTimeText.copy ()
+          visible = false
+        }
+        onWantPaste: {
+          itemTimeText.paste ()
+          visible = false
+        }
+        onWantSelect: {
+          itemTimeText.selectAll ()
+          visible = false
+        }
+      }
       Flow {
         id: timeRow
         spacing: 4
@@ -101,6 +143,9 @@ Rectangle {
             anchors.fill:parent
             onPressed: {
               itemTimeText.forceActiveFocus()
+            }
+            onPressAndHold: {
+              timeFlowCopyPaste.visible = !timeFlowCopyPaste.visible
             }
           }
         }
@@ -164,10 +209,33 @@ Rectangle {
         anchors { left: parent.left; verticalCenter: parent.verticalCenter }
         text: "command"
       }
+      CopyPasteMenu {
+        id: itemCommandCopyPaste
+        anchors { top: itemCommand.top; horizontalCenter: itemCommand.horizontalCenter }
+        visible: false
+        opacity: 0.7
+        z: itemCommandText.z + 1
+        onWantCopy: {
+          itemCommandText.copy ()
+          visible = false
+        }
+        onWantPaste: {
+          itemCommandText.paste ()
+          visible = false
+        }
+        onWantSelect: {
+          itemCommandText.selectAll ()
+          visible = false
+        }
+      }
       MouseArea {
         anchors.fill:parent
         onPressed: {
           itemCommandText.forceActiveFocus()
+        }
+        onPressAndHold: {
+          console.log (" command hold ")
+          itemCommandCopyPaste.visible = !itemCommandCopyPaste.visible
         }
       }
     }
@@ -175,7 +243,7 @@ Rectangle {
     Rectangle {
       id: itemDescription
       width: mainBox.descriptionWidth
-      height: itemDescriptionText.height
+      height: Math.max (itemDescriptionText.height, mainBox.rowHeight)
       color: itemDescriptionText.focus ? "white" : Qt.darker (mainBox.color, 1.4)
       radius:mainBox.radius - 1
       TextEdit {
@@ -185,6 +253,35 @@ Rectangle {
         wrapMode: Text.WordWrap
         anchors { left: parent.left; verticalCenter: parent.verticalCenter }
         text: "description"
+      }
+      CopyPasteMenu {
+        id: itemDescriptionCopyPaste
+        anchors { top: itemDescription.top; horizontalCenter: itemDescription.horizontalCenter }
+        visible: false
+        opacity: 0.7
+        z: itemDescriptionText.z + 1
+        onWantCopy: {
+          itemDescriptionText.copy ()
+          visible = false
+        }
+        onWantPaste: {
+          itemDescriptionText.paste ()
+          visible = false
+        }
+        onWantSelect: {
+          itemDescriptionText.selectAll ()
+          visible = false
+        }
+      }
+      MouseArea {
+        anchors.fill:parent
+        onPressed: {
+          itemDescriptionText.forceActiveFocus()
+        }
+        onPressAndHold: {
+          console.log (" command hold ")
+          itemDescriptionCopyPaste.visible = !itemDescriptionCopyPaste.visible
+        }
       }
     }
   }
