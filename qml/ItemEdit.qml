@@ -171,7 +171,7 @@ Rectangle {
       }
     }
     
-    Row {
+    Flow {
       CheckItem {
         id: commandCheck
         height: mainBox.rowHeight
@@ -192,6 +192,17 @@ Rectangle {
         text: qsTr ("Audible")
         onUserChanged: {
           console.log (" audible changed to " + isChecked)
+        }
+      }
+      CheckItem {
+        id: repeatCheck
+        height: mainBox.rowHeight
+        imageHeight: mainBox.rowHeight
+        text: qsTr ("Repeat")
+        onUserChanged: {
+          if (checked) {
+            console.log (" repeate changed to " + isChecked)
+          }
         }
       }
     }
@@ -238,6 +249,14 @@ Rectangle {
           itemCommandCopyPaste.visible = !itemCommandCopyPaste.visible
         }
       }
+    }
+    
+    Rectangle {
+      id: repeatBox
+      visible: repeatCheck.isChecked
+      width: visible ? mainBox.width : 0
+      height: visible ? mainBox.rowHeight : 0
+      Text { anchors.centerIn: parent; text: "repeat edit here" }
     }
 
     Rectangle {
