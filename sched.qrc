@@ -7,6 +7,8 @@
         <file>qml/GetString.qml</file>
         <file>qml/main.qml</file>
         <file>qml/ItemEdit.qml</file>
+        <file>qml/SpinBox.qml</file>
+        <file>qml/RepeatEdit.qml</file>
     </qresource>
     <qresource prefix="/schemas">
         <file alias="events.sql">schemas/events.sql</file>
@@ -25,5 +27,9 @@
         <file alias="checked-no.png">icons/checked-no.png</file>
         <file alias="checked-yes.png">icons/checked-yes.png</file>
         <file alias="bell.png">icons/bell.png</file>
+        <file alias="up.png">icons/up.png</file>
+        <file alias="down.png">icons/down.png</file>
+        <file alias="windowicon.png">icons/windowicon.png</file>
+        <file alias="marked.png">icons/marked.png</file>
     </qresource>
 </RCC>

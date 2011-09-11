@@ -14,6 +14,8 @@ Rectangle {
   property real descriptionWidth: width - 2*frameWidth
   property real rowHeight: 64
   property real restHeight: height - 2.0 * rowHeight
+  property real repeatMinutes: 0
+  property bool isPhone: false
   
   color: "#f0f0ff"
   border.color: "#303050"
@@ -21,7 +23,8 @@ Rectangle {
   
   signal saveEvent (string theTitle, string theTime, string theDescription, 
                     string command,
-                    bool  audible)
+                    bool  audible,
+                    real repeatMinutes)
   
   function save (theTitle, theTime, theDescription, hasCommand, command, audible) {
     console.log ("save new event " + theTitle + "/" + theTime + "/" + theDescription
@@ -30,7 +33,10 @@ Rectangle {
     if (!hasCommand) {
       command = ""
     }
-    saveEvent (theTitle, theTime, theDescription, command, audible)
+    if (!repeatCheck.isChecked) {
+      repeatMinutes = 0
+    }
+    saveEvent (theTitle, theTime, theDescription, command, audible, repeatMinutes)
     console.log ("back from signal")
   }
   
@@ -201,12 +207,26 @@ Rectangle {
         text: qsTr ("Repeat")
         onUserChanged: {
           if (checked) {
-            console.log (" repeate changed to " + isChecked)
+            console.log (" repeat changed to " + isChecked)
           }
         }
       }
     }
-    
+    Rectangle {
+      id: itemRepeat
+      width: mainBox.width
+      height: repeatCheck.isChecked ? mainBox.rowHeight : 0
+      visible: repeatCheck.isChecked
+      color: "white"
+      RepeatEdit {
+        id: repeatEdit
+        isPhone: mainBox.isPhone
+        onAcceptedValue: {
+          mainBox.repeatMinutes = value
+        }
+      }
+    }
+
     Rectangle {
       id: itemCommand
       width: mainBox.width
@@ -251,14 +271,6 @@ Rectangle {
       }
     }
     
-    Rectangle {
-      id: repeatBox
-      visible: repeatCheck.isChecked
-      width: visible ? mainBox.width : 0
-      height: visible ? mainBox.rowHeight : 0
-      Text { anchors.centerIn: parent; text: "repeat edit here" }
-    }
-
     Rectangle {
       id: itemDescription
       width: mainBox.descriptionWidth

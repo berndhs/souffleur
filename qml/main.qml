@@ -20,7 +20,8 @@ Rectangle {
 
 
   signal quit ()
-  signal saveNewEvent (string title, string time, string description, string command, bool audible)
+  signal saveNewEvent (string title, string time, string description, 
+                       string command, bool audible, real repeatMins)
   
   GeuzenOrientation {
     id: orientationWatcher
@@ -141,13 +142,15 @@ Rectangle {
     visible: false
     width: mainBox.mainWidth * 0.9
     height: mainBox.mainHeight - buttonRow.height
+    isPhone: mainBox.isPhone
     anchors {
       top: buttonRow.bottom
       horizontalCenter: mainBox.horizontalCenter
     }
     z: eventList.z+1
     onSaveEvent: {
-      mainBox.saveNewEvent (theTitle, theTime, theDescription, command, audible)
+      mainBox.saveNewEvent (theTitle, theTime, theDescription, 
+                            command, audible, repeatMinutes)
     }
   }
   Component.onCompleted: {

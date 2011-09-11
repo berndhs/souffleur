@@ -169,9 +169,9 @@ Agenda::Connect ()
 {
   connect (qmlRoot, SIGNAL (quit()),this, SLOT(Quit()));
   bool ok = connect (qmlRoot, SIGNAL (saveNewEvent(const QString &, const QString &, const QString&,
-                                         const QString &, bool)),
+                                         const QString &, bool, qreal)),
            this, SLOT (SaveNewEvent(const QString &, const QString &, const QString &,
-                                    const QString &, bool)));
+                                    const QString &, bool, qreal)));
   qDebug () << " connect newEvent " << ok;
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
@@ -293,9 +293,6 @@ Agenda::PickedDate (const QDate & date)
 void
 Agenda::ToggleCal ()
 {
-  bool seeit = false; //mainUi.calendarWidget->isVisible ();
- // mainUi.calendarWidget->setVisible (!seeit);
-  
 }
 
 void
@@ -362,9 +359,9 @@ Agenda::Launched (int howmany)
 
 void
 Agenda::SaveNewEvent(const QString &title, const QString &time, const QString &description,
-                     const QString & command, bool audible)
+                     const QString & command, bool audible, qreal repeatMins)
 {
-  AGENDA_PRETTY_DEBUG << title << time << description << command;
+  AGENDA_PRETTY_DEBUG << title << time << description << command << " repeat " << repeatMins;
   QString format1 ("yyyy-MM-dd hh:mm:ss");
   QString format2 ("yyyy-MM-dd hh:mm");
   QDateTime attempt (QDateTime::fromString(time,format1));
@@ -386,6 +383,10 @@ Agenda::SaveNewEvent(const QString &title, const QString &time, const QString &d
   if (!command.isEmpty()) {
     AgendaShell shellCommand (event.Id(), command);
     NewShell (shellCommand);
+  }
+  if (repeatMins > 0) {
+    AgendaRepeat repeater (event.Id(),"min",repeatMins);
+    NewRepeat(repeater);
   }
 }
 

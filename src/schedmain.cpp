@@ -110,6 +110,7 @@ main (int argc, char *argv[])
   
   agenda::Agenda   agenda;
   
+  agenda.setWindowIcon(QIcon(":/icons/windowicon.png"));
   app.setWindowIcon (agenda.windowIcon());
   agenda.Init (app,isPhone);
   agenda.AddConfigMessages (configMessages);

@@ -101,7 +101,8 @@ private slots:
                      const QString & time, 
                      const QString & description,
                      const QString & command,
-                     bool  audible);
+                     bool  audible,
+                     qreal repeatMins);
 
 private:
 
