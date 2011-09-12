@@ -59,6 +59,7 @@ SOURCES = src/schedmain.cpp \
           src/agenda.cpp \
           src/db-manager.cpp \
           src/agenda-event.cpp \
+          src/agenda-repeat.cpp \
           src/event-list.cpp \
           src/agenda-scheduler.cpp \
           src/notify.cpp \

@@ -4,7 +4,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -175,7 +175,6 @@ DBManager::Write (const AgendaEvent & event)
   insert.bindValue (1,QVariant (event.Nick ()));
   insert.bindValue (2,QVariant (event.Time ()));
   insert.bindValue (3,QVariant (event.Description ()));
-qDebug () << __PRETTY_FUNCTION__ << " wwwwwwwwwwww audible " << event.Audible();
   insert.bindValue (4,QVariant (event.Audible() ? 1 : 0));
   bool ok = insert.exec ();
   qDebug () << " event insert " << ok << insert.executedQuery();
@@ -197,7 +196,6 @@ DBManager::Read (const QUuid & id, AgendaEvent & event)
     event.SetTime (select.value(1).toULongLong());
     event.SetDescription (select.value(2).toString());
     event.SetId (id);
-qDebug () << __PRETTY_FUNCTION__ << " rrrrrrrrrrrr audible " << select.value(3);
     event.SetAudible(select.value(3).toInt() != 0);
     good = true;
   }
@@ -263,6 +261,16 @@ DBManager::RemoveEvent (const QUuid & uuid)
   qDebug () << " Remove " << ok << delqry.executedQuery ();
 }
 
+void
+DBManager::RemoveRepeat (const QUuid &uuid)
+{
+  QSqlQuery delqry (eventDB);
+  bool ok = delqry.exec (QString ("delete from repeats "
+                        " where eventid = \"%1\" ")
+                         .arg (uuid));
+  qDebug () << " Remove " << ok << delqry.executedQuery();
+}
+
 bool
 DBManager::Write (const AgendaRepeat & repeat)
 {
@@ -285,6 +293,7 @@ DBManager::Read (const QUuid & uuid, AgendaShell & shell)
   bool ok = select.exec (QString("select command from shells "
                                  " where eventid = \"%1\"")
                            .arg (uuid.toString()));
+  qDebug () << __PRETTY_FUNCTION__ << ok << select.executedQuery();
   if (ok && select.next ()) {
     QString cmd = select.value (0).toString();
     if (cmd.length() > 0) {
@@ -303,6 +312,7 @@ DBManager::Read (const QUuid & uuid, AgendaRepeat & repeat)
   bool ok = select.exec (QString("select kind, delay from repeats "
                                  " where eventid = \"%1\"")
                            .arg (uuid.toString()));
+  qDebug () << __PRETTY_FUNCTION__ << ok << select.executedQuery();
   if (ok && select.next ()) {
     QString kind = select.value (0).toString();
     quint64 delay = select.value (1).toULongLong ();

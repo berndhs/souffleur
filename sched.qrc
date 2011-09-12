@@ -9,6 +9,8 @@
         <file>qml/ItemEdit.qml</file>
         <file>qml/SpinBox.qml</file>
         <file>qml/RepeatEdit.qml</file>
+        <file>qml/About.qml</file>
+        <file>qml/ItemModify.qml</file>
     </qresource>
     <qresource prefix="/schemas">
         <file alias="events.sql">schemas/events.sql</file>
@@ -31,5 +33,6 @@
         <file alias="down.png">icons/down.png</file>
         <file alias="windowicon.png">icons/windowicon.png</file>
         <file alias="marked.png">icons/marked.png</file>
+        <file alias="R.png">icons/R.png</file>
     </qresource>
 </RCC>

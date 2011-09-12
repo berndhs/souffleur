@@ -93,18 +93,21 @@ private slots:
   void UpdateToolTip (const QDateTime & nextEvent);
   void TrayIconActive (QSystemTrayIcon::ActivationReason reason);
   
-  void SaveNewEvent (const QString & title, 
+  void SaveNewEvent (const QString & uuid,
+                     const QString & title, 
                      const QString & time, 
                      const QString & description,
                      const QString & command,
                      bool  audible,
                      qreal repeatMins);
+  void DeleteEvent (const QString & uuid);
 
 private:
 
   void Connect ();
   void CloseCleanup ();
   void AskRevive (int numOld);
+  void PrepareAbout ();
 
   bool             initDone;
   QApplication    *app;

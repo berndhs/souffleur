@@ -16,16 +16,24 @@ Rectangle {
   property real restHeight: height - 2.0 * rowHeight
   property real repeatMinutes: 0
   property bool isPhone: false
+  property string itemUuid: ""
   
   color: "#f0f0ff"
   border.color: "#303050"
   border.width: frameWidth
   
-  signal saveEvent (string theTitle, string theTime, string theDescription, 
+  signal saveEvent (string theUuid,
+                    string theTitle, string theTime, string theDescription, 
                     string command,
                     bool  audible,
                     real repeatMinutes)
+  signal cancelled ()
   
+  function cancel () {
+    visible = false
+    cancelled ()
+  }
+
   function save (theTitle, theTime, theDescription, hasCommand, command, audible) {
     console.log ("save new event " + theTitle + "/" + theTime + "/" + theDescription
                  + "/" + hasCommand + "/" + command)
@@ -36,8 +44,48 @@ Rectangle {
     if (!repeatCheck.isChecked) {
       repeatMinutes = 0
     }
-    saveEvent (theTitle, theTime, theDescription, command, audible, repeatMinutes)
+    saveEvent (itemUuid, theTitle, theTime, theDescription, command, audible, repeatMinutes)
     console.log ("back from signal")
+  }
+  function startNew () {
+    console.log (" start new event ")
+    itemUuid = ""
+    itemNickText.text = qsTr ("new event")
+    itemTimeText.text = Qt.formatDateTime (new Date(),"yyyy-MM-dd hh:mm:ss")
+    itemDescriptionText.text = qsTr ("Event Description")
+    commandCheck.isChecked = false
+    itemCommandText.text = ""
+    audioCheck.isChecked = false
+    repeatEdit.setValues (0,0,0)
+    repeatEdit.accepted = false
+    visible = true
+  }
+  function startModify (theUuid, theNick, theTime, theDescription, 
+                        theCommand, theAudible, theRepeat) {
+    console.log (" start mod old event " + theUuid + " delay " + theRepeat)
+    itemUuid = theUuid
+    itemNickText.text = theNick
+    itemTimeText.text = theTime
+    itemDescriptionText.text = theDescription
+    itemCommandText.text = theCommand
+    commandCheck.isChecked = theCommand.length > 0
+    audioCheck.isChecked = theAudible
+    repeatCheck.isChecked = theRepeat > 0
+    if (theRepeat > 0) {
+      setRepeatTimes (theRepeat)
+    } else {
+      repeatEdit.setValues (0,0,0)
+    }
+    repeatEdit.accepted = false
+    visible = true
+  }
+  
+  function setRepeatTimes (minutes) {
+    var hours = Math.floor ( minutes / 60)
+    minutes -= hours * 60
+    var days = Math.floor ( hours / 24)
+    hours -= days * 24
+    repeatEdit.setValues (days,hours,minutes)
   }
   
   DateTimeChecker {
@@ -172,6 +220,17 @@ Rectangle {
                             itemCommandText.text,
                             audioCheck.isChecked)
             }
+          }
+        }
+        ChoiceButton {
+          id:cancelButton
+          labelText: qsTr ("Cancel")
+          height: mainBox.rowHeight * 0.8
+          width: labelWidth
+          radius: height * 0.5
+          topColor: "#aa99ff"
+          onPressed: {
+            mainBox.cancel ()
           }
         }
       }

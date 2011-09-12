@@ -55,6 +55,7 @@ public:
   void  RemoveAllWarnings (const QUuid & uuid);
   void  RemoveShell (const QUuid & uuid);
   void  RemoveEvent (const QUuid & uuid);
+  void  RemoveRepeat (const QUuid & uuid);
 
   void  RemoveOrphans ();
 

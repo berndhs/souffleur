@@ -8,7 +8,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -31,7 +31,7 @@ namespace deliberate {
   QString ProgramVersion::VersionNumber ("0.1.0");
 
   QString ProgramVersion::ProgramName("Agenda");
-  QString ProgramVersion::copyright ("Copyright (C) 2010 Bernd Stramm");
+  QString ProgramVersion::copyright ("Copyright (C) 2011 Bernd Stramm");
   
   ProgramVersion::ProgramVersion (QString pgmname)
   {
@@ -43,7 +43,7 @@ namespace deliberate {
     return ProgramName + QString (" Version " )
                    + VersionNumber + " " + QString(__DATE__) + " "
 		       + QString(__TIME__)
-		       + QString("\r\n")
+		       + QString("\n")
 		       + copyright;
   }
 

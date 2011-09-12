@@ -10,6 +10,7 @@ Rectangle {
   rotation: 0
   property bool isPortrait: false
   property bool isInverted: false
+  property bool isPhone: false
   property real rowHeight: 42
   property real nickWidth: mainWidth * 0.25 
   property color mainColor: "#f0f0c0"
@@ -20,8 +21,9 @@ Rectangle {
 
 
   signal quit ()
-  signal saveNewEvent (string title, string time, string description, 
+  signal saveNewEvent (string uuid, string title, string time, string description, 
                        string command, bool audible, real repeatMins)
+  signal deleteEvent (string uuid)
   
   GeuzenOrientation {
     id: orientationWatcher
@@ -58,13 +60,29 @@ Rectangle {
           mainBox.quit() 
         }
       }
-      Column {
-        Text {
-          font.weight: Font.Bold
-          text: "Souffleur"
+      Rectangle {
+        id: aboutItem
+        width: Math.max (nameText.width, subheadingText.width)
+        height: aboutColumn.height
+        color: "transparent"
+        Column {
+          id: aboutColumn
+          Text {
+            id: nameText
+            font.weight: Font.Bold
+            text: "Souffleur"
+          }
+          Text {
+            id: subheadingText
+            text: qsTr ("Scheduling")
+          }
+
         }
-        Text {
-          text: qsTr ("Scheduling")
+        MouseArea {
+          anchors.fill: aboutItem
+          onPressAndHold: {
+            aboutBox.visible = !aboutBox.visible
+          }
         }
       }
       
@@ -77,11 +95,28 @@ Rectangle {
         radius: height * 0.5
         onPressed: {
           console.log ("add button pressed")
-          newItemEdit.visible = !newItemEdit.visible
+          newItemEdit.startNew ()
         }
       }
     }
   }
+
+  About {
+    id: aboutBox
+    width: mainBox.mainWidth * 0.7
+    height: mainBox.mainHeight - brandingBox.height
+    visible: false
+    radius: 12
+    z: eventList.z + 1
+    color: "#eeffee"
+    border.color: "#ddeedd"; border.width: 1
+    opacity: 0.9
+    anchors {
+      top: brandingBox.bottom
+      horizontalCenter: brandingBox.horizontalCenter
+    }
+  }
+
   
   Component {
     id:eventListDelegate
@@ -122,22 +157,61 @@ Rectangle {
             source: eventAudible ? ":/icons/bell.png" : ""
           }
         }
+        Rectangle {
+          id: repeatIconBox
+          width: 0.5* mainBox.rowHeight
+          height: mainBox.rowHeight
+          color: "transparent"
+          Image {
+            id: repeatImage
+            width: 0.5 * mainBox.rowHeight
+            height: 0.5 * mainBox.rowHeight
+            anchors.top: parent.top
+            source: eventRepeating ? ":/icons/R.png" : ""
+          }
+        }
         Text {
           id: eventTimeText
           text: eventWhen
           height:mainBox.rowHeight
           font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+          
+          MouseArea {
+            anchors.fill: parent
+            onClicked: {
+              itemModify.visible = !itemModify.visible
+              console.log (" changed modify visible " + itemModify.visible)
+            }
+          }
+          
         }
         Text {
           id: eventWhatText
           text: eventWhat 
           width: Math.max (mainBox.nickWidth, normalDelegateRow.restWidth)
-          wrapMode:Text.WrapAtWordBoundaryOrAnywhere
-          //height:mainBox.rowHeight
-          //width:normalDelegateRow.width - eventTitleText.width - eventTimeText.width
+          wrapMode:Text.Wrap
           font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
         }
         
+      }
+      ItemModify {
+        id: itemModify
+        anchors {
+          top: eventListDelegate.bottom;
+          horizontalCenter: eventListDelegate.horizontalCenter 
+        }
+        visible: false
+        z: eventListDelegate.z + 1
+        onVisibleChanged: {
+          console.log (" itemModify visible now " + visible + " for index " + index)
+        }
+        onWantChange: {
+          newItemEdit. startModify (eventUuid, eventTitle, eventWhen, eventWhat, 
+                                 eventCommand, eventAudible, eventRepeatMinutes) 
+        }
+        onWantDelete: {
+          mainBox.deleteEvent (eventUuid)
+        }
       }
     }
   }
@@ -167,7 +241,7 @@ Rectangle {
     }
     z: eventList.z+1
     onSaveEvent: {
-      mainBox.saveNewEvent (theTitle, theTime, theDescription, 
+      mainBox.saveNewEvent (theUuid, theTitle, theTime, theDescription, 
                             command, audible, repeatMinutes)
     }
   }

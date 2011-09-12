@@ -53,6 +53,7 @@ public:
   QUuid   Id   () const { return uuid; }
   QString Kind () const { return kind; }
   quint64 Delay () const { return delay; }
+  quint64 DelayMinutes () const;
 
   void SetId (const QUuid & u) { uuid = u; }
   void SetKind (const QString & k) { kind = k; }

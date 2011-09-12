@@ -23,9 +23,13 @@
  ****************************************************************/
 
 #include "agenda-event.h"
+#include "agenda-repeat.h"
+#include "agenda-shell.h"
 #include "db-manager.h"
 #include <QAbstractListModel>
 #include <QList>
+#include <QMap>
+#include <QUuid>
 #include <QObject>
 
 namespace agenda
@@ -47,6 +51,8 @@ public:
   void SaveSettings ();
   
   void Refresh ();
+  
+  void DeleteEvent (const QString & uuid);
 
 private:
 
@@ -57,12 +63,18 @@ private:
     Type_Title = Qt::UserRole+1,
     Type_When = Qt::UserRole+2,
     Type_What = Qt::UserRole+3,
-    Type_Audible = Qt::UserRole+4
+    Type_Audible = Qt::UserRole+4,
+    Type_Repeating = Qt::UserRole+5,
+    Type_RepeatMinutes = Qt::UserRole+6,
+    Type_Uuid = Qt::UserRole+7,
+    Type_Command = Qt::UserRole+8
   };
 
-  QList <AgendaEvent>  eventList;
-  DBManager           *db;
-  QString              dateForm;
+  QList <AgendaEvent>              eventList;
+  QMap <QUuid,AgendaRepeat>        repeats;
+  QMap <QUuid,AgendaShell>         shells;
+  DBManager                       *db;
+  QString                          dateForm;
 
 
 };

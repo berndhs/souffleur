@@ -1,5 +1,4 @@
-
-#include "agenda-event.h"
+#include "agenda-repeat.h"
 
 /****************************************************************
  * This file is distributed under the following license:
@@ -27,52 +26,18 @@
 namespace agenda
 {
 
-AgendaEvent::AgendaEvent ()
-  :uuid (QUuid::createUuid()),
-   timestamp (0)
+quint64
+AgendaRepeat::DelayMinutes() const
 {
-}
-
-AgendaEvent::AgendaEvent (const QString & n, quint64 time, 
-                          const QString & desc, bool playSound)
-  :uuid (QUuid::createUuid()),
-   nick (n),
-   timestamp (time),
-   description (desc),
-   audible (playSound)
-{
-}
-   
-
-AgendaEvent::AgendaEvent (const AgendaEvent & old)
-  :uuid (old.uuid),
-   nick (old.nick),
-   timestamp (old.timestamp),
-   description (old.description),
-   audible (old.audible)
-{
-}
-
-AgendaEvent &
-AgendaEvent::operator = (const AgendaEvent & other)
-{
-  if (this != &other) {
-    uuid = other.uuid;
-    nick = other.nick;
-    timestamp = other.timestamp;
-    description = other.description;
-    audible = other.audible;
+  qDebug () << __PRETTY_FUNCTION__ << " kind " << kind << " raw delay  " << delay;
+  if (kind == "min") {
+    return delay;
+  } else if (kind == "day") {
+    return delay * 24 * 60;
+  } else if (kind == "hour") {
+    return delay * 60;
   }
-  return *this;
-}
-
-void
-AgendaEvent::DebugDump ()
-{
-  qDebug () << " AgendaEvent ( " 
-            << uuid << nick << timestamp << description << audible
-            << " ) ";
+  return delay;
 }
 
 } // namespace
-

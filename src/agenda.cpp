@@ -3,7 +3,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -133,11 +133,16 @@ Agenda::Run ()
   qmlRoot = qobject_cast<QDeclarativeItem*> (rootObject());
   AGENDA_PRETTY_DEBUG << __LINE__ << " resize mode " << resizeMode();
   AGENDA_PRETTY_DEBUG << " root " << qmlRoot;
+  if (qmlRoot) {
+    qmlRoot->setProperty("isPhone",assumePhone);
+  }
   if (!assumePhone) {
     resize (normalSize);
   }
   AGENDA_PRETTY_DEBUG << " size "  << size() << " normal is " << normalSize;
   AGENDA_PRETTY_DEBUG << __LINE__ << " resize mode " << resizeMode();
+
+  PrepareAbout ();
                         
   Connect ();
   show ();
@@ -160,11 +165,14 @@ void
 Agenda::Connect ()
 {
   connect (qmlRoot, SIGNAL (quit()),this, SLOT(Quit()));
-  bool ok = connect (qmlRoot, SIGNAL (saveNewEvent(const QString &, const QString &, const QString&,
+  bool ok = connect (qmlRoot, SIGNAL (saveNewEvent(const QString &,
+                                         const QString &, const QString &, const QString&,
                                          const QString &, bool, qreal)),
-           this, SLOT (SaveNewEvent(const QString &, const QString &, const QString &,
+           this, SLOT (SaveNewEvent(const QString &, const QString &, const QString &, const QString &,
                                     const QString &, bool, qreal)));
   qDebug () << " connect newEvent " << ok;
+  connect (qmlRoot, SIGNAL (deleteEvent (const QString &)),
+           this, SLOT (DeleteEvent (const QString&)));
   connect (scheduler, SIGNAL (CurrentEvent (AgendaEvent)),
            this, SLOT (LaunchEvent (AgendaEvent)));
   connect (scheduler, SIGNAL (NewShell (AgendaShell)),
@@ -276,6 +284,20 @@ Agenda::ToggleCal ()
 }
 
 void
+Agenda::PrepareAbout ()
+{
+  QString version (deliberate::ProgramVersion::Version());
+  QStringList messages;
+  messages.append (version);
+  messages.append (configMessages);
+  QDeclarativeItem * aboutBox = qmlRoot->findChild <QDeclarativeItem*> ("AboutBox");
+  if (aboutBox) {
+    aboutBox->setProperty ("text",messages.join("\n"));
+  }
+  AGENDA_PRETTY_DEBUG << messages;
+}
+
+void
 Agenda::About ()
 {
   QString version (deliberate::ProgramVersion::Version());
@@ -338,26 +360,53 @@ Agenda::Launched (int howmany)
 }
 
 void
-Agenda::SaveNewEvent(const QString &title, const QString &time, const QString &description,
+Agenda::DeleteEvent(const QString &uuid)
+{
+  db.DeleteAll(QUuid (uuid));
+  events->DeleteEvent (uuid);
+}
+
+void
+Agenda::SaveNewEvent(const QString & uuid,
+                     const QString &title, const QString &time, const QString &description,
                      const QString & command, bool audible, qreal repeatMins)
 {
   AGENDA_PRETTY_DEBUG << title << time << description << command << " repeat " << repeatMins;
-  QString format1 ("yyyy-MM-dd hh:mm:ss");
-  QString format2 ("yyyy-MM-dd hh:mm");
-  QDateTime attempt (QDateTime::fromString(time,format1));
+  static QString format[4] = { QString ("ddd yyyy-MM-dd hh:mm:ss"),
+                        QString ("ddd yyyy-MM-dd hh:mm"),
+                        QString ("yyyy-MM-dd hh:mm:ss"),
+                        QString ("yyyy-MM-dd hh:mm"),
+                      };
+  bool foundGood (false);
   quint64 stamp;
-  if (attempt.isValid()) {
-    stamp = attempt.toTime_t();
-  } else {
-    attempt = QDateTime::fromString (time,format2);
+  for (int a=0;a<4;a++) {
+    QDateTime attempt (QDateTime::fromString (time, format[a]));
     if (attempt.isValid()) {
+      foundGood = true;
       stamp = attempt.toTime_t();
-    } else {
-      return; // bad date, give up
+      break;
     }
   }
+  if (!foundGood) {
+    AGENDA_PRETTY_DEBUG << " bad date " << time;
+    return;
+  }
   qDebug () << " new event time " << time << " using " << dateForm;
-  AgendaEvent event (title, stamp, description, audible);
+  AgendaEvent event;
+  if (uuid.isEmpty()) {
+    event = AgendaEvent (title, stamp, description, audible);
+  } else {
+    bool ok = db.Read (QUuid(uuid), event);
+    if (!ok) {
+      event = AgendaEvent (title, stamp, description, audible);
+    } else {
+      db.DeleteAll (event.Id());
+      event.SetNick (title);
+      event.SetDescription (description);
+      event.SetAudible (audible);
+      event.SetTime (stamp);
+    }
+  }
   qDebug () << " converted to " << event.Time();
   NewEvent (event);
   if (!command.isEmpty()) {

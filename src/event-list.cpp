@@ -2,7 +2,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -25,7 +25,7 @@
 #include <QHash>
 #include <QDateTime>
 #include <QDebug>
-
+#include <QUuid>
 
 #define AGENDA_PRETTY_DEBUG qDebug() << "__agenda__" << __PRETTY_FUNCTION__ 
 
@@ -45,6 +45,10 @@ EventList::EventList (QObject *parent)
   roles[Type_Title] = "eventTitle";
   roles[Type_What] = "eventWhat";
   roles[Type_Audible] = "eventAudible";
+  roles[Type_Repeating] = "eventRepeating";
+  roles[Type_RepeatMinutes] = "eventRepeatMinutes";
+  roles[Type_Uuid] = "eventUuid";
+  roles[Type_Command] = "eventCommand";
   setRoleNames(roles);
 }
 
@@ -91,6 +95,18 @@ EventList::Load ()
     if (it >= 0) {
       AgendaEvent event;
       while (db->ReadNext (it, event)) {
+        AgendaRepeat repeat;
+        if (db->Read (event.Id(),repeat)) {
+          if (event.Id() == repeat.Id()) {
+            repeats[event.Id()] = repeat;
+          }
+        }
+        AgendaShell  shell;
+        if (db->Read (event.Id(),shell)) {
+          if (event.Id() == shell.Id()) {
+            shells[event.Id()] = shell;
+          }
+        }
         addEvent (event);
       }
       db->CloseRead (it);
@@ -119,6 +135,28 @@ EventList::data (const QModelIndex & index, int role) const
   case Type_Audible:
     return QVariant (eventList.at(row).Audible());
     break;
+  case Type_Repeating:
+    return QVariant (repeats.contains(eventList.at(row).Id()));
+    break;
+  case Type_RepeatMinutes:
+    if (repeats.contains (eventList.at(row).Id())) {
+      qDebug () << __PRETTY_FUNCTION__ << " repeat seconds " << repeats[eventList.at(row).Id()].Delay();
+      return QVariant (repeats[eventList.at(row).Id()].DelayMinutes());
+    } else {
+      qDebug () << __PRETTY_FUNCTION__ << " NO REPEAT seconds";
+      return QVariant (0);
+    }
+    break;
+  case Type_Uuid:
+    return QVariant (eventList.at(row).Id().toString());
+    break;
+  case Type_Command:
+    if (shells.contains (eventList.at(row).Id())) {
+      return QVariant (shells[eventList.at(row).Id()].Command());
+    } else {
+      return QVariant (QString());
+    }
+    break;
   default:
     break;
   }
@@ -126,12 +164,28 @@ EventList::data (const QModelIndex & index, int role) const
   return QVariant();
 }
 
+
 void
 EventList::addEvent (const AgendaEvent & event)
 {
   beginInsertRows (QModelIndex(), rowCount(), rowCount());
   eventList.append (event);
   endInsertRows ();
+}
+
+void
+EventList::DeleteEvent (const QString & uuid)
+{
+  QUuid id (uuid);
+  for (int r=0; r<eventList.count(); r++) {
+    if (eventList.at(r).Id() == id) {
+      beginRemoveRows (QModelIndex(),r,r);
+      eventList.removeAt(r);
+      shells.remove (id);
+      repeats.remove (id);
+      endRemoveRows();
+    }
+  }
 }
 
 
