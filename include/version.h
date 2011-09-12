@@ -23,7 +23,6 @@
  ****************************************************************/
 
 #include <QString>
-#include "delib-debug.h"
 
 namespace deliberate {
 

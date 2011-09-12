@@ -26,22 +26,18 @@ OBJECTS_DIR = tmp/obj
 RESOURCES = sched.qrc
 TARGET = souffleur
 
-FORMS = ui/DebugLog.ui \
-        ui/config-edit.ui \
-        ui/item-edit.ui \
-        ui/helpwin.ui \
+#FORMS = ui/DebugLog.ui \
+#        ui/config-edit.ui \
+#        ui/helpwin.ui \
         
 
 HEADERS = include/schedmain.h \
           include/gpl2.h \
           include/cmdoptions.h \
-          include/config-edit.h \
-          include/delib-debug.h \
           include/deliberate.h \
           include/version.h \
           include/agenda.h \
           include/db-manager.h \
-          include/item-edit.h \
           include/agenda-event.h \
           include/agenda-shell.h \
           include/agenda-warning.h \
@@ -50,7 +46,6 @@ HEADERS = include/schedmain.h \
           include/agenda-scheduler.h \
           include/notify.h \
           include/shell-launcher.h \
-          include/helpview.h \
           include/property.h \
           include/magic-defs.h \
           include/orientation.h \
@@ -59,23 +54,27 @@ HEADERS = include/schedmain.h \
 
 SOURCES = src/schedmain.cpp \
           src/cmdoptions.cpp \
-          src/config-edit.cpp \
-          src/delib-debug.cpp \
           src/deliberate.cpp \
           src/version.cpp \
           src/agenda.cpp \
           src/db-manager.cpp \
-          src/item-edit.cpp \
           src/agenda-event.cpp \
           src/event-list.cpp \
           src/agenda-scheduler.cpp \
           src/notify.cpp \
           src/shell-launcher.cpp \
-          src/helpview.cpp \
           src/orientation.cpp \
           src/date-time-checker.cpp \
 
 
 OTHER_FILES += \
     sounds/alert.wav
+
+
+
+
+
+
+
+
 

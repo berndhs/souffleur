@@ -25,11 +25,9 @@
 #include "magic-defs.h"
 #include "deliberate.h"
 #include "version.h"
-#include "item-edit.h"
 #include "agenda-scheduler.h"
 #include "notify.h"
 #include "shell-launcher.h"
-#include "helpview.h"
 #include <QSize>
 #include <QDebug>
 #include <QMessageBox>
@@ -51,14 +49,12 @@ Agenda::Agenda (QWidget *parent)
    initDone (false),
    app (nullptr),
    trayIcon (nullptr),
-   configEdit (this),
    db (this),
    itemEdit (nullptr),
    scheduler (nullptr),
    notify (nullptr),
    shellLauncher (nullptr),
    audioAlerter (nullptr),
-   helpView (nullptr),
    dateForm ("ddd yyyy-MM-dd hh:mm:ss"),
    runAgain (false),
    visibleBeforeEvent (false),
@@ -73,13 +69,10 @@ Agenda::Agenda (QWidget *parent)
   trayIcon = new QSystemTrayIcon (this);  
   trayIcon->setIcon (windowIcon());
   trayIcon->setToolTip (windowTitle());
-  itemEdit = new ItemEdit (this);
-  itemEdit->hide ();
   scheduler = new AgendaScheduler (this);
   notify = new Notify (this);
   notify->SetTrayIcon (trayIcon);
   shellLauncher = new ShellLauncher (this);
-  helpView = new HelpView (this);
   events = new EventList (this);
   audioAlerter = new QMediaPlayer (this);
 }
@@ -92,9 +85,7 @@ Agenda::Init (QApplication &ap, bool isPhone)
   connect (app, SIGNAL (lastWindowClosed()), this, SLOT (Exiting()));
   Settings().sync();
   db.Start ();
-  //mainUi.activityList->Init (&db);
   scheduler->Init (&db);
-  //mainUi.calendarWidget->setVisible (false);
   initDone = true;
   if (events) {
     events->Init (&db);
@@ -121,6 +112,7 @@ Agenda::Run ()
   QDeclarativeContext * context = rootContext ();
   if (context) {
     context->setContextProperty ("cppEventListModel",events);
+    context->setContextProperty ("isPhone",assumePhone);
   }
   AGENDA_PRETTY_DEBUG << " phone ? " << assumePhone;
   QSize normalSize (600,400);
@@ -268,7 +260,7 @@ Agenda::CloseCleanup ()
 void
 Agenda::EditSettings ()
 {
-  configEdit.Exec ();
+  QMetaObject::invokeMethod(qmlRoot,"editSettings");
   SetSettings ();
 }
 
@@ -276,18 +268,6 @@ void
 Agenda::SetSettings ()
 {
   Settings().sync ();
-}
-
-void
-Agenda::NewItem ()
-{ 
-  itemEdit->NewItem ();
-}
-
-void
-Agenda::PickedDate (const QDate & date)
-{
-  itemEdit->NewItem (date);
 }
 
 void
@@ -496,9 +476,7 @@ Agenda::AskRevive (int numOld)
 void
 Agenda::License ()
 {
-  if (helpView) {
-    helpView->Show ("qrc:/help/LICENSE.txt");
-  }
+  QMetaObject::invokeMethod (qmlRoot,"showLicense");
 }
 
 void

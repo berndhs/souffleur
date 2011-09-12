@@ -36,31 +36,49 @@ Rectangle {
     }
   }
   
-  Row {
-    id:buttonRow
-    spacing:32
+  Rectangle {
+    id: brandingBox
+    width: buttonRow.width
+    height: buttonRow.height
+    color: "#eeee99"
+    radius: height * 0.5
     anchors { top: mainBox.top; horizontalCenter: mainBox.horizontalCenter }
-    ChoiceButton {
-      id:quitButton
-      labelText: qsTr ("Quit")
-      topColor: "#00ccff"
-      height:mainBox.rowHeight
-      radius: height * 0.5
-      onPressed: {
-        console.log ("quit pressed")
-        mainBox.quit() 
+    Row {
+      id:buttonRow
+      spacing:32
+      anchors { top: brandingBox.top; horizontalCenter: brandingBox.horizontalCenter }
+      ChoiceButton {
+        id:quitButton
+        labelText: qsTr ("Quit")
+        topColor: "#00ccff"
+        height:mainBox.rowHeight
+        radius: height * 0.5
+        onPressed: {
+          console.log ("quit pressed")
+          mainBox.quit() 
+        }
       }
-    }
-    ChoiceButton {
-      id:addButton
-      labelText: qsTr("+")
-      font.weight: Font.Bold
-      topColor: "#e7e755"
-      height:mainBox.rowHeight
-      radius: height * 0.5
-      onPressed: {
-        console.log ("add button pressed")
-        newItemEdit.visible = !newItemEdit.visible
+      Column {
+        Text {
+          font.weight: Font.Bold
+          text: "Souffleur"
+        }
+        Text {
+          text: qsTr ("Scheduling")
+        }
+      }
+      
+      ChoiceButton {
+        id:addButton
+        labelText: qsTr("+")
+        font.weight: Font.Bold
+        topColor: "#99ee99"
+        height:mainBox.rowHeight
+        radius: height * 0.5
+        onPressed: {
+          console.log ("add button pressed")
+          newItemEdit.visible = !newItemEdit.visible
+        }
       }
     }
   }
@@ -129,11 +147,11 @@ Rectangle {
     model:cppEventListModel
     delegate: eventListDelegate
     width: mainBox.mainWidth
-    height: mainBox.mainHeight - buttonRow.height
+    height: mainBox.mainHeight - brandingBox.height
     currentIndex: -1
     clip: true
     anchors {
-      top:buttonRow.bottom
+      top:brandingBox.bottom
       horizontalCenter: mainBox.horizontalCenter
     }
   }
@@ -141,10 +159,10 @@ Rectangle {
     id: newItemEdit
     visible: false
     width: mainBox.mainWidth * 0.9
-    height: mainBox.mainHeight - buttonRow.height
+    height: mainBox.mainHeight - brandingBox.height
     isPhone: mainBox.isPhone
     anchors {
-      top: buttonRow.bottom
+      top: brandingBox.bottom
       horizontalCenter: mainBox.horizontalCenter
     }
     z: eventList.z+1

@@ -24,13 +24,11 @@
 #include <QDeclarativeView>
 #include <QSystemTrayIcon>
 #include <QDateTime>
-#include "config-edit.h"
 #include "db-manager.h"
 #include "agenda-event.h"
 #include "agenda-warning.h"
 #include "agenda-shell.h"
 #include "event-list.h"
-#include "helpview.h"
 
 #include <QDeclarativeItem>
 
@@ -73,8 +71,6 @@ private slots:
   void About ();
   void License ();
   void Exiting ();
-  void NewItem ();
-  void PickedDate (const QDate & date);
   void ToggleCal ();
   void Minimize ();
   void CleanOld ();
@@ -114,7 +110,6 @@ private:
   QApplication    *app;
   QSystemTrayIcon *trayIcon;
  
-  ConfigEdit       configEdit;
   QStringList      configMessages;
 
   DBManager        db;
@@ -123,7 +118,6 @@ private:
   Notify          *notify;
   ShellLauncher   *shellLauncher;
   QMediaPlayer    *audioAlerter;
-  deliberate::HelpView        *helpView;
   QString          dateForm;
   bool             runAgain;
   bool             visibleBeforeEvent;

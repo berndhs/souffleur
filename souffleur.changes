@@ -1,6 +1,9 @@
-* Fri Sep 09 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.0 
+* Sun Sep 11 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.0 
+ - repeating events
+ - copy-paste on new item
  - better layout for rotation
  - audio uptional, rotation
+ - start programs from shell commands, even in harmattan
  - start converting to QML for Harmattan & Tablet
  - replace libnotify with system tray messages, libnotify is too much trouble
 
