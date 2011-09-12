@@ -1,6 +1,6 @@
 souffleur (0.1.0) unstable; urgency=low
 
-  * repeating events
-  * initial harmattan release
+  * edit existing events; delete events; whole pile of bug fixes;
+  * title bar, so people know what program is running
 
  -- Bernd Stramm <bernd.stramm@gmail.com>  Mon, 12 Sep 2011 00:00:00 +0000

@@ -25,6 +25,10 @@ Rectangle {
                        string command, bool audible, real repeatMins)
   signal deleteEvent (string uuid)
   
+  function setAboutText (theText) {
+    aboutBox.text = theText
+  }
+  
   GeuzenOrientation {
     id: orientationWatcher
     onRotationChange: {
@@ -112,7 +116,7 @@ Rectangle {
     border.color: "#ddeedd"; border.width: 1
     opacity: 0.9
     anchors {
-      top: brandingBox.bottom
+      top: brandingBox.bottom; topMargin: brandingBox.height
       horizontalCenter: brandingBox.horizontalCenter
     }
   }

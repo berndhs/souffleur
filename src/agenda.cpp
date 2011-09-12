@@ -290,10 +290,8 @@ Agenda::PrepareAbout ()
   QStringList messages;
   messages.append (version);
   messages.append (configMessages);
-  QDeclarativeItem * aboutBox = qmlRoot->findChild <QDeclarativeItem*> ("AboutBox");
-  if (aboutBox) {
-    aboutBox->setProperty ("text",messages.join("\n"));
-  }
+  QMetaObject::invokeMethod (qmlRoot,"setAboutText",
+                             Q_ARG (QVariant, QVariant (messages.join("\n"))));
   AGENDA_PRETTY_DEBUG << messages;
 }
 
