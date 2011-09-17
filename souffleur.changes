@@ -1,3 +1,11 @@
+* Sat Sep 17 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.2 
+ - display past alerts
+ - fix width and alignment problems
+ - make flicking of the edit item work; resize repeat-info row
+ - refactor main event list UI
+ - only do audible alert when event object says so
+ - edit existing events; delete events; whole pile of bug fixes;
+
 * Mon Sep 12 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.0 
  - edit existing events; delete events; whole pile of bug fixes;
  - title bar, so people know what program is running

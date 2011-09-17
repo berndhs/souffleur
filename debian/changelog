@@ -1,3 +1,13 @@
+souffleur (0.1.2) unstable; urgency=low
+
+  * display past alerts
+  * fix width and alignment problems
+  * make flicking of the edit item work; resize repeat-info row
+  * refactor main event list UI
+  * only do audible alert when event object says so
+
+ -- Bernd Stramm <bernd.stramm@gmail.com>  Sat, 17 Sep 2011 00:00:00 +0000
+
 souffleur (0.1.0) unstable; urgency=low
 
   * edit existing events; delete events; whole pile of bug fixes;
