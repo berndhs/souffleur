@@ -122,115 +122,28 @@ Rectangle {
   }
 
   
-  Component {
-    id:eventListDelegate
-    Rectangle {
-      id:normalDelegateRow
-      height:eventListRow.height
-      width:mainBox.mainWidth
-      color:Qt.lighter (mainBox.mainColor,isCurrent ? 1.5 : 1.2)
-      property bool isCurrent: index == eventList.currentIndex
-      property real restWidth: width - eventTimeText.width 
-                               - audibleIconBox.width - eventTitleText.width 
-                               - (eventListRow.itemCount - 1) * eventListRow.spacing
-      
-      
-      Flow {
-        id: eventListRow
-        spacing: 4
-        //height: Math.max (mainBox.rowHeight, eventWhatText.height)
-        width: normalDelegateRow.width
-        property int itemCount: 4
-        Text {
-          id: eventTitleText
-          text: eventTitle 
-          width: mainBox.nickWidth
-          height:mainBox.rowHeight
-          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
-        }
-        Rectangle {
-          id: audibleIconBox
-          width: 0.5* mainBox.rowHeight
-          height: mainBox.rowHeight
-          color: "transparent"
-          Image {
-            id: audibleImage
-            width: 0.5 * mainBox.rowHeight
-            height: 0.5 * mainBox.rowHeight
-            anchors.top: parent.top
-            source: eventAudible ? ":/icons/bell.png" : ""
-          }
-        }
-        Rectangle {
-          id: repeatIconBox
-          width: 0.5* mainBox.rowHeight
-          height: mainBox.rowHeight
-          color: "transparent"
-          Image {
-            id: repeatImage
-            width: 0.5 * mainBox.rowHeight
-            height: 0.5 * mainBox.rowHeight
-            anchors.top: parent.top
-            source: eventRepeating ? ":/icons/R.png" : ""
-          }
-        }
-        Text {
-          id: eventTimeText
-          text: eventWhen
-          height:mainBox.rowHeight
-          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
-          
-          MouseArea {
-            anchors.fill: parent
-            onClicked: {
-              itemModify.visible = !itemModify.visible
-              console.log (" changed modify visible " + itemModify.visible)
-            }
-          }
-          
-        }
-        Text {
-          id: eventWhatText
-          text: eventWhat 
-          width: Math.max (mainBox.nickWidth, normalDelegateRow.restWidth)
-          wrapMode:Text.Wrap
-          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
-        }
-        
-      }
-      ItemModify {
-        id: itemModify
-        anchors {
-          top: eventListDelegate.bottom;
-          horizontalCenter: eventListDelegate.horizontalCenter 
-        }
-        visible: false
-        z: eventListDelegate.z + 1
-        onVisibleChanged: {
-          console.log (" itemModify visible now " + visible + " for index " + index)
-        }
-        onWantChange: {
-          newItemEdit. startModify (eventUuid, eventTitle, eventWhen, eventWhat, 
-                                 eventCommand, eventAudible, eventRepeatMinutes) 
-        }
-        onWantDelete: {
-          mainBox.deleteEvent (eventUuid)
-        }
-      }
-    }
-  }
   
-  ListView {
+  MainEventList {
     id:eventList
     model:cppEventListModel
-    delegate: eventListDelegate
     width: mainBox.mainWidth
     height: mainBox.mainHeight - brandingBox.height
+    mainWidth: mainBox.mainWidth
+    nickWidth: mainBox.nickWidth
+    rowHeight: mainBox.rowHeight
+    mainColor: mainBox.mainColor
     currentIndex: -1
     clip: true
     anchors {
       top:brandingBox.bottom
       horizontalCenter: mainBox.horizontalCenter
+    }
+    onDeleteEvent: {
+      mainBox.deleteEvent (uuid)
+    }
+    onWantModify: {
+      itemEdit.startModify (uuid, title, when, what, command,
+                            audible, repeatMinutes)
     }
   }
   ItemEdit {

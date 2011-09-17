@@ -11,6 +11,8 @@
         <file>qml/RepeatEdit.qml</file>
         <file>qml/About.qml</file>
         <file>qml/ItemModify.qml</file>
+        <file>qml/MainEventList.qml</file>
+        <file>qml/AlertList.qml</file>
     </qresource>
     <qresource prefix="/schemas">
         <file alias="events.sql">schemas/events.sql</file>
