@@ -11,15 +11,15 @@ ListView {
   signal wantModify (string uuid, string title, string when, string what, 
                      string command, bool audible, int repeatMinutes)
 
-
-
+  
+  
   delegate: Component {
     id:eventListDelegate
     Rectangle {
       id:normalDelegateRow
       height:eventListRow.height
       width:listViewItem.mainWidth
-      color:Qt.lighter (listViewItem.mainColor,isCurrent ? 1.5 : 1.2)
+      color: isCurrent ? Qt.lighter (listViewItem.mainColor, 1.2) : listViewItem.mainColor
       property bool isCurrent: index == eventList.currentIndex
       property real restWidth: width - eventTimeText.width 
                                - audibleIconBox.width - eventTitleText.width 
@@ -80,19 +80,28 @@ ListView {
           }
           
         }
-        Text {
-          id: eventWhatText
-          text: eventWhat 
-          width: Math.max (listViewItem.nickWidth, normalDelegateRow.restWidth)
-          wrapMode:Text.Wrap
-          font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+        Rectangle {
+          id: eventWhatBox
+          width: listViewItem.mainWidth
+          height: Math.max (eventWhatText.height, listViewItem.rowHeight)
+          color: Qt.darker (normalDelegateRow.color, 1.1)
+          Text {
+            id: eventWhatText
+            text: eventWhat 
+            width: Math.max (listViewItem.nickWidth, normalDelegateRow.restWidth)
+            wrapMode:Text.Wrap
+            font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+          }
         }
+
         
       }
       ItemModify {
         id: itemModify
+        height: listViewItem.rowHeight
+        width: childrenRect.width
         anchors {
-          top: normalDelegateRow.bottom;
+          top: normalDelegateRow.verticalCenter
           horizontalCenter: normalDelegateRow.horizontalCenter 
         }
         visible: false
@@ -102,7 +111,7 @@ ListView {
         }
         onWantChange: {
           listViewItem.wantModify (eventUuid, eventTitle, eventWhen, eventWhat, 
-                                 eventCommand, eventAudible, eventRepeatMinutes) 
+                                   eventCommand, eventAudible, eventRepeatMinutes) 
         }
         onWantDelete: {
           listViewItem.deleteEvent (eventUuid)

@@ -130,7 +130,7 @@ Rectangle {
 
       MouseArea {
         anchors.fill:parent
-        onPressed: {
+        onClicked: {
           itemNickText.forceActiveFocus()
         }
         onPressAndHold: {
@@ -208,7 +208,7 @@ Rectangle {
           id: saveButton
           labelText: qsTr ("Save")
           height: mainBox.rowHeight * 0.8
-          width: labelWidth + 8
+          width: labelWidth
           radius: height * 0.5
           topColor: "#aaff99"
           onPressed: {
@@ -320,7 +320,7 @@ Rectangle {
       }
       MouseArea {
         anchors.fill:parent
-        onPressed: {
+        onClicked: {
           itemCommandText.forceActiveFocus()
         }
         onPressAndHold: {
@@ -365,7 +365,7 @@ Rectangle {
       }
       MouseArea {
         anchors.fill:parent
-        onPressed: {
+        onClicked: {
           itemDescriptionText.forceActiveFocus()
         }
         onPressAndHold: {
@@ -374,12 +374,20 @@ Rectangle {
         }
       }
     }
+    Rectangle {
+      id: tailSpacer
+      height: mainBox.height
+      width: mainBox.width
+      color: "transparent" // "green"
+    }
   }
+  
   ListView {
     id: itemList
     model: itemPartsModel
     height: parent.height
     width: mainBox.mainWidth
+    snapMode: ListView.NoSnap
     anchors {
       top: mainBox.top; topMargin: mainBox.frameWidth
       left: mainBox.left; leftMargin: mainBox.frameWidth

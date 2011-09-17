@@ -36,5 +36,6 @@
         <file alias="windowicon.png">icons/windowicon.png</file>
         <file alias="marked.png">icons/marked.png</file>
         <file alias="R.png">icons/R.png</file>
+        <file alias="question.png">icons/question.png</file>
     </qresource>
 </RCC>

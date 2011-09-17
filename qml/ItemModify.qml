@@ -23,7 +23,7 @@ import QtQuick 1.0
  ****************************************************************/
 
 
-Item {
+Rectangle {
   id: modifyItemMenu
   property real buttonHeight: 42
   property real buttonWidth: 84
@@ -34,6 +34,8 @@ Item {
   property bool enablePaste: true
   property bool enableSelect: true
 
+  color: "transparent"
+  
   signal wantCopy ()
   signal wantChange ()
   signal wantDelete ()

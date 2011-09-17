@@ -35,10 +35,6 @@ Rectangle {
       mainBox.isPortrait = portrait
       mainBox.rotation = rotation
       mainBox.isInverted = inverted
-      console.log ("orientation port " + mainBox.isPortrait)
-      console.log ("main box x " + mainBox.x + " y " + mainBox.y)
-      console.log ("rect size: " + mainBox.width + ", " + mainBox.height)
-      console.log ("my size  : " + mainWidth + ", " + mainHeight)
     }
   }
   
@@ -99,7 +95,8 @@ Rectangle {
         radius: height * 0.5
         onPressed: {
           console.log ("add button pressed")
-          newItemEdit.startNew ()
+          eventList.visible = false
+          itemEdit.startNew ()
         }
       }
     }
@@ -142,12 +139,13 @@ Rectangle {
       mainBox.deleteEvent (uuid)
     }
     onWantModify: {
+      eventList.visible = false
       itemEdit.startModify (uuid, title, when, what, command,
                             audible, repeatMinutes)
     }
   }
   ItemEdit {
-    id: newItemEdit
+    id: itemEdit
     visible: false
     width: mainBox.mainWidth * 0.9
     height: mainBox.mainHeight - brandingBox.height
@@ -158,8 +156,12 @@ Rectangle {
     }
     z: eventList.z+1
     onSaveEvent: {
+      eventList.visible = true
       mainBox.saveNewEvent (theUuid, theTitle, theTime, theDescription, 
                             command, audible, repeatMinutes)
+    }
+    onCancelled: {
+      eventList.visible = true
     }
   }
   Component.onCompleted: {

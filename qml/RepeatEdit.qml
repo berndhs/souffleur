@@ -83,8 +83,8 @@ Rectangle {
     }
     Image {
       id: checkedIcon
-      visible: mainBox.accepted
-      source: ":/icons/marked.png"
+      visible: true
+      source: mainBox.accepted ? ":/icons/marked.png" : ":/icons/question.png"
       width: mainBox.height
       height: mainBox.height
       fillMode:Image.Stretch
