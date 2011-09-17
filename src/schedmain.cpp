@@ -23,7 +23,9 @@
  ****************************************************************/
 
 #include <QApplication>
+#if 0
 #include <QSystemDeviceInfo>
+#endif
 #include <QFont>
 #include "deliberate.h"
 #include "version.h"
@@ -61,23 +63,22 @@ main (int argc, char *argv[])
 
   QApplication  app (argc, argv);
   
-  QSystemDeviceInfo sdi;
-
-  QString imsi = sdi.imsi();
-  QString imei = sdi.imei();
-  bool isPhone (!(imsi.isEmpty() || imei.isEmpty()));
-  qDebug () << __PRETTY_FUNCTION__ << " phone ? " << isPhone;
   
 
   QStringList  configMessages;
 
   deliberate::CmdOptions  opts ("souffleur");
-  opts.AddSoloOption ("debug","D",QObject::tr("show Debug log window"));
+  opts.AddSoloOption ("debug","D",
+          QObject::tr("show Debug log window"));
+  opts.AddSoloOption ("phone","P",
+          QObject::tr("use phone settings"));
+  opts.AddSoloOption ("notphone","C",
+          QObject::tr("use computer (non-phone) settings"));
   opts.AddStringOption ("logdebug","L",QObject::tr("write Debug log to file"));
 
 
   bool optsOk = opts.Parse (argc, argv);
-  if (!optsOk) {
+  if ((opts.SeenOpt ("phone") && opts.SeenOpt("notphone")) || !optsOk) {
     opts.Usage ();
     exit(1);
   }
@@ -85,6 +86,20 @@ main (int argc, char *argv[])
     opts.Usage ();
     exit (0);
   }
+#if 0
+  QSystemDeviceInfo sdi;
+
+  QString imsi = sdi.imsi();
+  QString imei = sdi.imei();
+  bool isPhone (!(imsi.isEmpty() || imei.isEmpty()));
+#else
+  bool isPhone (false);
+#endif
+
+  isPhone |= opts.SeenOpt("phone");
+  
+  qDebug () << __PRETTY_FUNCTION__ << " phone ? " << isPhone;
+
   pv.CLIVersion ();
   configMessages.append (QString("Built on %1 %2")
                          .arg (__DATE__).arg(__TIME__));

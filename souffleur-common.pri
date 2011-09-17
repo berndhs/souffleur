@@ -3,7 +3,7 @@ TEMPLATE = app
 
 QT += core gui sql webkit declarative
 CONFIG += mobility
-MOBILITY += systeminfo sensors multimedia
+MOBILITY += sensors multimedia
 
 INCLUDEPATH += ./include
 
