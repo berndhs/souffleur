@@ -318,7 +318,6 @@ Rectangle {
           height: commandCheck.isChecked ? mainBox.rowHeight : 0
           visible: commandCheck.isChecked
           color: itemCommandText.focus ? "white" : Qt.darker (mainBox.color, 1.3)
-          border.color: "green"; border.width: 2
           TextInput {
             id: itemCommandText
             activeFocusOnPress: true

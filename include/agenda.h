@@ -127,6 +127,7 @@ private:
 
   QDeclarativeItem * qmlRoot;
   EventList        * events;
+  EventList        * pastEvents;
   
   bool             assumePhone;
 

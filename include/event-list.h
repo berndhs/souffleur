@@ -31,6 +31,7 @@
 #include <QMap>
 #include <QUuid>
 #include <QObject>
+#include "magic-defs.h"
 
 namespace agenda
 {
@@ -44,8 +45,11 @@ public:
 
   int rowCount (const QModelIndex & index = QModelIndex()) const;
   QVariant data (const QModelIndex & index, int role = Qt::DisplayRole) const;
+  
+  Q_INVOKABLE void clear ();
+  Q_INVOKABLE void clearEvent (const QString & uuid);
 
-  void Init (DBManager *dbm);
+  void Init (DBManager *dbm = nullptr);
 
   void Load ();
   void SaveSettings ();
@@ -53,11 +57,11 @@ public:
   void Refresh ();
   
   void DeleteEvent (const QString & uuid);
+  
+  void Append (const AgendaEvent & event);
+  void Prepend (const AgendaEvent & event);
 
 private:
-
-  void addEvent (const AgendaEvent & event);
-  void clear ();
 
   enum DataType {
     Type_Title = Qt::UserRole+1,

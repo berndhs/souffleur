@@ -60,6 +60,7 @@ Agenda::Agenda (QWidget *parent)
    visibleBeforeEvent (false),
    qmlRoot (nullptr),
    events (nullptr),
+   pastEvents (nullptr),
    assumePhone (false)
 {
   AGENDA_PRETTY_DEBUG ;
@@ -74,6 +75,7 @@ Agenda::Agenda (QWidget *parent)
   notify->SetTrayIcon (trayIcon);
   shellLauncher = new ShellLauncher (this);
   events = new EventList (this);
+  pastEvents = new EventList (this);
   audioAlerter = new QMediaPlayer (this);
 }
 
@@ -89,6 +91,11 @@ Agenda::Init (QApplication &ap, bool isPhone)
   initDone = true;
   if (events) {
     events->Init (&db);
+    events->setObjectName("Main_Events");
+  }
+  if (pastEvents) {
+    pastEvents->Init ();
+    pastEvents->setObjectName("Past_Events");
   }
 }
 
@@ -112,6 +119,7 @@ Agenda::Run ()
   QDeclarativeContext * context = rootContext ();
   if (context) {
     context->setContextProperty ("cppEventListModel",events);
+    context->setContextProperty ("cppPastEventListModel",pastEvents);
     context->setContextProperty ("isPhone",assumePhone);
   }
   AGENDA_PRETTY_DEBUG << " phone ? " << assumePhone;
@@ -437,6 +445,9 @@ Agenda::LaunchEvent (AgendaEvent event)
 {
   AGENDA_PRETTY_DEBUG;
   
+  if (pastEvents) {
+    pastEvents->Prepend (event);
+  }
   if (notify) {
 qDebug () << " Agenda::Launch Event visi " << isVisible () 
           << " mini " << isMinimized();
@@ -459,6 +470,7 @@ qDebug () << " Agenda::Launch Event visi " << isVisible ()
     AGENDA_PRETTY_DEBUG << " alerter error " << audioAlerter->errorString();
     AGENDA_PRETTY_DEBUG << " media url " << audioAlerter->media().canonicalUrl();
   } 
+  QMetaObject::invokeMethod(qmlRoot,"doAlert");
   if (assumePhone) {
     showFullScreen();
     show ();

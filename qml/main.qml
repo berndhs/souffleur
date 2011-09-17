@@ -29,6 +29,11 @@ Rectangle {
     aboutBox.text = theText
   }
   
+  function doAlert () {
+    alertList.visible = true
+    alertList.doCheck ()
+  }
+  
   GeuzenOrientation {
     id: orientationWatcher
     onRotationChange: {
@@ -83,6 +88,9 @@ Rectangle {
           onPressAndHold: {
             aboutBox.visible = !aboutBox.visible
           }
+          onClicked: {
+            alertList.visible = !alertList.visible
+          }
         }
       }
       
@@ -111,21 +119,19 @@ Rectangle {
     z: eventList.z + 1
     color: "#eeffee"
     border.color: "#ddeedd"; border.width: 1
-    opacity: 0.9
+    opacity: 0.95
     anchors {
       top: brandingBox.bottom; topMargin: brandingBox.height
       horizontalCenter: brandingBox.horizontalCenter
     }
   }
-
-  
-  
+ 
   MainEventList {
     id:eventList
     model:cppEventListModel
     width: mainBox.mainWidth
     height: mainBox.mainHeight - brandingBox.height
-    mainWidth: mainBox.mainWidth
+    mainWidth: width
     nickWidth: mainBox.nickWidth
     rowHeight: mainBox.rowHeight
     mainColor: mainBox.mainColor
@@ -144,6 +150,36 @@ Rectangle {
                             audible, repeatMinutes)
     }
   }
+  
+  AlertList {
+    id: alertList
+    visible: false
+    model:cppPastEventListModel
+    width: mainBox.mainWidth * 0.8
+    height: mainBox.mainHeight - brandingBox.height
+    mainWidth: width
+    nickWidth: mainBox.nickWidth
+    rowHeight: mainBox.rowHeight
+    mainColor: "#f0f070"
+    currentIndex: -1
+    clip: true
+    anchors {
+      top:brandingBox.bottom
+      horizontalCenter: mainBox.horizontalCenter
+    }
+    
+    onWantClose: {
+      visible = false
+    }
+    onWantClear: {
+      cppPastEventListModel.clear ()
+    }
+    onWantClearEvent:{
+      cppPastEventListModel.clearEvent (uuid)
+    }
+    
+  }
+  
   ItemEdit {
     id: itemEdit
     visible: false

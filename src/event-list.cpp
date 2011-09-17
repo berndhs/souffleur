@@ -107,7 +107,7 @@ EventList::Load ()
             shells[event.Id()] = shell;
           }
         }
-        addEvent (event);
+        Append (event);
       }
       db->CloseRead (it);
     }
@@ -166,11 +166,25 @@ EventList::data (const QModelIndex & index, int role) const
 
 
 void
-EventList::addEvent (const AgendaEvent & event)
+EventList::Append (const AgendaEvent & event)
 {
   beginInsertRows (QModelIndex(), rowCount(), rowCount());
   eventList.append (event);
   endInsertRows ();
+}
+
+void
+EventList::Prepend (const AgendaEvent & event)
+{
+  beginInsertRows (QModelIndex(), 0, 0);
+  eventList.prepend (event);
+  endInsertRows ();
+}
+
+void
+EventList::clearEvent (const QString & uuid)
+{
+  DeleteEvent (uuid);
 }
 
 void

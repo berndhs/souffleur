@@ -15,7 +15,8 @@ Rectangle {
     id: aboutText
     text: "About This Program\nAuthors"
     wrapMode: Text.WordWrap
-    anchors.fill:parent
+    width: parent.width * 0.9
+    anchors.centerIn: parent
   }
   MouseArea {
     anchors.fill: parent
