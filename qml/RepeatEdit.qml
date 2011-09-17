@@ -3,7 +3,8 @@ import QtQuick 1.0
 Rectangle {
   id:mainBox
   width: 400
-  height: isPhone ? 64 : 42
+  //height: isPhone ? 64 : 42
+  height: spinBoxRow.height
   property real value: daysBox.value * 1440
                       + hoursBox.value * 60
                       + minsBox.value
@@ -25,7 +26,9 @@ Rectangle {
   
   signal acceptedValue (real value)
   
-  Flow {
+  Row {
+    id: spinBoxRow
+    height: daysBox.height
     SpinBox {
       id: daysBox
       label: "Days"

@@ -80,21 +80,30 @@ ListView {
           }
           
         }
-        Rectangle {
-          id: eventWhatBox
-          width: listViewItem.mainWidth
-          height: Math.max (eventWhatText.height, listViewItem.rowHeight)
-          color: Qt.darker (normalDelegateRow.color, 1.1)
-          Text {
-            id: eventWhatText
-            text: eventWhat 
-            width: Math.max (listViewItem.nickWidth, normalDelegateRow.restWidth)
-            wrapMode:Text.Wrap
-            font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+        Row {
+          id: eventWhatRow
+          Rectangle {
+            id: eventWhatIndent
+            width: 16; height: eventWhatBox.height
+            color: "transparent"
+            
           }
-        }
+          Rectangle {
+            id: eventWhatBox
+            width: listViewItem.mainWidth
+            height: Math.max (eventWhatText.height, listViewItem.rowHeight)
+            color: Qt.darker (normalDelegateRow.color, 1.1)
+            
+            Text {
+              id: eventWhatText
+              text: eventWhat 
+              width: Math.max (listViewItem.nickWidth, normalDelegateRow.restWidth)
+              wrapMode:Text.Wrap
+              font.weight: normalDelegateRow.isCurrent ? Font.Bold : Font.Normal
+            }
+          }
 
-        
+        }
       }
       ItemModify {
         id: itemModify
