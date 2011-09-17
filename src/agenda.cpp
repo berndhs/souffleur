@@ -445,7 +445,7 @@ qDebug () << " Agenda::Launch Event visi " << isVisible ()
     notify->ShowMessage (event, oldVisi, oldMini);
   }
   AGENDA_PRETTY_DEBUG << audioAlerter;
-  if (audioAlerter) {
+  if (audioAlerter && event.Audible()) {
     if (assumePhone) {
       audioAlerter->setMedia (QUrl::fromLocalFile("/opt/souffleur/audio/alert.wav"));
     } else {
@@ -453,18 +453,16 @@ qDebug () << " Agenda::Launch Event visi " << isVisible ()
     }
     audioAlerter->setVolume(50);
     QTimer::singleShot (1,audioAlerter,SLOT (play()));
-    if (assumePhone) {
-      showFullScreen();
-      show ();
-      raise ();
-    }
     AGENDA_PRETTY_DEBUG << " alerter ok "  << audioAlerter->isAudioAvailable();
     AGENDA_PRETTY_DEBUG << " media   ok "  << audioAlerter->mediaStatus();
     AGENDA_PRETTY_DEBUG << " media duration "  << audioAlerter->duration();
     AGENDA_PRETTY_DEBUG << " alerter error " << audioAlerter->errorString();
     AGENDA_PRETTY_DEBUG << " media url " << audioAlerter->media().canonicalUrl();
-  } else {
-    AGENDA_PRETTY_DEBUG << " no alerter !!";
+  } 
+  if (assumePhone) {
+    showFullScreen();
+    show ();
+    raise ();
   }
 }
 
