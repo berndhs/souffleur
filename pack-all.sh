@@ -48,9 +48,9 @@ cd $TEMPDIR
 
 tar zxf $TARFILE
 
-#mad -t harmattan-platform-api dpkg-source -b ${ARCHIVE}
+mad -t harmattan-platform-api dpkg-source -b ${ARCHIVE}
 
-dpkg-source -b ${ARCHIVE}
+#dpkg-source -b ${ARCHIVE}
 
 cd ..
 
@@ -67,20 +67,34 @@ DEB_FILES=" \
           ${TEMPDIR}/$HARMAT_TARFILE \
            ${TEMPDIR}/$HARMAT_DSCFILE \
           "
+HAVE_ALL_DEB_FILES=yes
+for F in $DEB_FILES ; do
+  if [ ! -f $F ] ; then
+    HAVE_ALL_DEB_FILES=no
+  fi
+done
 
-set -x
+if [ ! "X$HAVE_ALL_DEB_FILES" == "Xyes" ] ; then
+  echo "Could not generate all of $DEB_FILES "
+  echo "quitting"
+  exit 1
+fi
+
 mkdir -p ${HARMAT_PACKDIR}
 cp ${DEB_FILES} ${HARMAT_PACKDIR}
 if [ 0$WANT_OBS -ge 1 ]; then
+  set -x
   cp $DEB_FILES meego_obs/
+  set +x
 fi
 
 echo ${VERSION} > ${RPM_PACKDIR}/pack-version
 echo ${NAME} > ${RPM_PACKDIR}/pack-name
 
+set -x
 cp ${TEMPDIR}/${HARMAT_TARFILE} ${CHANGELOG} ${RPM_PACKDIR}
-
 set +x
+
 
 echo -n " remove temp dir "$TEMPDIR " [Y/n] ? "
 read YORN

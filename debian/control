@@ -2,7 +2,7 @@ Source: souffleur
 Section: user/other
 Priority: optional
 Maintainer: Bernd Stramm <bernd.stramm@gmail.com>
-Build-Depends: debhelper (>= 5), libqt4-dev, libqt4-declarative, libqtm-sensors-dev, libqtm-systeminfo-dev libqtm-multimedia-dev
+Build-Depends: debhelper (>= 5), libqt4-dev, libqt4-declarative-dev, libqtm-sensors-dev, libqtm-systeminfo-dev, libqtm-multimedia-dev, libqtwebkit-dev
 Standards-Version: 3.7.3
 Homepage: http://souffleur.sourceforge.net
 
