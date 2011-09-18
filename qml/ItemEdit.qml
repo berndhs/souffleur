@@ -52,14 +52,14 @@ Rectangle {
     itemUuid = ""
     itemNickText.text = qsTr ("new event")
     itemTimeText.text = Qt.formatDateTime (new Date(),"yyyy-MM-dd hh:mm:ss")
-    itemDescriptionText.text = qsTr ("Event Description")
+    itemDescriptionText.text = qsTr ("event description")
     commandCheck.isChecked = false
     itemCommandText.text = ""
     audioCheck.isChecked = false
     repeatEdit.setValues (0,0,0)
     repeatEdit.accepted = false
-    
     visible = true
+    itemNickText.forceActiveFocus ()
   }
   function startModify (theUuid, theNick, theTime, theDescription, 
                         theCommand, theAudible, theRepeat) {
@@ -131,8 +131,11 @@ Rectangle {
             id: itemNickText
             activeFocusOnPress: true
             focus: true
+            selectByMouse: true
             anchors { left: parent.left; verticalCenter: parent.verticalCenter }
             text: "title"
+            Keys.onTabPressed: { itemTimeText.forceActiveFocus() }
+            onAccepted: { itemTimeText.forceActiveFocus() }
           }
           CopyPasteMenu {
             id: itemNickCopyPaste
@@ -208,15 +211,20 @@ Rectangle {
               TextInput {
                 id: itemTimeText
                 activeFocusOnPress: true
+                selectByMouse: true
                 anchors { left: parent.left; verticalCenter: parent.verticalCenter }
                 text: Qt.formatDateTime (new Date(),"yyyy-MM-dd hh:mm:ss")
                 color: itemTime.isValid ? "black" : "red"
                 font.italic: !itemTime.isValid
                 onAccepted: {
-                  itemTime.checkDate ()
+                  if (itemTime.checkDate ()) {
+                    itemDescriptionText.forceActiveFocus()
+                  }
                 }
                 Keys.onTabPressed: {
-                  itemTime.checkDate ()
+                  if (itemTime.checkDate ()) {
+                    itemDescriptionText.forceActiveFocus()
+                  }
                 }
               }
               MouseArea {
@@ -346,7 +354,7 @@ Rectangle {
           MouseArea {
             anchors.fill:parent
             onClicked: {
-              itemCommandText.forceActiveFocus()
+              itemCommandText.activate()
             }
             onPressAndHold: {
               console.log (" command hold ")
@@ -364,10 +372,15 @@ Rectangle {
           TextEdit {
             id: itemDescriptionText
             activeFocusOnPress: true
+            selectByMouse: true
             width: parent.width
             wrapMode: Text.WordWrap
+            function activate () {
+              forceActiveFocus ()
+              cursorPosition = text.length
+            } 
             anchors { left: parent.left; verticalCenter: parent.verticalCenter }
-            text: "description"
+            text: "Description"
           }
           CopyPasteMenu {
             id: itemDescriptionCopyPaste
@@ -391,7 +404,7 @@ Rectangle {
           MouseArea {
             anchors.fill:parent
             onClicked: {
-              itemDescriptionText.forceActiveFocus()
+              itemDescriptionText.activate()
             }
             onPressAndHold: {
               console.log (" command hold ")
