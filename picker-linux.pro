@@ -1,6 +1,6 @@
 TEMPLATE = app
 
-TARGET = bin/background-picker
+TARGET = bin/souffleur-background-picker
 
 OBJECTS_DIR = picker_tmp/obj
 MOC_DIR = picker_tmp/moc
