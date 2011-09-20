@@ -1,7 +1,7 @@
 PROJECT = souffleur
 TEMPLATE = app
 
-QT += core gui sql webkit declarative
+QT += core gui sql declarative
 CONFIG += mobility
 MOBILITY += sensors multimedia
 
@@ -20,7 +20,7 @@ MOC_DIR = tmp/moc
 RCC_DIR = tmp/rcc
 OBJECTS_DIR = tmp/obj
 RESOURCES = sched.qrc
-TARGET = souffleur
+TARGET = bin/souffleur
 
 #FORMS = ui/DebugLog.ui \
 #        ui/config-edit.ui \
