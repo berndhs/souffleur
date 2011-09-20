@@ -378,15 +378,22 @@ Agenda::SaveNewEvent(const QString & uuid,
                      const QString & command, bool audible, qreal repeatMins)
 {
   AGENDA_PRETTY_DEBUG << title << time << description << command << " repeat " << repeatMins;
-  static QString format[4] = { QString ("ddd yyyy-MM-dd hh:mm:ss"),
-                        QString ("ddd yyyy-MM-dd hh:mm"),
-                        QString ("yyyy-MM-dd hh:mm:ss"),
+  static QString format[2] = {QString ("yyyy-MM-dd hh:mm:ss"),
                         QString ("yyyy-MM-dd hh:mm"),
                       };
   bool foundGood (false);
   quint64 stamp;
-  for (int a=0;a<4;a++) {
-    QDateTime attempt (QDateTime::fromString (time, format[a]));
+  QString timeBuf (time);
+  QRegExp leadingCrap ("\\D+");
+  int pos = timeBuf.indexOf (leadingCrap);
+  int crapLen = leadingCrap.cap().length();
+  qDebug () << "     pos " << pos << " len " << crapLen;
+  if (pos == 0) {
+    timeBuf.remove (0,crapLen);
+  }
+  for (int a=0;a<2;a++) {
+    QDateTime attempt (QDateTime::fromString (timeBuf, format[a]));
+    qDebug () << "       " << attempt.isValid() << " for " << attempt;
     if (attempt.isValid()) {
       foundGood = true;
       stamp = attempt.toTime_t();
@@ -394,10 +401,10 @@ Agenda::SaveNewEvent(const QString & uuid,
     }
   }
   if (!foundGood) {
-    AGENDA_PRETTY_DEBUG << " bad date " << time;
+    AGENDA_PRETTY_DEBUG << " bad date " << timeBuf;
     return;
   }
-  qDebug () << " new event time " << time << " using " << dateForm;
+  qDebug () << " new event timeBuf " << timeBuf << " using " << dateForm;
   AgendaEvent event;
   if (uuid.isEmpty()) {
     event = AgendaEvent (title, stamp, description, audible);

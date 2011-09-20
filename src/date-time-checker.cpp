@@ -1,5 +1,6 @@
 #include "date-time-checker.h"
 #include <QDateTime>
+#include <QRegExp>
 #include <QDebug>
 
 namespace agenda
@@ -12,20 +13,20 @@ DateTimeChecker::DateTimeChecker (QObject *parent)
 bool
 DateTimeChecker::isValid (const QString & candidate)
 {
-  QDateTime checkLong1 (QDateTime::fromString(candidate,"yyyy-MM-dd hh:mm:ss"));
+  QString timeBuf (candidate);
+  int pos = timeBuf.indexOf (leadingCrap);
+  int crapLen = leadingCrap.cap().length();
+  qDebug () << "     pos " << pos << " len " << crapLen;
+  if (pos == 0) {
+    timeBuf.remove (0,crapLen);
+  }
+  
+  QDateTime checkLong1 (QDateTime::fromString(timeBuf,"yyyy-MM-dd hh:mm:ss"));
   if (checkLong1.isValid()) {
     return true;
   }
-  QDateTime checkShort1 (QDateTime::fromString (candidate, "yyyy-MM-dd hh:mm"));
+  QDateTime checkShort1 (QDateTime::fromString (timeBuf, "yyyy-MM-dd hh:mm"));
   if (checkShort1.isValid()) {
-    return true;
-  }
-  QDateTime checkLong2 (QDateTime::fromString(candidate,"ddd yyyy-MM-dd hh:mm:ss"));
-  if (checkLong2.isValid()) {
-    return true;
-  }
-  QDateTime checkShort2 (QDateTime::fromString (candidate, "ddd yyyy-MM-dd hh:mm"));
-  if (checkShort2.isValid()) {
     return true;
   }
   qDebug () << __PRETTY_FUNCTION__ << " bad date " << candidate;
