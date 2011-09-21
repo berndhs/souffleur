@@ -1,9 +1,9 @@
-souffleur (0.1.4) unstable; urgency=low
+souffleur (0.1.5) unstable; urgency=low
 
+  * fix schemas; fix some editing problems;
   * ignore leading non-digits of the date string
-  * change name of picker to souffleur-background-picker
-
- -- Bernd Stramm <bernd.stramm@gmail.com>  Tue, 20 Sep 2011 00:00:00 +0000
+  * change name of picker to souffleur-background-picker; note changes in changelogs
+ -- Bernd Stramm <bernd.stramm@gmail.com>  Wed, 21 Sep 2011 19:00:00 +0000
 
 souffleur (0.1.3) unstable; urgency=low
 
