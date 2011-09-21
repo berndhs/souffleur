@@ -35,6 +35,7 @@
 class QApplication;
 class QDate;
 class QMediaPlayer;
+class QEvent;
 
 
 namespace agenda 
@@ -61,6 +62,10 @@ public:
            { configMessages.append (cm); }
 
   void closeEvent ( QCloseEvent *event);
+
+protected:
+
+  bool event (QEvent *event);
 
 private slots:
 

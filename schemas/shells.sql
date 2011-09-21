@@ -1,4 +1,4 @@
 CREATE TABLE "shells" (
-  "eventid" TEXT NOT NULL,
+  "eventid" TEXT NOT NULL UNIQUE on CONFLICT REPLACE,
   "command" TEXT NOT NULL
 );

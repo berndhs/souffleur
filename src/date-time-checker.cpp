@@ -14,6 +14,7 @@ bool
 DateTimeChecker::isValid (const QString & candidate)
 {
   QString timeBuf (candidate);
+  QRegExp leadingCrap ("\\D+");
   int pos = timeBuf.indexOf (leadingCrap);
   int crapLen = leadingCrap.cap().length();
   qDebug () << "     pos " << pos << " len " << crapLen;

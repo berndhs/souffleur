@@ -60,6 +60,11 @@ Rectangle {
     repeatEdit.accepted = false
     visible = true
     itemNickText.forceActiveFocus ()
+    console.log ("New Edit " + itemNickText.text
+                 + "\n     desc " + itemDescriptionText.text
+                 + "\n     time " + itemTimeText.text
+                 + "\n     run  " + commandCheck.isChecked
+                 + "\n     audi " + audioCheck.isChecked)
   }
   function startModify (theUuid, theNick, theTime, theDescription, 
                         theCommand, theAudible, theRepeat) {
@@ -79,6 +84,11 @@ Rectangle {
     }
     repeatEdit.accepted = false
     visible = true
+    console.log ("Old Edit " + itemNickText.text
+                 + "\n     desc " + itemDescriptionText.text
+                 + "\n     time " + itemTimeText.text
+                 + "\n     run  " + commandCheck.isChecked
+                 + "\n     audi " + audioCheck.isChecked)
   }
   
   function setRepeatTimes (minutes) {
@@ -354,7 +364,7 @@ Rectangle {
           MouseArea {
             anchors.fill:parent
             onClicked: {
-              itemCommandText.activate()
+              itemCommandText.forceActiveFocus()
             }
             onPressAndHold: {
               console.log (" command hold ")

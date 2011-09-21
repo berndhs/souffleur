@@ -37,5 +37,7 @@
         <file alias="marked.png">icons/marked.png</file>
         <file alias="R.png">icons/R.png</file>
         <file alias="question.png">icons/question.png</file>
+        <file alias="gear.png">icons/gear.png</file>
+        <file alias="help.png">icons/help.png</file>
     </qresource>
 </RCC>

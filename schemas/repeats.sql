@@ -1,5 +1,5 @@
 CREATE TABLE "repeats" (
-  "eventid" TEXT NOT NULL,
+  "eventid" TEXT NOT NULL UNIQUE on CONFLICT REPLACE,
   "kind"  TEXT NOT NULL,
   "delay" INTEGER NOT NULL
 );

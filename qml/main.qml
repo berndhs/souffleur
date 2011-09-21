@@ -29,6 +29,10 @@ Rectangle {
     aboutBox.text = theText
   }
   
+  function selectHelp () {
+    console.log ("user wants help")
+  }
+  
   function doAlert () {
     alertList.visible = true
     alertList.doCheck ()
@@ -52,8 +56,19 @@ Rectangle {
     anchors { top: mainBox.top; horizontalCenter: mainBox.horizontalCenter }
     Row {
       id:buttonRow
-      spacing:32
+      spacing:20
       anchors { top: brandingBox.top; horizontalCenter: brandingBox.horizontalCenter }
+      ChoiceButton {   
+        id: helpButton
+        width: mainBox.rowHeight
+        height: mainBox.rowHeight
+        topColor: "#00ccff"
+        radius: height * 0.5
+        labelText: "?"
+        font.bold:true
+        font.pointSize: quitButton.font.pointSize + 2
+        onPressed: selectHelp()
+      }
       ChoiceButton {
         id:quitButton
         labelText: qsTr ("Quit")
@@ -105,6 +120,18 @@ Rectangle {
           console.log ("add button pressed")
           eventList.visible = false
           itemEdit.startNew ()
+        }
+      }
+      Image {
+        id: maintainButton
+        height: mainBox.rowHeight
+        width: mainBox.rowHeight
+        source: ":/icons/gear.png"
+        MouseArea {
+          anchors.fill: parent
+          onPressed: {
+            console.log ("want maintain")
+          }
         }
       }
     }

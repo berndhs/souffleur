@@ -36,6 +36,7 @@
 #include <QCursor>
 #include <QDeclarativeContext>
 #include <QMediaPlayer>
+#include <QEvent>
 
 #define AGENDA_PRETTY_DEBUG qDebug() << "__agenda__" << __PRETTY_FUNCTION__ 
 
@@ -421,9 +422,11 @@ Agenda::SaveNewEvent(const QString & uuid,
     }
   }
   qDebug () << " converted to " << event.Time();
+  qDebug () << " new command " << command;
   NewEvent (event);
   if (!command.isEmpty()) {
     AgendaShell shellCommand (event.Id(), command);
+    qDebug () << "   try to store new command " << shellCommand.Id() << shellCommand.Command();
     NewShell (shellCommand);
   }
   if (repeatMins > 0) {
@@ -561,6 +564,15 @@ Agenda::TrayIconActive (QSystemTrayIcon::ActivationReason reason)
     showNormal ();
   }
   raise ();
+}
+
+bool
+Agenda::event (QEvent * event)
+{
+  if (event->type() == QEvent::RequestSoftwareInputPanel) {
+    qDebug () << "         SOFWARE INPUT REQUESTED ";
+  }
+  return QDeclarativeView::event (event);
 }
 
 

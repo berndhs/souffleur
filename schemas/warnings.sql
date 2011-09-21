@@ -1,5 +1,5 @@
 CREATE TABLE "warnings" (
-  "eventid" TEXT NOT NULL,
+  "eventid" TEXT NOT NULL UNIQUE on CONFLICT REPLACE,
   "time" INTEGER NOT NULL,
   "isevent" INTEGER NOT NULL
 );

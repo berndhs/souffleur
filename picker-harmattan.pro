@@ -27,3 +27,9 @@ contains(MEEGO_EDITION,harmattan) {
 }
 
 
+
+contains(MEEGO_EDITION,harmattan) {
+    icon.files = picker-harmattan.png
+    icon.path = /usr/share/icons/hicolor/80x80/apps
+    INSTALLS += icon
+}
