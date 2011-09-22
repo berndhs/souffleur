@@ -1,3 +1,9 @@
+souffleur (0.1.6) unstable; urgency=low
+
+  * bump version due to OBS/QtCreator packaging issue
+
+ -- Bernd Stramm <bernd.stramm@gmail.com>  Thu, 22 Sep 2011 20:00:00 +0000
+
 souffleur (0.1.5) unstable; urgency=low
 
   * fix schemas; fix some editing problems;
