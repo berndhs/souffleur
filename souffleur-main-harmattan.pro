@@ -61,6 +61,7 @@ contains(MEEGO_EDITION,harmattan) {
     # YES this is the same stuff as for the contains() case above
     # this is here because OBS doesn't have the "harmattan" symbol in MEEGO_EDITION
     # and because this .pro is ONLY for harmattan
+    # PLUS QtCreator doesn't deploy anything unless it is within contains()
 
     icon.files = harmattan/souffleur.png
     icon.path = /usr/share/icons/hicolor/80x80/apps

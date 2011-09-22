@@ -47,6 +47,7 @@ Rectangle {
   }
 
   Flow { 
+    spacing: 32
     ChoiceButton {
       id: modifyButton
       visible: modifyItemMenu.enablePaste
