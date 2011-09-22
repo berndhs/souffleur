@@ -25,6 +25,10 @@
 
 include ("souffleur-common.pri")
 
+QMAKE_CXXFLAGS += -DDELIBERATE_HARMATTAN=6
+
+PROJECT = souffleur
+
 OTHER_FILES += \
     qtc_packaging/debian_harmattan/rules \
     qtc_packaging/debian_harmattan/README \
@@ -34,29 +38,37 @@ OTHER_FILES += \
     qtc_packaging/debian_harmattan/changelog \
     qml/main.qml
 
+contains(MEEGO_EDITION,harmattan) {
 
+icon.files = harmattan/souffleur.png
+icon.path = /usr/share/icons/hicolor/80x80/apps
+INSTALLS += icon
+
+audiofiles.files += sounds/alert.wav
+audiofiles.path = /opt/souffleur/audio
+INSTALLS += audiofiles
+
+
+desktopfile.files = harmattan/souffleur.desktop
+desktopfile.path = /usr/share/applications
+INSTALLS += desktopfile
+
+}
+
+icon.files = harmattan/souffleur.png
+icon.path = /usr/share/icons/hicolor/80x80/apps
+INSTALLS += icon
+
+audiofiles.files += sounds/alert.wav
+audiofiles.path = /opt/souffleur/audio
+INSTALLS += audiofiles
+
+
+desktopfile.files = harmattan/souffleur.desktop
+desktopfile.path = /usr/share/applications
+INSTALLS += desktopfile
 
 contains(MEEGO_EDITION,harmattan) {
     target.path = /opt/souffleur/bin
     INSTALLS += target
-}
-
-
-contains(MEEGO_EDITION,harmattan) {
-    icon.files = harmattan/souffleur.png
-    icon.path = /usr/share/icons/hicolor/80x80/apps
-    INSTALLS += icon
-}
-
-contains(MEEGO_EDITION,harmattan) {
-   audiofiles.files += sounds/alert.wav
-   audiofiles.path = /opt/souffleur/audio
-   INSTALLS += audiofiles
-}
-
-
-contains(MEEGO_EDITION,harmattan) {
-    desktopfile.files = harmattan/souffleur.desktop
-    desktopfile.path = /usr/share/applications
-    INSTALLS += desktopfile
 }

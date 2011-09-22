@@ -22,14 +22,11 @@ SOURCES = src/background-picker.cpp \
      src/version.cpp 
 
 contains(MEEGO_EDITION,harmattan) {
-    target.path = /opt/souffleur/bin
-    INSTALLS += target
+target.path = /opt/souffleur/bin
+INSTALLS += target
 }
 
 
+target.path = /opt/souffleur/bin
+INSTALLS += target
 
-contains(MEEGO_EDITION,harmattan) {
-    icon.files = picker-harmattan.png
-    icon.path = /usr/share/icons/hicolor/80x80/apps
-    INSTALLS += icon
-}

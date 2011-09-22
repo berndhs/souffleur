@@ -19,6 +19,11 @@ SRC = $(SOURCEDIR)/$(TAR_SRC)
 rpm: $(SRC) $(SPEC)
 	QA_RPATHS=1 rpmbuild -ba $(SPEC) | tee build.log
 
+fresh: NEWPACK rpm
+
+NEWPACK:
+	$(RM) pack-count
+
 spec: $(SPEC) FORCE
 
 $(SPEC):  spec.in pack-version Makefile

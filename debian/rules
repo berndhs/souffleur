@@ -18,6 +18,9 @@ configure-stamp:
 	dh_testdir
 	qmake PREFIX=/usr souffleur-harmattan.pro # Uncomment this line for use without Qt Creator
 
+	echo -n "built at " > qmake-stamp  
+	date -R >> qmake-stamp
+
 	touch configure-stamp
 
 
@@ -39,17 +42,26 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	echo "cleaning"
-	if [ -f Makefile ] ; then $(MAKE) clean; fi
+	if [ -f Makefile ] ; then \
+	  if [ -e qmake-stamp ]; then \
+	    echo "cleaning " ;\
+	    cat qmake-stamp ;\
+	    $(MAKE) clean ;\
+	    rm qmake-stamp ;\
+	  fi; \
+	fi; 
 
 	dh_clean 
 
-install: build
+install: build 
 	dh_testdir
 	dh_testroot
 	dh_clean -k 
 	dh_installdirs
 
 	# Add here commands to install the package into debian/souffleur.
+	ls -aR "$(CURDIR)"/debian/souffleur
+	ls -aR bin
 	$(MAKE) INSTALL_ROOT="$(CURDIR)"/debian/souffleur install
 
 
@@ -90,3 +102,4 @@ binary-arch: build install
 
 binary: binary-indep binary-arch
 .PHONY: build clean binary-indep binary-arch binary install configure
+
