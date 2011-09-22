@@ -51,12 +51,13 @@ Rectangle {
       }
       ChoiceButton {
         id: clearButton
-        labelText: qsTr ("Clear")
+        labelText: qsTr ("Clear All")
         height: mainBox.rowHeight
         radius: height * 0.5
         topColor: "#aaff00"
         onPressed: {
           mainBox.wantClear ()
+          mainBox.wantClose ()
         }
       }
     }

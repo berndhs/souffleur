@@ -3,6 +3,6 @@ Name=Souffleur Agenda Planner
 GenericName=Daily Event Planner Application
 Comment=Remind the User to Do Things, and Things They Should Have Done
 Exec=/opt/souffleur/bin/souffleur --phone
-Icon=souffleur
+Icon=/usr/share/icons/hicolor/80x80/apps/souffleur.png
 Type=Application
 Categories=Office;Calendar;

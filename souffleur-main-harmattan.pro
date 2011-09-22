@@ -40,35 +40,42 @@ OTHER_FILES += \
 
 contains(MEEGO_EDITION,harmattan) {
 
-icon.files = harmattan/souffleur.png
-icon.path = /usr/share/icons/hicolor/80x80/apps
-INSTALLS += icon
+    icon.files = harmattan/souffleur.png
+    icon.path = /usr/share/icons/hicolor/80x80/apps
+    INSTALLS += icon
 
-audiofiles.files += sounds/alert.wav
-audiofiles.path = /opt/souffleur/audio
-INSTALLS += audiofiles
-
-
-desktopfile.files = harmattan/souffleur.desktop
-desktopfile.path = /usr/share/applications
-INSTALLS += desktopfile
-
-}
-
-icon.files = harmattan/souffleur.png
-icon.path = /usr/share/icons/hicolor/80x80/apps
-INSTALLS += icon
-
-audiofiles.files += sounds/alert.wav
-audiofiles.path = /opt/souffleur/audio
-INSTALLS += audiofiles
+    audiofiles.files += sounds/alert.wav
+    audiofiles.path = /opt/souffleur/audio
+    INSTALLS += audiofiles
 
 
-desktopfile.files = harmattan/souffleur.desktop
-desktopfile.path = /usr/share/applications
-INSTALLS += desktopfile
+    desktopfile.files = harmattan/souffleur.desktop
+    desktopfile.path = /usr/share/applications
+    INSTALLS += desktopfile
 
-contains(MEEGO_EDITION,harmattan) {
     target.path = /opt/souffleur/bin
     INSTALLS += target
+
+} else {
+
+    # YES this is the same stuff as for the contains() case above
+    # this is here because OBS doesn't have the "harmattan" symbol in MEEGO_EDITION
+    # and because this .pro is ONLY for harmattan
+
+    icon.files = harmattan/souffleur.png
+    icon.path = /usr/share/icons/hicolor/80x80/apps
+    INSTALLS += icon
+
+    audiofiles.files += sounds/alert.wav
+    audiofiles.path = /opt/souffleur/audio
+    INSTALLS += audiofiles
+
+
+    desktopfile.files = harmattan/souffleur.desktop
+    desktopfile.path = /usr/share/applications
+    INSTALLS += desktopfile
+
+    target.path = /opt/souffleur/bin
+    INSTALLS += target
+
 }
