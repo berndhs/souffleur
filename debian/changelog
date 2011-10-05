@@ -1,14 +1,9 @@
 souffleur (0.1.7) unstable; urgency=low
 
+  * timeout 10 secs on alert list when raised automatically
   * spacing between Modify and Delete for added safety
 
- -- Bernd Stramm <bernd.stramm@gmail.com>  Thu, 22 Sep 2011 21:00:00 +0000
-
-souffleur (0.1.6) unstable; urgency=low
-
-  * bump version due to OBS/QtCreator packaging issue
-
- -- Bernd Stramm <bernd.stramm@gmail.com>  Thu, 22 Sep 2011 20:00:00 +0000
+ -- Bernd Stramm <bernd.stramm@gmail.com>  Wed, 05 Oct 2011 00:00:00 +0000
 
 souffleur (0.1.5) unstable; urgency=low
 
