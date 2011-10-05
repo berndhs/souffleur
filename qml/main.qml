@@ -35,7 +35,7 @@ Rectangle {
   
   function doAlert () {
     alertList.visible = true
-    alertList.doCheck ()
+    alertList.startTimer ()
   }
   
   GeuzenOrientation {
@@ -105,6 +105,8 @@ Rectangle {
           }
           onClicked: {
             alertList.visible = !alertList.visible
+            alertList.raisedManually = alertList.visible
+            alertList.stopTimer ()
           }
         }
       }
@@ -197,6 +199,7 @@ Rectangle {
     
     onWantClose: {
       visible = false
+      hideTimer.stop ()
     }
     onWantClear: {
       cppPastEventListModel.clear ()

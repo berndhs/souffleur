@@ -10,17 +10,29 @@ Rectangle {
   property alias model: listViewContainer.model
   property alias currentIndex: listViewContainer.currentIndex
   property alias count: listViewContainer.count
+  property bool raisedManually: false
   
   signal wantClose ()
   signal wantClear ()
   signal wantClearEvent (string uuid)
   
-  function doCheck () {
-   // console.log ("qml checking PastEventList " + count)
-    console.log (" qml PastEventList model " + model)
-    console.log (" PastEventList box w/h " + width + " / " + height)
-    console.log (" PastEventList view w/h " + listViewContainer.width + "/" + listViewContainer.height)
-    console.log (" PastEventList content w/h " + listViewContainer.contentWidth +"/" + listViewContainer.contentHeight)
+  function startTimer () {
+    if (!raisedManually) {
+      hideTimer.restart ()
+    }
+  }
+  function stopTimer () {
+    hideTimer.stop ()
+  }
+
+  Timer {
+    id: hideTimer
+    interval: 10000
+    running: false
+    repeat: false
+    onTriggered: {
+      mainBox.visible = false
+    }
   }
   
   Rectangle {
