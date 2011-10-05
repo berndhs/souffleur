@@ -1,3 +1,9 @@
+souffleur (0.1.7) unstable; urgency=low
+
+  * spacing between Modify and Delete for added safety
+
+ -- Bernd Stramm <bernd.stramm@gmail.com>  Thu, 22 Sep 2011 21:00:00 +0000
+
 souffleur (0.1.6) unstable; urgency=low
 
   * bump version due to OBS/QtCreator packaging issue
@@ -9,6 +15,7 @@ souffleur (0.1.5) unstable; urgency=low
   * fix schemas; fix some editing problems;
   * ignore leading non-digits of the date string
   * change name of picker to souffleur-background-picker; note changes in changelogs
+
  -- Bernd Stramm <bernd.stramm@gmail.com>  Wed, 21 Sep 2011 19:00:00 +0000
 
 souffleur (0.1.3) unstable; urgency=low
