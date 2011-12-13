@@ -24,6 +24,7 @@ function list_contains_count () {
   done
 }
 
+set -x
 ALL_ARGS=$*
 NAME=souffleur
 CHANGELOG=${NAME}.changes
@@ -48,9 +49,9 @@ cd $TEMPDIR
 
 tar zxf $TARFILE
 
-mad -t harmattan-platform-api dpkg-source -b ${ARCHIVE}
+#mad -t harmattan-platform-api dpkg-source -b ${ARCHIVE}
 
-#dpkg-source -b ${ARCHIVE}
+dpkg-source -b ${ARCHIVE}
 
 cd ..
 
