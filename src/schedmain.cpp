@@ -132,6 +132,6 @@ main (int argc, char *argv[])
   
   agenda.Run ();
   result = app.exec ();
-  qDebug () << " QApplication exec finished ";
+  qDebug () << " QApplication exec finished " << result;
   return result;
 }

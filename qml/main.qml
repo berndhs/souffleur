@@ -199,7 +199,7 @@ Rectangle {
     
     onWantClose: {
       visible = false
-      hideTimer.stop ()
+      //hideTimer.stop ()
     }
     onWantClear: {
       cppPastEventListModel.clear ()

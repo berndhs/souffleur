@@ -236,12 +236,14 @@ Agenda::Connect ()
 void
 Agenda::Minimize ()
 {
+  qDebug () << __PRETTY_FUNCTION__;
   showMinimized ();
 }
 
 void
 Agenda::Restart ()
 {
+  qDebug () << __PRETTY_FUNCTION__;
   qDebug () << " restart called ";
   runAgain = true;
   Quit ();
@@ -251,22 +253,18 @@ Agenda::Restart ()
 void
 Agenda::Quit ()
 {
+  qDebug () << __PRETTY_FUNCTION__;
   CloseCleanup ();
   if (app) {
     app->quit();
   }
 }
 
-void
-Agenda::closeEvent (QCloseEvent *event)
-{
-  Q_UNUSED (event)
-  CloseCleanup ();
-}
 
 void
 Agenda::CloseCleanup ()
 {
+  qDebug () << __PRETTY_FUNCTION__ ;
   QSize currentSize = size();
   Settings().setValue ("sizes/main",currentSize);
   //mainUi.activityList->SaveSettings ();
@@ -569,12 +567,22 @@ Agenda::TrayIconActive (QSystemTrayIcon::ActivationReason reason)
 bool
 Agenda::event (QEvent * event)
 {
-  if (event->type() == QEvent::RequestSoftwareInputPanel) {
+  if (event->type() == QEvent::RequestSoftwareInputPanel) { 
     qDebug () << "         SOFWARE INPUT REQUESTED ";
   }
+  qDebug () << __PRETTY_FUNCTION__ << event << event->type() 
+            << " outside " << event->spontaneous();
   return QDeclarativeView::event (event);
 }
 
+
+void
+Agenda::closeEvent (QCloseEvent *event)
+{
+  qDebug () << __PRETTY_FUNCTION__ << event;
+  CloseCleanup ();
+  QDeclarativeView::closeEvent (event);
+}
 
 } // namespace
 

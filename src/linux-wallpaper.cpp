@@ -54,11 +54,17 @@ main (int argc, char * argv[])
   BackgroundPicker picker (BackgroundPicker::System_Xfce4);
   bool ok = QObject::connect (&picker, SIGNAL (quit()),&app,SLOT (quit()));
   
-  if (arglist.isEmpty() || arglist.contains ("--random")) {
+  QStringList optList;
+  for (int a = arglist.count() -1; a >= 0; a--) {
+    if (arglist.at(a).startsWith ("--")) {
+      optList.append (arglist.at(a));
+    }
+  }
+  if (optList.isEmpty() || optList.contains ("--random")) {
     picker.run (BackgroundPicker::Run_Random);
-  } else if (arglist.contains ("--daily")) {
+  } else if (optList.contains ("--daily")) {
     picker.run (BackgroundPicker::Run_Daily);
-  } else if (arglist.contains ("--hourly")) {
+  } else if (optList.contains ("--hourly")) {
     picker.run (BackgroundPicker::Run_Hourly);
   } else {
     return 1;

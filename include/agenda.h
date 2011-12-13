@@ -61,11 +61,11 @@ public:
   void  AddConfigMessages (const QStringList & cm) 
            { configMessages.append (cm); }
 
-  void closeEvent ( QCloseEvent *event);
 
 protected:
 
   bool event (QEvent *event);
+  void closeEvent ( QCloseEvent *event);
 
 private slots:
 
