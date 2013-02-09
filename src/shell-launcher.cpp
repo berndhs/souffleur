@@ -4,7 +4,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -56,7 +56,7 @@ ShellLauncher::Launch (const AgendaShell & shell)
   processes.insert (newProc);
   connect (newProc, SIGNAL (Finished (AgendaProcess*)),
            this, SLOT (Finished (AgendaProcess*)));
-  newProc->execute (shell.Command());
+  newProc->startDetached (shell.Command());
 }
 
 void

@@ -4,7 +4,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -33,11 +33,13 @@ AgendaEvent::AgendaEvent ()
 {
 }
 
-AgendaEvent::AgendaEvent (const QString & n, quint64 time, const QString & desc)
+AgendaEvent::AgendaEvent (const QString & n, quint64 time, 
+                          const QString & desc, bool playSound)
   :uuid (QUuid::createUuid()),
    nick (n),
    timestamp (time),
-   description (desc)
+   description (desc),
+   audible (playSound)
 {
 }
    
@@ -46,7 +48,8 @@ AgendaEvent::AgendaEvent (const AgendaEvent & old)
   :uuid (old.uuid),
    nick (old.nick),
    timestamp (old.timestamp),
-   description (old.description)
+   description (old.description),
+   audible (old.audible)
 {
 }
 
@@ -58,6 +61,7 @@ AgendaEvent::operator = (const AgendaEvent & other)
     nick = other.nick;
     timestamp = other.timestamp;
     description = other.description;
+    audible = other.audible;
   }
   return *this;
 }
@@ -66,7 +70,7 @@ void
 AgendaEvent::DebugDump ()
 {
   qDebug () << " AgendaEvent ( " 
-            << uuid << nick << timestamp << description 
+            << uuid << nick << timestamp << description << audible
             << " ) ";
 }
 

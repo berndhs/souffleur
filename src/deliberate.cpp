@@ -4,7 +4,7 @@
 /****************************************************************
  * This file is distributed under the following license:
  *
- * Copyright (C) 2010, Bernd Stramm
+ * Copyright (C) 2011, Bernd Stramm
  *
  *  This program is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU General Public License
@@ -59,7 +59,7 @@ SetSettings (QSettings & settings)
 QSettings &
 Settings ()
 {
-  if (mySettings) {
+  if (!mySettings) {
     mySettings = new QSettings;
   }
   if (mySettings == 0) {

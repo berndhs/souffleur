@@ -13,11 +13,11 @@
 #// of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
 #//
 
-PRO_FILE = sched.pro
+PRO_FILE = souffleur-linux.pro
 MAKEFILE = MakeSched
 TOP_MAKEFILE = Makefile
 TARGETS = bin/souffleur
-DESKTOP_FILE = souffleur.desktop
+DESKTOP_FILE = linux/souffleur.desktop
 DESKTOP_DIR = /usr/share/applications
 ICON_FILE = souffleur.png
 ICON_DIR = /usr/share/pixmaps
@@ -40,15 +40,10 @@ release: $(MAKEFILE) FORCE
 	$(MAKE) -f $(MAKEFILE) release
 
 install: all FORCE
-	install -d $(DESTDIR)
-	install -m 0755 -p $(TARGETS) $(DESTDIR)
+	make -f $(MAKEFILE) install
 
-desktop: install
-	install -d $(DESKTOP_DIR)
-	install -m 0644 -p $(DESKTOP_FILE) $(DESKTOP_DIR)
-	install -d $(ICON_DIR)
-	install -m 0644 -p $(ICON_FILE) $(ICON_DIR)
-	
+uninstall: $(MAKEFILE) FORCE
+	make -f $(MAKEFILE) uninstall
 
 qmake: 
 	$(QMAKE) $(PRO_FILE) -o $(MAKEFILE)

@@ -1,16 +1,43 @@
-<!DOCTYPE RCC>
-<RCC version="1.0">
-<qresource>
-<file>souffleur.png</file>
-</qresource>
-<qresource prefix="/schemas">
-  <file alias="events.sql">schemas/events.sql</file>
-  <file alias="uniqueid.sql">schemas/uniqueid.sql</file>
-  <file alias="warnings.sql">schemas/warnings.sql</file>
-  <file alias="shells.sql">schemas/shells.sql</file>
-  <file alias="repeats.sql">schemas/repeats.sql</file>
-</qresource>
-<qresource prefix="/help">
-  <file alias="LICENSE.txt">helpfiles/LICENSE.txt</file>
-</qresource>
+<RCC>
+    <qresource prefix="/">
+        <file>souffleur.png</file>
+        <file>qml/CheckItem.qml</file>
+        <file>qml/ChoiceButton.qml</file>
+        <file>qml/CopyPasteMenu.qml</file>
+        <file>qml/GetString.qml</file>
+        <file>qml/main.qml</file>
+        <file>qml/ItemEdit.qml</file>
+        <file>qml/SpinBox.qml</file>
+        <file>qml/RepeatEdit.qml</file>
+        <file>qml/About.qml</file>
+        <file>qml/ItemModify.qml</file>
+        <file>qml/MainEventList.qml</file>
+        <file>qml/AlertList.qml</file>
+    </qresource>
+    <qresource prefix="/schemas">
+        <file alias="events.sql">schemas/events.sql</file>
+        <file alias="uniqueid.sql">schemas/uniqueid.sql</file>
+        <file alias="warnings.sql">schemas/warnings.sql</file>
+        <file alias="shells.sql">schemas/shells.sql</file>
+        <file alias="repeats.sql">schemas/repeats.sql</file>
+    </qresource>
+    <qresource prefix="/help">
+        <file alias="LICENSE.txt">helpfiles/LICENSE.txt</file>
+    </qresource>
+    <qresource prefix="/alerts">
+        <file alias="alert.wav">sounds/alert.wav</file>
+    </qresource>
+    <qresource prefix="/icons">
+        <file alias="checked-no.png">icons/checked-no.png</file>
+        <file alias="checked-yes.png">icons/checked-yes.png</file>
+        <file alias="bell.png">icons/bell.png</file>
+        <file alias="up.png">icons/up.png</file>
+        <file alias="down.png">icons/down.png</file>
+        <file alias="windowicon.png">icons/windowicon.png</file>
+        <file alias="marked.png">icons/marked.png</file>
+        <file alias="R.png">icons/R.png</file>
+        <file alias="question.png">icons/question.png</file>
+        <file alias="gear.png">icons/gear.png</file>
+        <file alias="help.png">icons/help.png</file>
+    </qresource>
 </RCC>

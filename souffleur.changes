@@ -1,4 +1,51 @@
-%changelog
+* Tue Dec 13 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.8 
+ - fix test for no-options case defaulting to "random"
+
+* Wed Oct 05 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.7 
+ - timeout 10 secs on alert list when raised automatically
+ - spacing between Modify and Delete for added safety
+
+* Thu Sep 22 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.7 
+ - spacing between Modify and Delete for added safety
+
+* Thu Sep 22 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.6 
+ - bump version due to OBS/QtCreator packaging issue
+
+* Wed Sep 21 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.5 
+ - fix schemas; fix some editing problems;
+ - ignore leading non-digits of the date string
+ - ignore leading non-digits of the date string
+ - change name of picker to souffleur-background-picker
+
+* Mon Sep 19 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.3 
+ - add immensely silly wallpaper changer utility
+ - rpm packaging helpers
+ - fix packaging issues
+ - better text editing
+ - command line option to specify phone or not, do without hokey phone testing
+
+* Sat Sep 17 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.2 
+ - display past alerts
+ - fix width and alignment problems
+ - make flicking of the edit item work; resize repeat-info row
+ - refactor main event list UI
+ - only do audible alert when event object says so
+ - edit existing events; delete events; whole pile of bug fixes;
+
+* Mon Sep 12 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.0 
+ - edit existing events; delete events; whole pile of bug fixes;
+ - title bar, so people know what program is running
+ - repeating events
+
+* Sun Sep 11 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.1.0 
+ - repeating events
+ - copy-paste on new item
+ - better layout for rotation
+ - audio uptional, rotation
+ - start programs from shell commands, even in harmattan
+ - start converting to QML for Harmattan & Tablet
+ - replace libnotify with system tray messages, libnotify is too much trouble
+
 * Thu Jun 23 2011 Bernd Stramm <bernd.stramm@gmail.com> - 0.0.12-1
 - raise hidden window
 

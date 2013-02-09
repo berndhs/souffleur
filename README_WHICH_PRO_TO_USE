@@ -1,0 +1,9 @@
+There are a number of different souffleur-<something>.pro files.
+
+The top level files are:
+
+souffleur-harmattan.pro    - use for harmattan builds
+souffleur-linux.pro        - use for non-harmtattan linux builds for Qt Creator
+
+There is also a "configure" script. This will work on non-harmattan
+linux, and uses the souffleur-linu.pro file.
